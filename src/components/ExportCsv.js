@@ -7,6 +7,7 @@ const ExportCsv = ({
   schedule,
   userAdjustedSchedule,
   employeeCodeCount,
+  codes,
 }) => {
   const handleExportCSV = () => {
     const csvContent = generateCSVContent(schedule);
@@ -38,10 +39,18 @@ const ExportCsv = ({
           employeeRow.push(employees[employeeId].name);
 
           dateRange.forEach((day) => {
+            // console.log(
+            //   codes[day.dayOfWeek][userAdjustedSchedule[employeeId][day.date]]
+            //     ?.name
+            // );
+            const userAdjustedEmpId = userAdjustedSchedule[employeeId];
+            const scheduleEmpId = schedule[employeeId];
             const val =
-              (userAdjustedSchedule[employeeId] &&
-                userAdjustedSchedule[employeeId][day.date]) ||
-              (schedule[employeeId] && schedule[employeeId][day.date]) ||
+              (userAdjustedEmpId &&
+                codes[day.dayOfWeek][userAdjustedEmpId[day.date]]?.name) ||
+              (userAdjustedEmpId &&
+                codes.Add[userAdjustedEmpId[day.date]]?.name) ||
+              (scheduleEmpId && scheduleEmpId[day.date]) ||
               "";
             employeeRow.push(val);
           });

@@ -45,7 +45,7 @@ const Import = ({ setEmployees, setGroups, setScheduleRange, setCodes }) => {
       reader.onload = (e) => {
         try {
           const jsonData = JSON.parse(e.target.result);
-          console.log(jsonData);
+          // console.log(jsonData);
           setEmployees(jsonData.employees);
           setGroups(jsonData.groups);
           setScheduleRange(jsonData.scheduleRange);

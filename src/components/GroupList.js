@@ -62,7 +62,7 @@ const GroupList = ({ groups, employees, setGroups, setEmployees }) => {
       };
     });
 
-    console.log(updatedEmployees);
+    // console.log(updatedEmployees);
     setEmployees(updatedEmployees);
   };
 
@@ -97,7 +97,7 @@ const GroupList = ({ groups, employees, setGroups, setEmployees }) => {
     if (groupEmployees) {
       groupEmployees.forEach((employeeId) => {
         const updatedEmployee = { ...updatedEmployees[employeeId] };
-        console.log(updatedEmployee);
+        // console.log(updatedEmployee);
         updatedEmployees[employeeId] = {
           ...updatedEmployee,
           groupRules: updatedEmployee?.groupRules
@@ -112,7 +112,7 @@ const GroupList = ({ groups, employees, setGroups, setEmployees }) => {
               },
         };
       });
-      console.log(updatedEmployees);
+      // console.log(updatedEmployees);
       setEmployees(updatedEmployees);
     }
   };

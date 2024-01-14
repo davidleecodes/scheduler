@@ -53,7 +53,7 @@ const ScheduleTable = ({
       ? newSchedule[employeeId]
       : {};
     newSchedule[employeeId][date] = codeId;
-    console.log(newSchedule);
+    // console.log(newSchedule);
     setuserAdjustedSchedule(newSchedule);
   };
 
@@ -69,7 +69,7 @@ const ScheduleTable = ({
         }
       });
     });
-    console.log(scheduleMappedCodes);
+    // console.log(scheduleMappedCodes);
     setScheduleMappedCodes(scheduleMappedCodes);
   }, [userAdjustedSchedule]);
 

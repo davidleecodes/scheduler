@@ -104,7 +104,7 @@ const CodeList = ({
     };
     // const lastId = employeeIds[employeeIds.length - 1];
     // updatedCodes[day] = [...updatedCodes[day], newCode];
-    console.log(updatedCodes);
+    // console.log(updatedCodes);
 
     setCodes(updatedCodes);
   };

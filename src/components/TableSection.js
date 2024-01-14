@@ -120,6 +120,7 @@ const TableSection = ({
             schedule={schedule}
             userAdjustedSchedule={userAdjustedSchedule}
             employeeCodeCount={employeeCodeCount}
+            codes={codes}
           />
         </Grid>
       </Grid>

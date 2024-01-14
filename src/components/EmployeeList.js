@@ -33,8 +33,8 @@ const EmployeeList = ({
     setEmployees(rest);
     deleteEmployeeFromGroup(id);
     deleteEmployeeFromSchedule(id);
-    console.log(groups);
-    console.log(userAdjustedSchedule);
+    // console.log(groups);
+    // console.log(userAdjustedSchedule);
   };
   const onAddEmployee = (data) => {
     const employeeIds = Object.keys(employees);
