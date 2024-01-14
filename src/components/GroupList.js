@@ -46,21 +46,26 @@ const GroupList = ({ groups, employees, setGroups, setEmployees }) => {
     }
     updatedEmployee.group = groupId;
 
-    Object.keys(groupRules).forEach((selectedRule) => {
-      updatedEmployees[employeeId] = {
-        ...updatedEmployee,
-        groupRules: updatedEmployee?.groupRules
-          ? {
-              ...updatedEmployee.groupRules,
-              [selectedRule]:
-                groupRulesCollection[selectedRule].employee.defaultValues,
-            }
-          : {
-              [selectedRule]:
-                groupRulesCollection[selectedRule].employee.defaultValues,
-            },
-      };
-    });
+    if (groupRules) {
+      Object.keys(groupRules).forEach((selectedRule) => {
+        updatedEmployees[employeeId] = {
+          ...updatedEmployee,
+          groupRules: updatedEmployee?.groupRules
+            ? {
+                ...updatedEmployee.groupRules,
+                [selectedRule]:
+                  groupRulesCollection[selectedRule].employee.defaultValues,
+              }
+            : {
+                [selectedRule]:
+                  groupRulesCollection[selectedRule].employee.defaultValues,
+              },
+        };
+      });
+    } else {
+      const { groupRules, ...rest } = updatedEmployees[employeeId];
+      updatedEmployees[employeeId] = rest;
+    }
 
     // console.log(updatedEmployees);
     setEmployees(updatedEmployees);

@@ -81,7 +81,7 @@ const ScheduleTable = ({
         group.employees.forEach((employeeId) => {
           const employee = employees[employeeId];
           if (employee) {
-            employee.groupRules &&
+            if (employee.groupRules) {
               Object.entries(employee.groupRules).forEach(
                 ([groupRuleId, employeeGroupRule]) => {
                   if (group.groupRules && group.groupRules[groupRuleId]) {
@@ -106,6 +106,10 @@ const ScheduleTable = ({
                   }
                 }
               );
+            } else {
+              newSchedule[employeeId] = {};
+              setSchedule(newSchedule);
+            }
           }
         });
     });
@@ -205,10 +209,9 @@ const ScheduleTable = ({
   };
 
   const codesMatch = (day) => {
-    return (
-      Object.keys(scheduleMappedCodes[day.date]).sort().join() ===
-      Object.keys(codes[day.dayOfWeek]).sort().join()
-    );
+    const scheduleDayCodes = Object.keys(scheduleMappedCodes[day.date]);
+    const dayCodes = Object.keys(codes[day.dayOfWeek]);
+    return dayCodes.every((c) => scheduleDayCodes.includes(c));
   };
 
   return (
