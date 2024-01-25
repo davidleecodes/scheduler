@@ -70,14 +70,46 @@ const scheduleRangeInt = {
 };
 
 const codeInt = {
-  Sun: { Sun1: { name: "a10" }, Sun2: { name: "b10" }, Sun3: { name: "b30" } },
-  Mon: { Mon1: { name: "a10" }, Mon2: { name: "b10" }, Mon3: { name: "b30" } },
-  Tue: { Tue1: { name: "a10" }, Tue2: { name: "b10" }, Tue3: { name: "b30" } },
-  Wed: { Wed1: { name: "a10" }, Wed2: { name: "b10" }, Wed3: { name: "b30" } },
-  Thu: { Thu1: { name: "a10" }, Thu2: { name: "b10" }, Thu3: { name: "b30" } },
-  Fri: { Fri1: { name: "a10" }, Fri2: { name: "b10" }, Fri3: { name: "b30" } },
-  Sat: { Sat1: { name: "a10" }, Sat2: { name: "b10" }, Sat3: { name: "b30" } },
-  Add: { Add1: { name: "x" }, Add2: { name: "v" }, Add3: { name: "h" } },
+  Sun: {
+    Sun1: { name: "a10", shift: "morning" },
+    Sun2: { name: "b10", shift: "morning" },
+    Sun3: { name: "b30", shift: "evening" },
+  },
+  Mon: {
+    Mon1: { name: "a10", shift: "morning" },
+    Mon2: { name: "b10", shift: "morning" },
+    Mon3: { name: "b30", shift: "evening" },
+  },
+  Tue: {
+    Tue1: { name: "a10", shift: "morning" },
+    Tue2: { name: "b10", shift: "morning" },
+    Tue3: { name: "b30", shift: "evening" },
+  },
+  Wed: {
+    Wed1: { name: "a10", shift: "morning" },
+    Wed2: { name: "b10", shift: "morning" },
+    Wed3: { name: "b30", shift: "evening" },
+  },
+  Thu: {
+    Thu1: { name: "a10", shift: "morning" },
+    Thu2: { name: "b10", shift: "morning" },
+    Thu3: { name: "b30", shift: "evening" },
+  },
+  Fri: {
+    Fri1: { name: "a10", shift: "morning" },
+    Fri2: { name: "b10", shift: "morning" },
+    Fri3: { name: "b30", shift: "evening" },
+  },
+  Sat: {
+    Sat1: { name: "a10", shift: "morning" },
+    Sat2: { name: "b10", shift: "morning" },
+    Sat3: { name: "b30", shift: "evening" },
+  },
+  Add: {
+    Add1: { name: "x", shift: "none" },
+    Add2: { name: "v", shift: "none" },
+    Add3: { name: "h", shift: "none" },
+  },
   Internal: { x: { name: "x" }, h: { name: "h" } },
   // Add: ["x", "y", "z"],
 };

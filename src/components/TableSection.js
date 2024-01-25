@@ -56,14 +56,14 @@ const TableSection = ({
         const day = daysShort[dayjs(date).weekday()];
         if (codeId !== "" && codeId !== " ") {
           if (codes[day][codeId]) {
-            const codeName = codes[day][codeId].name;
+            const codeShift = codes[day][codeId].shift;
 
-            const match = codeName.match(/([a-zA-Z]+)([0-9]+)/);
-            const numbersPart = match[2];
+            // const match = codeName.match(/([a-zA-Z]+)([0-9]+)/);
+            // const numbersPart = match[2];
 
             // console.log(codeName);
-            codeCounts[numbersPart] = codeCounts[numbersPart]
-              ? codeCounts[numbersPart] + 1
+            codeCounts[codeShift] = codeCounts[codeShift]
+              ? codeCounts[codeShift] + 1
               : 1;
           } else if (codes.Add[codeId]) {
             const codeName = codes.Add[codeId].name;

@@ -2,16 +2,22 @@ import React, { useState } from "react";
 import { Typography } from "@mui/joy";
 import { Sheet as Paper } from "@mui/joy";
 
-import { TextField, IconButton, Grid } from "@mui/material";
+import { TextField, IconButton, Grid, Select, MenuItem } from "@mui/material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import dayjs from "dayjs";
+
+const shifts = {
+  morning: "morning",
+  evening: "evening",
+  none: "none",
+};
 
 const AddField = ({ handleAddCode, day }) => {
   const [newCodeName, setNewCodeName] = useState("");
 
   const handleAdd = () => {
-    handleAddCode(day, { name: newCodeName });
+    handleAddCode(day, { name: newCodeName, shift: shifts.morning }); // default morning
     setNewCodeName("");
   };
   return (
@@ -64,7 +70,7 @@ const CodeList = ({
     const { name, value } = event.target;
     const updatedCodes = { ...codes };
     updatedCodes[day][codeId] = { ...updatedCodes[day][codeId], [name]: value };
-    // console.log(updatedCodes);
+    console.log(updatedCodes);
     setCodes(updatedCodes);
   };
   const daysShort = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -111,11 +117,15 @@ const CodeList = ({
 
   const { Internal, ...codesN } = codes;
   return (
-    <Grid container spacing={1} style={{ flexWrap: "nowrap" }}>
+    <Grid
+      container
+      spacing={1}
+      // style={{ flexWrap: "nowrap" }}
+    >
       {Object.keys(codesN).map((day) => (
         <Grid
           item
-          xs={2}
+          xs={4}
           style={{ minWidth: "150px", maxWidth: "400px" }}
           key={day}
         >
@@ -134,16 +144,38 @@ const CodeList = ({
                   alignItems="center"
                   style={{ flexWrap: "nowrap" }}
                 >
-                  <Grid item style={{ flexGrow: 1 }}>
-                    <TextField
-                      // label={`Code ${index + 1}`}
-                      value={code.name}
-                      onChange={(event) => handleCodeChange(day, codeId, event)}
-                      fullWidth
-                      size="small"
-                      variant="standard"
-                      name="name"
-                    />
+                  <Grid item container spacing={2} style={{ flexGrow: 1 }}>
+                    <Grid xs={6} item>
+                      <TextField
+                        // label={`Code ${index + 1}`}
+                        value={code.name}
+                        onChange={(event) =>
+                          handleCodeChange(day, codeId, event)
+                        }
+                        fullWidth
+                        size="small"
+                        variant="standard"
+                        name="name"
+                      />
+                    </Grid>
+                    <Grid xs={6} item>
+                      <Select
+                        value={code.shift}
+                        onChange={(event) =>
+                          handleCodeChange(day, codeId, event)
+                        }
+                        size="small"
+                        variant="standard"
+                        name="shift"
+                        fullWidth
+                      >
+                        {Object.keys(shifts).map((shift) => (
+                          <MenuItem key={shift} value={shift}>
+                            {shift}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </Grid>
                   </Grid>
                   <Grid item>
                     <IconButton
