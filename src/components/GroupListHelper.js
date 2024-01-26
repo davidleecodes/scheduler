@@ -50,7 +50,6 @@ const AddEmployeeField = ({ employees, handleAddEmployee, groupId, group }) => {
               value={selectedEmployee}
               label="add employee"
               onChange={(e) => setSelectedEmployee(e.target.value)}
-              // variant="standard"
             >
               <MenuItem value="">None</MenuItem>
               {Object.keys(filterEmployees).map((employeeId) => (
@@ -116,8 +115,6 @@ const AddRuleField = ({ handleAddRule, groupId, group }) => {
               fullWidth
               value={selectedRule}
               onChange={(e) => setSelectedRule(e.target.value)}
-              // size="small"
-              // variant="standard"
             >
               <MenuItem value="">None</MenuItem>
 

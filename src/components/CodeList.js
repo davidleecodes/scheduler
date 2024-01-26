@@ -57,11 +57,8 @@ const CodeList = ({
     const string = array[array.length - 1];
     const match = string.match(/([a-zA-Z]+)([0-9]+)/);
     if (match) {
-      const lettersPart = match[1];
+      // const lettersPart = match[1];
       const numbersPart = match[2];
-      // console.log([lettersPart, parseInt(numbersPart) + 1].join(""));
-
-      // return [lettersPart, parseInt(numbersPart) + 1].join("");
       return [startKey, parseInt(numbersPart) + 1].join("");
     }
   }
@@ -70,7 +67,6 @@ const CodeList = ({
     const { name, value } = event.target;
     const updatedCodes = { ...codes };
     updatedCodes[day][codeId] = { ...updatedCodes[day][codeId], [name]: value };
-    console.log(updatedCodes);
     setCodes(updatedCodes);
   };
   const daysShort = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -108,20 +104,12 @@ const CodeList = ({
       ...updatedCodes[day],
       [interateArrayId(dayCodes, day)]: data,
     };
-    // const lastId = employeeIds[employeeIds.length - 1];
-    // updatedCodes[day] = [...updatedCodes[day], newCode];
-    // console.log(updatedCodes);
-
     setCodes(updatedCodes);
   };
 
   const { Internal, ...codesN } = codes;
   return (
-    <Grid
-      container
-      spacing={1}
-      // style={{ flexWrap: "nowrap" }}
-    >
+    <Grid container spacing={1}>
       {Object.keys(codesN).map((day) => (
         <Grid
           item
@@ -147,7 +135,6 @@ const CodeList = ({
                   <Grid item container spacing={2} style={{ flexGrow: 1 }}>
                     <Grid xs={6} item>
                       <TextField
-                        // label={`Code ${index + 1}`}
                         value={code.name}
                         onChange={(event) =>
                           handleCodeChange(day, codeId, event)

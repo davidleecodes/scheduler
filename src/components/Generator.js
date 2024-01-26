@@ -20,7 +20,6 @@ const Generator = ({
         let employeeId = randomizedEmployeeIds[index];
 
         while (schedule[employeeId] && schedule[employeeId][day.date]) {
-          console.log(index, employeeId);
           index++;
           employeeId = randomizedEmployeeIds[index];
         }
@@ -33,7 +32,6 @@ const Generator = ({
         };
       });
     });
-    // console.log(updatedUserAdjustedSchedule);
     setuserAdjustedSchedule(updatedUserAdjustedSchedule);
   };
 

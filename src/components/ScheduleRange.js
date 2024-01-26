@@ -8,7 +8,6 @@ import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import dayjs from "dayjs";
 
 function ScheduleRange({ scheduleRange, setScheduleRange }) {
-  // console.log(scheduleRange);
   const handleDateChange = (date) => {
     setScheduleRange({ ...scheduleRange, selectedDate: date });
   };
@@ -33,17 +32,6 @@ function ScheduleRange({ scheduleRange, setScheduleRange }) {
     );
     setScheduleRange({ ...scheduleRange, selectedDate: newDate });
   };
-  // useEffect(() => {
-  //   const newDate = scheduleRange.selectedDate
-  //     ? dayjs(scheduleRange.selectedDate).format("MM/DD/YYYY")
-  //     : dayjs().format("MM/DD/YYYY");
-  //   setScheduleRange({ ...scheduleRange, selectedDate: newDate });
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
-
-  // dayjs.isDayjs(scheduleRange.selectedDate)
-  // ? scheduleRange.selectedDate
-  // :""
 
   return (
     <>
@@ -53,16 +41,7 @@ function ScheduleRange({ scheduleRange, setScheduleRange }) {
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
                 format="MM/DD/YYYY"
-                value={
-                  dayjs(scheduleRange.selectedDate)
-                  // scheduleRange && scheduleRange.selectedDate
-                  //   ? scheduleRange.selectedDate
-                  //   : ""
-                  // ? dayjs(scheduleRange.selectedDate).format("MM/DD/YYYY")
-                  // : ""
-                  // ? dayjs(scheduleRange.selectedDate).format("MM/DD/YYYY")
-                  // : ""
-                }
+                value={dayjs(scheduleRange.selectedDate)}
                 onChange={handleDateChange}
                 slotProps={{ textField: { size: "small" } }}
               />

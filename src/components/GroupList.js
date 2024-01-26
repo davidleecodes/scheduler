@@ -7,13 +7,7 @@ import {
   AccordionDetails,
   AccordionGroup,
 } from "@mui/joy";
-import {
-  TextField,
-  Grid,
-  // Paper,
-  IconButton,
-  Button,
-} from "@mui/material";
+import { TextField, Grid, IconButton, Button } from "@mui/material";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 
@@ -67,7 +61,6 @@ const GroupList = ({ groups, employees, setGroups, setEmployees }) => {
       updatedEmployees[employeeId] = rest;
     }
 
-    // console.log(updatedEmployees);
     setEmployees(updatedEmployees);
   };
 
@@ -102,7 +95,6 @@ const GroupList = ({ groups, employees, setGroups, setEmployees }) => {
     if (groupEmployees) {
       groupEmployees.forEach((employeeId) => {
         const updatedEmployee = { ...updatedEmployees[employeeId] };
-        // console.log(updatedEmployee);
         updatedEmployees[employeeId] = {
           ...updatedEmployee,
           groupRules: updatedEmployee?.groupRules
@@ -117,7 +109,6 @@ const GroupList = ({ groups, employees, setGroups, setEmployees }) => {
               },
         };
       });
-      // console.log(updatedEmployees);
       setEmployees(updatedEmployees);
     }
   };

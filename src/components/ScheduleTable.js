@@ -41,13 +41,11 @@ const ScheduleTable = ({
   const handleCellChange = (event, date, employeeId) => {
     const codeId = event.target.value;
     const schDay = scheduleMappedCodes[date];
-    // console.log(schDay);
 
     const newSchedule = { ...userAdjustedSchedule };
 
     //swap codeId
     if (schDay && schDay[codeId] && !codes.Add[codeId]) {
-      // console.log(codeId, schDay[codeId]);
       const swapEmployeeId = schDay[codeId];
       const { [date]: removeDate, ...rest } = newSchedule[swapEmployeeId];
       newSchedule[swapEmployeeId] = rest;
@@ -56,7 +54,6 @@ const ScheduleTable = ({
       ? newSchedule[employeeId]
       : {};
     newSchedule[employeeId][date] = codeId;
-    // console.log(newSchedule);
     setuserAdjustedSchedule(newSchedule);
   };
 
@@ -72,13 +69,11 @@ const ScheduleTable = ({
         }
       });
     });
-    // console.log(scheduleMappedCodes);
     setScheduleMappedCodes(scheduleMappedCodes);
   }, [userAdjustedSchedule]);
 
   useEffect(() => {
     const newSchedule = { ...schedule };
-    // console.log(groups, employees);
     Object.values(groups).forEach((group) => {
       group.employees &&
         group.employees.forEach((employeeId) => {
@@ -88,16 +83,6 @@ const ScheduleTable = ({
               Object.entries(employee.offDays).forEach(([offDayId, offDay]) => {
                 const offDayStart = dayjs(offDay.start);
                 const offDayEnd = dayjs(offDay.end);
-                // console.log(
-                //   startDate.isSameOrBefore(offDayStart),
-                //   startDate.format("MM/DD/YYYY"),
-                //   offDayStart.format("MM,DD,YYYY")
-                // );
-                // console.log(
-                //   endDate.isSameOrAfter(offDayEnd),
-                //   endDate.format("MM/DD/YYYY"),
-                //   offDayEnd.format("MM,DD,YYYY")
-                // );
 
                 if (
                   startDate.isSameOrBefore(offDayStart) ||
@@ -106,7 +91,6 @@ const ScheduleTable = ({
                   let currentDate = offDayStart;
                   while (currentDate.isSameOrBefore(offDayEnd)) {
                     const formattedDate = currentDate.format("MM-DD-YYYY");
-                    // console.log(formattedDate);
                     newSchedule[employeeId] = {
                       ...newSchedule[employeeId],
                       [formattedDate]: "v",
@@ -114,9 +98,7 @@ const ScheduleTable = ({
 
                     currentDate = currentDate.add(1, "day");
                   }
-                  // console.log(newSchedule);
 
-                  // newSchedule[employeeId] = {};
                   setSchedule(newSchedule);
                 }
               });
@@ -158,11 +140,6 @@ const ScheduleTable = ({
   }, [employees, endDate, groups, startDate]);
 
   const codeSelect = (employeeId, day, codes) => {
-    // const combineCodes = {
-    //   ...codes[day.dayOfWeek],
-    //   ...codes.Add,
-    // };
-    // console.log(combineCodes);
     const schDay = scheduleMappedCodes[day.date];
     const dayOfWeek = day.dayOfWeek;
     const highLight =
@@ -170,7 +147,6 @@ const ScheduleTable = ({
       schedule[employeeId] &&
       !schedule[employeeId][day.date];
 
-    // console.log(schDay);
     return (
       <TableCell
         key={day.date}
@@ -270,7 +246,6 @@ const ScheduleTable = ({
                   key={day.date}
                   align="center"
                   padding="none"
-                  // size="small"
                   style={{
                     border:
                       scheduleMappedCodes[day.date] && codesMatch(day)
@@ -316,21 +291,8 @@ const ScheduleTable = ({
                         <TableCell padding="none">
                           {employees[employeeId].name}
                         </TableCell>
-                        {dateRange.map(
-                          (day) =>
-                            // <TableCell
-                            //   key={day.date}
-                            //   align="center"
-                            //   style={{ padding: 1 }}
-                            // >
-                            codeSelect(
-                              employeeId,
-                              day,
-                              codes,
-                              day.date
-                              // scheduleMappedCodes
-                            )
-                          // </TableCell>
+                        {dateRange.map((day) =>
+                          codeSelect(employeeId, day, codes, day.date)
                         )}
                         <TableCell>
                           <div style={{ whiteSpace: "nowrap" }}>

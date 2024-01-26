@@ -145,7 +145,6 @@ const intervalGroupOnChange = (startDate, endDate, employeeData, groupData) => {
   const { days, everyNumberOfWeeks } = groupData;
   const { startDay } = employeeData;
 
-  // console.log("hit");
   const selectedDaysIndex = days.map((day) =>
     weekdaysShort.indexOf(day.toLowerCase())
   );
@@ -165,8 +164,6 @@ const intervalGroupOnChange = (startDate, endDate, employeeData, groupData) => {
     selectedDaysIndex.forEach((index) => {
       const newDate = currentDate.weekday(index);
       const newDateFormated = newDate.format("MM-DD-YYYY");
-
-      // console.log(currentDate.format("MM-DD"), newDateFormated);
 
       if (newDate.isBetween(startDateMod, endDateMod)) {
         if (count < everyNumberOfWeeks) {

@@ -39,10 +39,6 @@ const ExportCsv = ({
           employeeRow.push(employees[employeeId].name);
 
           dateRange.forEach((day) => {
-            // console.log(
-            //   codes[day.dayOfWeek][userAdjustedSchedule[employeeId][day.date]]
-            //     ?.name
-            // );
             const userAdjustedEmpId = userAdjustedSchedule[employeeId];
             const scheduleEmpId = schedule[employeeId];
             const val =

@@ -7,7 +7,6 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
-// import { DateRangePicker } from "@mui/x-date-pickers-pro/DateRangePicker";
 import dayjs from "dayjs";
 
 const EmployeeList = ({
@@ -40,8 +39,6 @@ const EmployeeList = ({
     setEmployees(rest);
     deleteEmployeeFromGroup(id);
     deleteEmployeeFromSchedule(id);
-    // console.log(groups);
-    // console.log(userAdjustedSchedule);
   };
   const onAddEmployee = (data) => {
     const employeeIds = Object.keys(employees);
@@ -67,8 +64,6 @@ const EmployeeList = ({
     const offDays = employee?.offDays;
     const [start, setStart] = useState();
     const [end, setEnd] = useState();
-    // console.log(offDays);
-    const [dates, setDates] = React.useState(["", ""]);
 
     const handleAddOffDay = () => {
       const offDayId = Object.keys(offDays).length + 1;
@@ -101,8 +96,6 @@ const EmployeeList = ({
       }));
     };
     const handleDateChange = (offDayId, value, name) => {
-      // console.log(event, context, "EVT");
-      // const { name, value } = event.target;
       setEmployees((prev) => ({
         ...prev,
         [employeeId]: {
@@ -167,10 +160,6 @@ const EmployeeList = ({
               slotProps={{ textField: { size: "small" } }}
               disablePast
             />
-            {/* <DateRangePicker
-              value={dates}
-              onChange={(newValue) => setDates(newValue)}
-            /> */}
           </LocalizationProvider>
           <IconButton
             variant="contained"
@@ -189,13 +178,7 @@ const EmployeeList = ({
     <>
       <Grid item container direction={"column"} spacing={1}>
         {Object.keys(employees).map((employeeId) => (
-          <Grid
-            item
-            container
-            key={employeeId}
-            // style={{ flexWrap: "nowrap" }}
-            spacing={3}
-          >
+          <Grid item container key={employeeId} spacing={3}>
             <Grid item>
               <TextField
                 value={employees[employeeId].name}
@@ -205,12 +188,6 @@ const EmployeeList = ({
                 name="name"
               />
 
-              {/* <Typography variant="h6">Employee Rules:</Typography>
-          {employees[employeeId].groupRules.interval && (
-            <EmployeeRulesComponent
-              employeeRule={employees[employeeId].groupRules.interval}
-            />
-          )} */}
               <Typography>off days</Typography>
               <OffDays
                 employee={employees[employeeId]}
@@ -229,7 +206,6 @@ const EmployeeList = ({
           </Grid>
         ))}
 
-        {/* <Typography variant="h6">Add Employee:</Typography> */}
         <Grid item container style={{ flexWrap: "nowrap" }}>
           <TextField
             label="New Employee Name"

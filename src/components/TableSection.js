@@ -59,10 +59,6 @@ const TableSection = ({
           if (codes[day][codeId]) {
             const codeShift = codes[day][codeId].shift;
 
-            // const match = codeName.match(/([a-zA-Z]+)([0-9]+)/);
-            // const numbersPart = match[2];
-
-            // console.log(codeName);
             codeCounts[codeShift] = codeCounts[codeShift]
               ? codeCounts[codeShift] + 1
               : 1;
@@ -79,22 +75,6 @@ const TableSection = ({
     if (userAdjustedSchedule[employeeId]) {
       count(userAdjustedSchedule[employeeId]);
     }
-    // if (schedule[employeeId] && userAdjustedSchedule[employeeId]) {
-    //   const userAdjustedArray = Object.entries(
-    //     userAdjustedSchedule[employeeId]
-    //   ).filter(([date, code]) => code !== "");
-    //   const userAdjustedObject = Object.fromEntries(userAdjustedArray);
-
-    //   const combined = {
-    //     ...schedule[employeeId],
-    //     ...userAdjustedObject,
-    //   };
-    //   count(combined);
-    // } else if (schedule[employeeId]) {
-    //   count(schedule[employeeId]);
-    // } else if (userAdjustedSchedule[employeeId]) {
-    //   count(userAdjustedSchedule[employeeId]);
-    // }
 
     const res = Object.entries(codeCounts)
       .sort((a, b) => a[0].localeCompare(b[0]))
