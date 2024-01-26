@@ -5,6 +5,7 @@ import { Grid } from "@mui/material";
 import ScheduleTable from "./ScheduleTable";
 import ScheduleRange from "./ScheduleRange";
 import ExportCsv from "./ExportCsv";
+import Generator from "./Generator";
 
 // const dateRangeInt = [
 //     {
@@ -96,6 +97,7 @@ const TableSection = ({
     // }
 
     const res = Object.entries(codeCounts)
+      .sort((a, b) => a[0].localeCompare(b[0]))
       .map(([code, num]) => `${code} : ${num}`)
       .join(" , ");
 
@@ -113,15 +115,29 @@ const TableSection = ({
         </Grid>
 
         <Grid item>
-          <ExportCsv
-            dateRange={dateRange}
-            groups={groups}
-            employees={employees}
-            schedule={schedule}
-            userAdjustedSchedule={userAdjustedSchedule}
-            employeeCodeCount={employeeCodeCount}
-            codes={codes}
-          />
+          <Grid container spacing={1}>
+            <Grid item>
+              <Generator
+                employees={employees}
+                codes={codes}
+                schedule={schedule}
+                dateRange={dateRange}
+                userAdjustedSchedule={userAdjustedSchedule}
+                setuserAdjustedSchedule={setuserAdjustedSchedule}
+              />
+            </Grid>
+            <Grid item>
+              <ExportCsv
+                dateRange={dateRange}
+                groups={groups}
+                employees={employees}
+                schedule={schedule}
+                userAdjustedSchedule={userAdjustedSchedule}
+                employeeCodeCount={employeeCodeCount}
+                codes={codes}
+              />
+            </Grid>
+          </Grid>
         </Grid>
       </Grid>
       <Grid item sx={{ mt: 1 }}>

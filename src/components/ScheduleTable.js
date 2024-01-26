@@ -14,6 +14,9 @@ import {
 } from "@mui/material";
 import { groupRulesCollection } from "./GroupRulesCollection";
 import { yellow } from "@mui/material/colors";
+import dayjs from "dayjs";
+const isSameOrAfter = require("dayjs/plugin/isSameOrAfter");
+dayjs.extend(isSameOrAfter);
 
 // {emp1:{
 //     date:'code'
@@ -81,6 +84,44 @@ const ScheduleTable = ({
         group.employees.forEach((employeeId) => {
           const employee = employees[employeeId];
           if (employee) {
+            if (employee.offDays) {
+              Object.entries(employee.offDays).forEach(([offDayId, offDay]) => {
+                const offDayStart = dayjs(offDay.start);
+                const offDayEnd = dayjs(offDay.end);
+                // console.log(
+                //   startDate.isSameOrBefore(offDayStart),
+                //   startDate.format("MM/DD/YYYY"),
+                //   offDayStart.format("MM,DD,YYYY")
+                // );
+                // console.log(
+                //   endDate.isSameOrAfter(offDayEnd),
+                //   endDate.format("MM/DD/YYYY"),
+                //   offDayEnd.format("MM,DD,YYYY")
+                // );
+
+                if (
+                  startDate.isSameOrBefore(offDayStart) ||
+                  endDate.isSameOrAfter(offDayEnd)
+                ) {
+                  let currentDate = offDayStart;
+                  while (currentDate.isSameOrBefore(offDayEnd)) {
+                    const formattedDate = currentDate.format("MM-DD-YYYY");
+                    // console.log(formattedDate);
+                    newSchedule[employeeId] = {
+                      ...newSchedule[employeeId],
+                      [formattedDate]: "v",
+                    };
+
+                    currentDate = currentDate.add(1, "day");
+                  }
+                  // console.log(newSchedule);
+
+                  // newSchedule[employeeId] = {};
+                  setSchedule(newSchedule);
+                }
+              });
+            }
+
             if (employee.groupRules) {
               Object.entries(employee.groupRules).forEach(
                 ([groupRuleId, employeeGroupRule]) => {
@@ -98,7 +139,7 @@ const ScheduleTable = ({
                       groupGroupRuleData
                     );
                     newSchedule[employeeId] = {
-                      // ...newSchedule[employeeId],
+                      ...newSchedule[employeeId],
                       ...result,
                     };
 

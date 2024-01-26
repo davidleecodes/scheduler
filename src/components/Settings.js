@@ -20,13 +20,17 @@ const employeesInit = {
     groupRules: {
       interval: { data: { startDay: "12/31/2023" } },
     },
+    offDays: {
+      o1: { start: "02/01/2024", end: "02/02/2024" },
+      o2: { start: "01/25/2024", end: "01/30/2024" },
+    },
     group: "g1",
   },
   e2: {
     name: "bran",
-    groupRules: {
-      interval: { data: { startDay: "01/06/2024" } },
-    },
+    // groupRules: {
+    //   interval: { data: { startDay: "01/06/2024" } },
+    // },
   },
   e3: {
     name: "carl",
@@ -58,7 +62,7 @@ const groupsInit = {
   // },
   g3: {
     name: "group C",
-    employees: ["e4"],
+    employees: ["e4", "e2"],
   },
 };
 
@@ -110,7 +114,7 @@ const codeInt = {
     Add2: { name: "v", shift: "none" },
     Add3: { name: "h", shift: "none" },
   },
-  Internal: { x: { name: "x" }, h: { name: "h" } },
+  Internal: { x: { name: "x" }, h: { name: "h" }, v: { name: "v" } },
   // Add: ["x", "y", "z"],
 };
 
