@@ -6,6 +6,7 @@ import ScheduleTable from "./ScheduleTable";
 import ScheduleRange from "./ScheduleRange";
 import ExportCsv from "./ExportCsv";
 import Generator from "./Generator";
+import { daysShort } from "./utils";
 
 // const dateRangeInt = [
 //     {
@@ -48,7 +49,7 @@ const TableSection = ({
     return startDate.add(scheduleRange.numOfWks, "week").subtract(1, "day");
   }, [scheduleRange.numOfWks, startDate]);
 
-  const daysShort = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  // const daysShort = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
   const employeeCodeCount = (employeeId) => {
     const codeCounts = {};

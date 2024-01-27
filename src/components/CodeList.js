@@ -6,6 +6,7 @@ import { TextField, IconButton, Grid, Select, MenuItem } from "@mui/material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import dayjs from "dayjs";
+import { daysShort, iterateArrayId } from "./utils";
 
 const shifts = {
   morning: "morning",
@@ -52,24 +53,13 @@ const CodeList = ({
   userAdjustedSchedule,
   setuserAdjustedSchedule,
 }) => {
-  function interateArrayId(array, startKey) {
-    if (!array || array.length === 0) return `${startKey}1`;
-    const string = array[array.length - 1];
-    const match = string.match(/([a-zA-Z]+)([0-9]+)/);
-    if (match) {
-      // const lettersPart = match[1];
-      const numbersPart = match[2];
-      return [startKey, parseInt(numbersPart) + 1].join("");
-    }
-  }
-
   const handleCodeChange = (day, codeId, event) => {
     const { name, value } = event.target;
     const updatedCodes = { ...codes };
     updatedCodes[day][codeId] = { ...updatedCodes[day][codeId], [name]: value };
     setCodes(updatedCodes);
   };
-  const daysShort = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  // const daysShort = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
   const deleteCodeFromSchedule = (day, codeId) => {
     const updatedSchedule = { ...userAdjustedSchedule };
@@ -102,7 +92,7 @@ const CodeList = ({
     const dayCodes = Object.keys(updatedCodes[day]);
     updatedCodes[day] = {
       ...updatedCodes[day],
-      [interateArrayId(dayCodes, day)]: data,
+      [iterateArrayId(dayCodes, day)]: data,
     };
     setCodes(updatedCodes);
   };

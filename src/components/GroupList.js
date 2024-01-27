@@ -12,8 +12,8 @@ import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 
 import { groupRulesCollection } from "./GroupRulesCollection";
-
 import { AddEmployeeField, AddRuleField } from "./GroupListHelper";
+import { iterateArrayId } from "./utils";
 
 const GroupList = ({ groups, employees, setGroups, setEmployees }) => {
   const [newGroupName, setNewGroupName] = useState("");
@@ -21,10 +21,9 @@ const GroupList = ({ groups, employees, setGroups, setEmployees }) => {
   const handleAddGroup = () => {
     const data = { name: newGroupName };
     const groupIds = Object.keys(groups);
-    const lastId = groupIds[groupIds.length - 1];
-    const newId = lastId ? `g${parseInt(lastId.slice(1)) + 1}` : "g1";
-    setGroups({ ...groups, [newId]: data });
-
+    // const lastId = groupIds[groupIds.length - 1];
+    // const newId = lastId ? `g${parseInt(lastId.slice(1)) + 1}` : "g1";
+    setGroups({ ...groups, [iterateArrayId(groupIds, "g")]: data });
     setNewGroupName("");
   };
 

@@ -15,8 +15,6 @@ import {
 import { groupRulesCollection } from "./GroupRulesCollection";
 import { yellow } from "@mui/material/colors";
 import dayjs from "dayjs";
-const isSameOrAfter = require("dayjs/plugin/isSameOrAfter");
-dayjs.extend(isSameOrAfter);
 
 // {emp1:{
 //     date:'code'

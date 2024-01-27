@@ -6,7 +6,7 @@ import { Typography } from "@mui/joy";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-
+import { iterateArrayId } from "./utils";
 import dayjs from "dayjs";
 
 const EmployeeList = ({
@@ -42,9 +42,10 @@ const EmployeeList = ({
   };
   const onAddEmployee = (data) => {
     const employeeIds = Object.keys(employees);
-    const lastId = employeeIds[employeeIds.length - 1];
-    const newId = lastId ? `e${parseInt(lastId.slice(1)) + 1}` : "e1";
-    setEmployees({ ...employees, [newId]: data });
+    // const lastId = employeeIds[employeeIds.length - 1];
+    // const newId = lastId ? `e${parseInt(lastId.slice(1)) + 1}` : "e1";
+    // setEmployees({ ...employees, [newId]: data });
+    setEmployees({ ...employees, [iterateArrayId(employeeIds, "e")]: data });
   };
 
   const handleAddEmployee = () => {
@@ -66,14 +67,15 @@ const EmployeeList = ({
     const [end, setEnd] = useState();
 
     const handleAddOffDay = () => {
-      const offDayId = Object.keys(offDays).length + 1;
+      // const offDayId = Object.keys(offDays).length + 1;
+      const offDayIds = Object.keys(offDays);
       setEmployees((prev) => ({
         ...prev,
         [employeeId]: {
           ...prev[employeeId],
           offDays: {
             ...prev[employeeId].offDays,
-            [offDayId]: {
+            [iterateArrayId(offDayIds, "o")]: {
               start: start.format("MM/DD/YYYY"),
               end: end.format("MM/DD/YYYY"),
             },

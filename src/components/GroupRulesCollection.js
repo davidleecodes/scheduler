@@ -10,24 +10,13 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
+import { daysShort } from "./utils";
 
-const isSameOrBefore = require("dayjs/plugin/isSameOrBefore");
-const localeData = require("dayjs/plugin/localeData");
-const isBetween = require("dayjs/plugin/isBetween");
-const weekday = require("dayjs/plugin/weekday");
-const updateLocale = require("dayjs/plugin/updateLocale");
+// const localeData = require("dayjs/plugin/localeData");
+// dayjs.extend(localeData);
 
-dayjs.extend(isSameOrBefore);
-dayjs.extend(localeData);
-dayjs.extend(isBetween);
-dayjs.extend(weekday);
-dayjs.extend(updateLocale);
-
-dayjs.updateLocale("en", {
-  weekStart: 1,
-});
-const daysShort = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-const weekdaysShort = daysShort.map((day) => day.toLowerCase());
+// const daysShort = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+// const weekdaysShort = daysShort.map((day) => day.toLowerCase());
 
 const IntervalGroup = ({ ruleData, setGroups, groupId, groups }) => {
   const [selectedDays, setSelectedDays] = useState(ruleData?.days || []);
@@ -108,7 +97,8 @@ const IntervalEmployee = ({
   const selectedDaysIndex =
     groupRuleData &&
     groupRuleData.days &&
-    groupRuleData.days.map((day) => weekdaysShort.indexOf(day.toLowerCase()));
+    groupRuleData.days.map((day) => daysShort.indexOf(day));
+  // groupRuleData.days.map((day) => weekdaysShort.indexOf(day.toLowerCase()));
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
@@ -146,7 +136,8 @@ const intervalGroupOnChange = (startDate, endDate, employeeData, groupData) => {
   const { startDay } = employeeData;
 
   const selectedDaysIndex = days.map((day) =>
-    weekdaysShort.indexOf(day.toLowerCase())
+    // weekdaysShort.indexOf(day.toLowerCase())
+    daysShort.indexOf(day)
   );
   let startDateMod = startDate.subtract(1, "day");
   const endDateMod = dayjs(endDate).add(1, "day");
