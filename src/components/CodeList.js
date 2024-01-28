@@ -97,6 +97,7 @@ const CodeList = ({
     setCodes(updatedCodes);
   };
 
+  console.log("code list");
   const { Internal, ...codesN } = codes;
   return (
     <Grid container spacing={1}>

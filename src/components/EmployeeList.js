@@ -14,7 +14,6 @@ const EmployeeList = ({
   setEmployees,
   groups,
   setGroups,
-  userAdjustedSchedule,
   setuserAdjustedSchedule,
 }) => {
   const [newEmployeeName, setNewEmployeeName] = useState("");
@@ -30,26 +29,23 @@ const EmployeeList = ({
   };
 
   const deleteEmployeeFromSchedule = (employeeId) => {
-    const { [employeeId]: employee, ...rest } = userAdjustedSchedule;
-    setuserAdjustedSchedule(rest);
+    setuserAdjustedSchedule((prev) => {
+      const { [employeeId]: employee, ...rest } = prev;
+      return rest;
+    });
   };
 
-  const onDeleteEmployee = (id) => {
-    const { [id]: employee, ...rest } = employees;
+  const onDeleteEmployee = (employeeId) => {
+    const { [employeeId]: employee, ...rest } = employees;
     setEmployees(rest);
-    deleteEmployeeFromGroup(id);
-    deleteEmployeeFromSchedule(id);
-  };
-  const onAddEmployee = (data) => {
-    const employeeIds = Object.keys(employees);
-    // const lastId = employeeIds[employeeIds.length - 1];
-    // const newId = lastId ? `e${parseInt(lastId.slice(1)) + 1}` : "e1";
-    // setEmployees({ ...employees, [newId]: data });
-    setEmployees({ ...employees, [iterateArrayId(employeeIds, "e")]: data });
+    deleteEmployeeFromGroup(employeeId);
+    deleteEmployeeFromSchedule(employeeId);
   };
 
   const handleAddEmployee = () => {
-    onAddEmployee({ name: newEmployeeName });
+    const data = { name: newEmployeeName };
+    const employeeIds = Object.keys(employees);
+    setEmployees({ ...employees, [iterateArrayId(employeeIds, "e")]: data });
     setNewEmployeeName("");
   };
 
@@ -61,120 +57,7 @@ const EmployeeList = ({
     }));
   };
 
-  const OffDays = ({ employee, employeeId }) => {
-    const offDays = employee?.offDays;
-    const [start, setStart] = useState();
-    const [end, setEnd] = useState();
-
-    const handleAddOffDay = () => {
-      // const offDayId = Object.keys(offDays).length + 1;
-      const offDayIds = Object.keys(offDays);
-      setEmployees((prev) => ({
-        ...prev,
-        [employeeId]: {
-          ...prev[employeeId],
-          offDays: {
-            ...prev[employeeId].offDays,
-            [iterateArrayId(offDayIds, "o")]: {
-              start: start.format("MM/DD/YYYY"),
-              end: end.format("MM/DD/YYYY"),
-            },
-          },
-        },
-      }));
-      setStart(null);
-      setEnd(null);
-    };
-
-    const handleOffDayDelete = (offDayId) => {
-      const updatedOffDays = { ...offDays };
-      delete updatedOffDays[offDayId];
-      setEmployees((prev) => ({
-        ...prev,
-        [employeeId]: {
-          ...prev[employeeId],
-          offDays: updatedOffDays,
-        },
-      }));
-    };
-    const handleDateChange = (offDayId, value, name) => {
-      setEmployees((prev) => ({
-        ...prev,
-        [employeeId]: {
-          ...prev[employeeId],
-          offDays: {
-            ...prev[employeeId].offDays,
-            [offDayId]: {
-              ...prev[employeeId].offDays[offDayId],
-              [name]: value.format("MM/DD/YYYY"),
-            },
-          },
-        },
-      }));
-    };
-
-    return (
-      <>
-        {offDays &&
-          Object.entries(offDays).map(([offDayId, offDay]) => (
-            <Grid key={offDayId}>
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker
-                  format="MM/DD/YYYY"
-                  value={dayjs(offDay.start)}
-                  onChange={(value) =>
-                    handleDateChange(offDayId, value, "start")
-                  }
-                  name="start"
-                  slotProps={{ textField: { size: "small" } }}
-                />
-              </LocalizationProvider>
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker
-                  format="MM/DD/YYYY"
-                  value={dayjs(offDay.end)}
-                  onChange={(value) => handleDateChange(offDayId, value, "end")}
-                  name="end"
-                  slotProps={{ textField: { size: "small" } }}
-                />
-                <IconButton
-                  color="secondary"
-                  onClick={() => handleOffDayDelete(offDayId)}
-                >
-                  <RemoveCircleOutlineIcon />
-                </IconButton>
-              </LocalizationProvider>
-            </Grid>
-          ))}
-        <Grid>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker
-              format="MM/DD/YYYY"
-              value={start}
-              onChange={(newValue) => setStart(newValue)}
-              slotProps={{ textField: { size: "small" } }}
-              disablePast
-            />
-            <DatePicker
-              format="MM/DD/YYYY"
-              value={end}
-              onChange={(newValue) => setEnd(newValue)}
-              slotProps={{ textField: { size: "small" } }}
-              disablePast
-            />
-          </LocalizationProvider>
-          <IconButton
-            variant="contained"
-            color="primary"
-            onClick={handleAddOffDay}
-            disabled={!start || !end}
-          >
-            <AddCircleOutlineIcon />
-          </IconButton>
-        </Grid>
-      </>
-    );
-  };
+  console.log("employee list");
 
   return (
     <>
@@ -194,6 +77,7 @@ const EmployeeList = ({
               <OffDays
                 employee={employees[employeeId]}
                 employeeId={employeeId}
+                setEmployees={setEmployees}
               />
             </Grid>
 
@@ -225,6 +109,118 @@ const EmployeeList = ({
             <AddCircleOutlineIcon />
           </IconButton>
         </Grid>
+      </Grid>
+    </>
+  );
+};
+
+const OffDays = ({ employee, employeeId, setEmployees }) => {
+  const offDays = employee?.offDays;
+  const [start, setStart] = useState();
+  const [end, setEnd] = useState();
+
+  const handleAddOffDay = () => {
+    const offDayIds = Object.keys(offDays);
+    setEmployees((prev) => ({
+      ...prev,
+      [employeeId]: {
+        ...prev[employeeId],
+        offDays: {
+          ...prev[employeeId].offDays,
+          [iterateArrayId(offDayIds, "o")]: {
+            start: start.format("MM/DD/YYYY"),
+            end: end.format("MM/DD/YYYY"),
+          },
+        },
+      },
+    }));
+    setStart(null);
+    setEnd(null);
+  };
+
+  const handleOffDayDelete = (offDayId) => {
+    const updatedOffDays = { ...offDays };
+    delete updatedOffDays[offDayId];
+    setEmployees((prev) => ({
+      ...prev,
+      [employeeId]: {
+        ...prev[employeeId],
+        offDays: updatedOffDays,
+      },
+    }));
+  };
+  const handleDateChange = (offDayId, value, name) => {
+    setEmployees((prev) => ({
+      ...prev,
+      [employeeId]: {
+        ...prev[employeeId],
+        offDays: {
+          ...prev[employeeId].offDays,
+          [offDayId]: {
+            ...prev[employeeId].offDays[offDayId],
+            [name]: value.format("MM/DD/YYYY"),
+          },
+        },
+      },
+    }));
+  };
+
+  return (
+    <>
+      {offDays &&
+        Object.entries(offDays).map(([offDayId, offDay]) => (
+          <Grid key={offDayId}>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DatePicker
+                format="MM/DD/YYYY"
+                value={dayjs(offDay.start)}
+                onChange={(value) => handleDateChange(offDayId, value, "start")}
+                name="start"
+                slotProps={{ textField: { size: "small" } }}
+              />
+            </LocalizationProvider>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DatePicker
+                format="MM/DD/YYYY"
+                value={dayjs(offDay.end)}
+                onChange={(value) => handleDateChange(offDayId, value, "end")}
+                name="end"
+                slotProps={{ textField: { size: "small" } }}
+              />
+              <IconButton
+                color="secondary"
+                onClick={() => handleOffDayDelete(offDayId)}
+              >
+                <RemoveCircleOutlineIcon />
+              </IconButton>
+            </LocalizationProvider>
+          </Grid>
+        ))}
+      <Grid>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DatePicker
+            format="MM/DD/YYYY"
+            value={start}
+            onChange={(newValue) => setStart(newValue)}
+            slotProps={{ textField: { size: "small" } }}
+            disablePast
+          />
+          <DatePicker
+            format="MM/DD/YYYY"
+            value={end}
+            onChange={(newValue) => setEnd(newValue)}
+            slotProps={{ textField: { size: "small" } }}
+            disablePast
+          />
+        </LocalizationProvider>
+        <IconButton
+          variant="contained"
+          color="primary"
+          onClick={handleAddOffDay}
+          disabled={!start || !end}
+        >
+          <AddCircleOutlineIcon />
+        </IconButton>
       </Grid>
     </>
   );

@@ -152,6 +152,7 @@ const GroupList = ({ groups, employees, setGroups, setEmployees }) => {
     updatedGroups[groupId].employees = updatedEmployees;
     setGroups(updatedGroups);
   };
+  console.log("group list");
   return (
     <>
       <Grid item container direction={"column"} spacing={1}>

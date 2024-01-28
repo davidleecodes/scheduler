@@ -127,7 +127,6 @@ const TableSection = ({
           startDate={startDate}
           endDate={endDate}
           employees={employees}
-          scheduleRange={scheduleRange}
           groups={groups}
           codes={codes}
           schedule={schedule}

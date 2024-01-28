@@ -68,7 +68,6 @@ const Settings = () => {
                 setEmployees={setEmployees}
                 groups={groups}
                 setGroups={setGroups}
-                userAdjustedSchedule={userAdjustedSchedule}
                 setuserAdjustedSchedule={setuserAdjustedSchedule}
               />
             </AccordionDetails>

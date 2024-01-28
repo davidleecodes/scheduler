@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, memo, useCallback } from "react";
 import { Sheet as Paper } from "@mui/joy";
 
 import {
@@ -25,7 +25,6 @@ const ScheduleTable = ({
   startDate,
   endDate,
   employees,
-  scheduleRange,
   groups,
   codes,
   schedule,
@@ -45,11 +44,12 @@ const ScheduleTable = ({
     //swap codeId
     if (schDay && schDay[codeId] && !codes.Add[codeId]) {
       const swapEmployeeId = schDay[codeId];
-      const { [date]: removeDate, ...rest } = newSchedule[swapEmployeeId];
-      newSchedule[swapEmployeeId] = rest;
+      // const { [date]: removeDate, ...rest } = newSchedule[swapEmployeeId];
+      // newSchedule[swapEmployeeId] = rest;
+      delete newSchedule[swapEmployeeId][date];
     }
     newSchedule[employeeId] = newSchedule[employeeId]
-      ? newSchedule[employeeId]
+      ? { ...newSchedule[employeeId] }
       : {};
     newSchedule[employeeId][date] = codeId;
     setuserAdjustedSchedule(newSchedule);
@@ -137,75 +137,11 @@ const ScheduleTable = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [employees, endDate, groups, startDate]);
 
-  const codeSelect = (employeeId, day, codes) => {
-    const schDay = scheduleMappedCodes[day.date];
-    const dayOfWeek = day.dayOfWeek;
-    const highLight =
-      (dayOfWeek === "Sat" || dayOfWeek === "Sun") &&
-      schedule[employeeId] &&
-      !schedule[employeeId][day.date];
-
-    return (
-      <TableCell
-        key={day.date}
-        align="center"
-        style={{
-          padding: 1,
-          backgroundColor: highLight ? yellow[200] : "initial",
-        }}
-      >
-        <Select
-          labelId="demo-simple-select-standard-label"
-          value={
-            (userAdjustedSchedule[employeeId] &&
-              userAdjustedSchedule[employeeId][day.date]) ||
-            (schedule[employeeId] && schedule[employeeId][day.date]) ||
-            ""
-          }
-          sx={{
-            "& div.MuiSelect-select.MuiInputBase-input": {
-              padding: 0,
-            },
-            "& svg": { display: "none" },
-          }}
-          onChange={(event) => handleCellChange(event, day.date, employeeId)}
-          variant="standard"
-        >
-          {schedule[employeeId] && schedule[employeeId][day.date] && (
-            <MenuItem value=" ">" "</MenuItem>
-          )}
-          {Object.entries(codes[day.dayOfWeek]).map(([codeId, code]) => (
-            <MenuItem
-              key={codeId}
-              value={codeId}
-              style={schDay && schDay[codeId] ? { color: "lightgrey" } : {}}
-            >
-              {code.name}
-            </MenuItem>
-          ))}
-          {Object.entries(codes.Add).map(([codeId, code]) => (
-            <MenuItem key={codeId} value={codeId}>
-              {code.name}
-            </MenuItem>
-          ))}
-          {Object.entries(codes.Internal).map(([codeId, code]) => (
-            <MenuItem key={codeId} value={codeId} style={{ display: "none" }}>
-              {code.name}
-            </MenuItem>
-          ))}
-
-          <MenuItem value="">clear</MenuItem>
-        </Select>
-      </TableCell>
-    );
-  };
-
   const dayStack = (date) => {
     const splitDate = date.split("-");
     return (
       <Box
         sx={{
-          // display: { xs: "block", sm: "block", md: "block", lg: "flex" },
           display: "flex",
           flexDirection: "column",
         }}
@@ -213,11 +149,6 @@ const ScheduleTable = ({
         alignItems="center"
       >
         <Box>{splitDate[0]}</Box>
-        {/* <Box
-          sx={{ display: { xs: "none", sm: "none", md: "none", lg: "block" } }}
-        >
-          -
-        </Box> */}
         <Box>{splitDate[1]}</Box>
       </Box>
     );
@@ -229,6 +160,7 @@ const ScheduleTable = ({
     return dayCodes.every((c) => scheduleDayCodes.includes(c));
   };
 
+  console.log("table");
   return (
     <>
       <TableContainer component={Paper}>
@@ -289,9 +221,23 @@ const ScheduleTable = ({
                         <TableCell padding="none">
                           {employees[employeeId].name}
                         </TableCell>
-                        {dateRange.map((day) =>
-                          codeSelect(employeeId, day, codes, day.date)
-                        )}
+                        {dateRange.map((day) => (
+                          <React.Fragment key={day.date}>
+                            <CodeSelect
+                              employeeId={employeeId}
+                              day={day}
+                              codes={codes}
+                              dayScheduleMappedCodes={
+                                scheduleMappedCodes[day.date]
+                              }
+                              empSchedule={schedule[employeeId]}
+                              empUserAdjustedSchedule={
+                                userAdjustedSchedule[employeeId]
+                              }
+                              handleCellChange={handleCellChange}
+                            />
+                          </React.Fragment>
+                        ))}
                         <TableCell>
                           <div style={{ whiteSpace: "nowrap" }}>
                             {employeeCodeCount(employeeId)}
@@ -306,6 +252,80 @@ const ScheduleTable = ({
         </Table>
       </TableContainer>
     </>
+  );
+};
+
+const CodeSelect = ({
+  employeeId,
+  day,
+  codes,
+  dayScheduleMappedCodes,
+  empSchedule,
+  empUserAdjustedSchedule,
+  handleCellChange,
+}) => {
+  // const schDay = scheduleMappedCodes[day.date];
+  const dayOfWeek = day.dayOfWeek;
+  const highLight =
+    (dayOfWeek === "Sat" || dayOfWeek === "Sun") &&
+    empSchedule &&
+    !empSchedule[day.date];
+  // console.log("cell");
+  return (
+    <TableCell
+      key={day.date}
+      align="center"
+      style={{
+        padding: 1,
+        backgroundColor: highLight ? yellow[200] : "initial",
+      }}
+    >
+      <Select
+        labelId="demo-simple-select-standard-label"
+        value={
+          (empUserAdjustedSchedule && empUserAdjustedSchedule[day.date]) ||
+          (empSchedule && empSchedule[day.date]) ||
+          ""
+        }
+        sx={{
+          "& div.MuiSelect-select.MuiInputBase-input": {
+            padding: 0,
+          },
+          "& svg": { display: "none" },
+        }}
+        onChange={(event) => handleCellChange(event, day.date, employeeId)}
+        variant="standard"
+      >
+        {empSchedule && empSchedule[day.date] && (
+          <MenuItem value=" ">" "</MenuItem>
+        )}
+        {Object.entries(codes[day.dayOfWeek]).map(([codeId, code]) => (
+          <MenuItem
+            key={codeId}
+            value={codeId}
+            style={
+              dayScheduleMappedCodes && dayScheduleMappedCodes[codeId]
+                ? { color: "lightgrey" }
+                : {}
+            }
+          >
+            {code.name}
+          </MenuItem>
+        ))}
+        {Object.entries(codes.Add).map(([codeId, code]) => (
+          <MenuItem key={codeId} value={codeId}>
+            {code.name}
+          </MenuItem>
+        ))}
+        {Object.entries(codes.Internal).map(([codeId, code]) => (
+          <MenuItem key={codeId} value={codeId} style={{ display: "none" }}>
+            {code.name}
+          </MenuItem>
+        ))}
+
+        <MenuItem value="">clear</MenuItem>
+      </Select>
+    </TableCell>
   );
 };
 
