@@ -79,8 +79,8 @@ const ScheduleTable = ({
           if (employee) {
             if (employee.offDays) {
               Object.entries(employee.offDays).forEach(([offDayId, offDay]) => {
-                const offDayStart = dayjs(offDay.start);
-                const offDayEnd = dayjs(offDay.end);
+                const offDayStart = dayjs(offDay[0]);
+                const offDayEnd = dayjs(offDay[1]);
 
                 if (
                   startDate.isSameOrBefore(offDayStart) ||

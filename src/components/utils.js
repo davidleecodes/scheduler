@@ -20,6 +20,17 @@ dayjs.updateLocale("en", {
 
 const daysShort = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
+const daysShortLong = {
+  Mon: "Monday",
+  Tue: "Tuesday",
+  Wed: "Wednesday",
+  Thu: "Thursday",
+  Fri: "Friday",
+  Sat: "Saturday",
+  Sun: "Sunday",
+  Add: "Additional",
+};
+
 /**
  *
  * @param {string[]} array array of current ids
@@ -38,4 +49,4 @@ function iterateArrayId(array, startKey) {
   }
 }
 
-export { daysShort, iterateArrayId };
+export { daysShort, iterateArrayId, daysShortLong };

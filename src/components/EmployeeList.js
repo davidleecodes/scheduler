@@ -1,13 +1,24 @@
 import React, { useState } from "react";
-import { TextField, IconButton, Grid } from "@mui/material";
+import {
+  TextField,
+  IconButton,
+  Grid,
+  Box,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+} from "@mui/material";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { Typography } from "@mui/joy";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+// import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { iterateArrayId } from "./utils";
 import dayjs from "dayjs";
+import { DatePicker, Space } from "antd";
+const { RangePicker } = DatePicker;
 
 const EmployeeList = ({
   employees,
@@ -16,6 +27,7 @@ const EmployeeList = ({
   setGroups,
   setuserAdjustedSchedule,
 }) => {
+  const [selectedId, setSelectedId] = React.useState(Object.keys(employees)[0]);
   const [newEmployeeName, setNewEmployeeName] = useState("");
 
   const deleteEmployeeFromGroup = (employeeId) => {
@@ -57,28 +69,84 @@ const EmployeeList = ({
     }));
   };
 
+  const handleListItemClick = (event, id) => {
+    setSelectedId(id);
+  };
   console.log("employee list");
+
+  const employeeId = selectedId;
 
   return (
     <>
-      <Grid item container direction={"column"} spacing={1}>
-        {Object.keys(employees).map((employeeId) => (
-          <Grid item container key={employeeId} spacing={3}>
-            <Grid item>
+      <Grid container>
+        <Grid item>
+          <Box
+            sx={{
+              width: "100%",
+              minWidth: 200,
+              maxWidth: 400,
+              bgcolor: "InfoBackground",
+            }}
+          >
+            <Grid item container style={{ flexWrap: "nowrap" }}>
               <TextField
-                value={employees[employeeId].name}
-                onChange={(event) => handleOnChange(employeeId, event)}
+                label="New Employee Name"
+                value={newEmployeeName}
+                onChange={(e) => setNewEmployeeName(e.target.value)}
                 size="small"
                 variant="standard"
-                name="name"
               />
-
-              <Typography>off days</Typography>
-              <OffDays
-                employee={employees[employeeId]}
-                employeeId={employeeId}
-                setEmployees={setEmployees}
-              />
+              <IconButton
+                variant="contained"
+                color="primary"
+                onClick={handleAddEmployee}
+                disabled={!newEmployeeName}
+              >
+                <AddCircleOutlineIcon />
+              </IconButton>
+            </Grid>
+            <List>
+              {Object.entries(employees).map(([id, employee]) => (
+                <>
+                  <ListItem key={id}>
+                    <ListItemButton
+                      selected={selectedId === id}
+                      onClick={(event) => handleListItemClick(event, id)}
+                    >
+                      <ListItemText primary={employee.name} />
+                    </ListItemButton>
+                  </ListItem>
+                  {/* <Divider /> */}
+                </>
+              ))}
+            </List>
+          </Box>
+        </Grid>
+        {/* <Grid item container direction={"column"} spacing={1}>
+        {Object.keys(employees).map((employeeId) => ( */}
+        <Grid item style={{ flexGrow: 1 }}>
+          <Grid container key={employeeId} spacing={3} style={{ flexGrow: 1 }}>
+            <Grid item>
+              <Grid item container spacing={2}>
+                <Grid item xs={12}>
+                  <TextField
+                    value={employees[employeeId].name}
+                    onChange={(event) => handleOnChange(employeeId, event)}
+                    size="small"
+                    variant="standard"
+                    name="name"
+                    label="Name"
+                  />
+                </Grid>
+                <Grid item>
+                  <Typography>off days</Typography>
+                  <OffDays
+                    employee={employees[employeeId]}
+                    employeeId={employeeId}
+                    setEmployees={setEmployees}
+                  />
+                </Grid>
+              </Grid>
             </Grid>
 
             <Grid item>
@@ -90,24 +158,26 @@ const EmployeeList = ({
               </IconButton>
             </Grid>
           </Grid>
-        ))}
+          {/* </Grid>
+        ))} */}
 
-        <Grid item container style={{ flexWrap: "nowrap" }}>
-          <TextField
-            label="New Employee Name"
-            value={newEmployeeName}
-            onChange={(e) => setNewEmployeeName(e.target.value)}
-            size="small"
-            variant="standard"
-          />
-          <IconButton
-            variant="contained"
-            color="primary"
-            onClick={handleAddEmployee}
-            disabled={!newEmployeeName}
-          >
-            <AddCircleOutlineIcon />
-          </IconButton>
+          {/* <Grid item container style={{ flexWrap: "nowrap" }}>
+            <TextField
+              label="New Employee Name"
+              value={newEmployeeName}
+              onChange={(e) => setNewEmployeeName(e.target.value)}
+              size="small"
+              variant="standard"
+            />
+            <IconButton
+              variant="contained"
+              color="primary"
+              onClick={handleAddEmployee}
+              disabled={!newEmployeeName}
+            >
+              <AddCircleOutlineIcon />
+            </IconButton>
+          </Grid> */}
         </Grid>
       </Grid>
     </>
@@ -116,8 +186,8 @@ const EmployeeList = ({
 
 const OffDays = ({ employee, employeeId, setEmployees }) => {
   const offDays = employee?.offDays;
-  const [start, setStart] = useState();
-  const [end, setEnd] = useState();
+  const [dates, setDates] = useState(["", ""]);
+  // const [end, setEnd] = useState();
 
   const handleAddOffDay = () => {
     const offDayIds = Object.keys(offDays);
@@ -127,15 +197,17 @@ const OffDays = ({ employee, employeeId, setEmployees }) => {
         ...prev[employeeId],
         offDays: {
           ...prev[employeeId].offDays,
-          [iterateArrayId(offDayIds, "o")]: {
-            start: start.format("MM/DD/YYYY"),
-            end: end.format("MM/DD/YYYY"),
-          },
+          [iterateArrayId(offDayIds, "o")]: dates,
+          //  {
+          //   start: start.format("MM/DD/YYYY"),
+          //   end: end.format("MM/DD/YYYY"),
+          // },
         },
       },
     }));
-    setStart(null);
-    setEnd(null);
+    // setStart(null);
+    // setEnd(null);
+    setDates(["", ""]);
   };
 
   const handleOffDayDelete = (offDayId) => {
@@ -149,17 +221,14 @@ const OffDays = ({ employee, employeeId, setEmployees }) => {
       },
     }));
   };
-  const handleDateChange = (offDayId, value, name) => {
+  const handleDateChange = (dateStrings, offDayId) => {
     setEmployees((prev) => ({
       ...prev,
       [employeeId]: {
         ...prev[employeeId],
         offDays: {
           ...prev[employeeId].offDays,
-          [offDayId]: {
-            ...prev[employeeId].offDays[offDayId],
-            [name]: value.format("MM/DD/YYYY"),
-          },
+          [offDayId]: dateStrings,
         },
       },
     }));
@@ -170,7 +239,19 @@ const OffDays = ({ employee, employeeId, setEmployees }) => {
       {offDays &&
         Object.entries(offDays).map(([offDayId, offDay]) => (
           <Grid key={offDayId}>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <RangePicker
+              value={[dayjs(offDay[0]), dayjs(offDay[1])]}
+              onChange={(dateStrings) =>
+                handleDateChange(dateStrings, offDayId)
+              }
+            />
+            <IconButton
+              color="secondary"
+              onClick={() => handleOffDayDelete(offDayId)}
+            >
+              <RemoveCircleOutlineIcon />
+            </IconButton>
+            {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
                 format="MM/DD/YYYY"
                 value={dayjs(offDay.start)}
@@ -193,11 +274,15 @@ const OffDays = ({ employee, employeeId, setEmployees }) => {
               >
                 <RemoveCircleOutlineIcon />
               </IconButton>
-            </LocalizationProvider>
+            </LocalizationProvider> */}
           </Grid>
         ))}
       <Grid>
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <RangePicker
+          value={dates}
+          onChange={(dateStrings) => setDates(dateStrings)}
+        />
+        {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DatePicker
             format="MM/DD/YYYY"
             value={start}
@@ -212,12 +297,12 @@ const OffDays = ({ employee, employeeId, setEmployees }) => {
             slotProps={{ textField: { size: "small" } }}
             disablePast
           />
-        </LocalizationProvider>
+        </LocalizationProvider> */}
         <IconButton
           variant="contained"
           color="primary"
           onClick={handleAddOffDay}
-          disabled={!start || !end}
+          disabled={!dates[0] && !dates[1]}
         >
           <AddCircleOutlineIcon />
         </IconButton>

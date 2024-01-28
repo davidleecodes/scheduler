@@ -2,11 +2,25 @@ import React, { useState } from "react";
 import { Typography } from "@mui/joy";
 import { Sheet as Paper } from "@mui/joy";
 
-import { TextField, IconButton, Grid, Select, MenuItem } from "@mui/material";
+import {
+  TextField,
+  IconButton,
+  Grid,
+  Select,
+  MenuItem,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+  Divider,
+  Box,
+  InputLabel,
+  FormControl,
+} from "@mui/material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import dayjs from "dayjs";
-import { daysShort, iterateArrayId } from "./utils";
+import { daysShort, iterateArrayId, daysShortLong } from "./utils";
 
 const shifts = {
   morning: "morning",
@@ -53,6 +67,8 @@ const CodeList = ({
   userAdjustedSchedule,
   setuserAdjustedSchedule,
 }) => {
+  const [selectedId, setSelectedId] = React.useState(Object.keys(codes)[0]);
+
   const handleCodeChange = (day, codeId, event) => {
     const { name, value } = event.target;
     const updatedCodes = { ...codes };
@@ -96,33 +112,69 @@ const CodeList = ({
     };
     setCodes(updatedCodes);
   };
-
+  const handleListItemClick = (event, id) => {
+    setSelectedId(id);
+  };
   console.log("code list");
   const { Internal, ...codesN } = codes;
+  const day = selectedId;
   return (
-    <Grid container spacing={1}>
-      {Object.keys(codesN).map((day) => (
+    <>
+      <Grid container>
+        <Grid item>
+          <Box
+            sx={{
+              width: "100%",
+              minWidth: 200,
+              maxWidth: 400,
+              bgcolor: "InfoBackground",
+            }}
+          >
+            <List>
+              {Object.entries(codesN).map(([id, day]) => (
+                <>
+                  <ListItem key={id}>
+                    <ListItemButton
+                      selected={selectedId === id}
+                      onClick={(event) => handleListItemClick(event, id)}
+                    >
+                      <ListItemText primary={daysShortLong[id]} />
+                    </ListItemButton>
+                  </ListItem>
+                  {/* <Divider /> */}
+                </>
+              ))}
+            </List>
+          </Box>
+        </Grid>
         <Grid
           item
-          xs={4}
-          style={{ minWidth: "150px", maxWidth: "400px" }}
-          key={day}
+          // container spacing={1}
+          style={{ flexGrow: 1 }}
         >
-          <Paper sx={{ p: 1 }}>
-            <Grid container direction="column" spacing={1}>
-              <Grid item>
-                <Typography variant="subtitle1">{day}</Typography>
-              </Grid>
+          {/* {Object.keys(codesN).map((day) => (
+            <Grid
+              item
+              xs={4}
+              style={{ minWidth: "150px", maxWidth: "400px" }}
+              key={day}
+            > */}
+          {/* <Paper sx={{ p: 1 }}> */}
+          <Grid container direction="column" spacing={2}>
+            <Grid item>
+              <Typography variant="subtitle1">{daysShortLong[day]}</Typography>
+            </Grid>
 
-              {Object.entries(codesN[day]).map(([codeId, code]) => (
-                <Grid
-                  item
-                  container
-                  key={codeId}
-                  spacing={1}
-                  alignItems="center"
-                  style={{ flexWrap: "nowrap" }}
-                >
+            {Object.entries(codesN[day]).map(([codeId, code]) => (
+              <Grid
+                item
+                container
+                key={codeId}
+                spacing={1}
+                alignItems="center"
+                style={{ flexWrap: "nowrap" }}
+              >
+                <Paper sx={{ p: 1 }} style={{ width: "100%" }}>
                   <Grid item container spacing={2} style={{ flexGrow: 1 }}>
                     <Grid xs={6} item>
                       <TextField
@@ -134,51 +186,60 @@ const CodeList = ({
                         size="small"
                         variant="standard"
                         name="name"
+                        label="name"
                       />
                     </Grid>
                     <Grid xs={6} item>
-                      <Select
-                        value={code.shift}
-                        onChange={(event) =>
-                          handleCodeChange(day, codeId, event)
-                        }
-                        size="small"
-                        variant="standard"
-                        name="shift"
-                        fullWidth
-                      >
-                        {Object.keys(shifts).map((shift) => (
-                          <MenuItem key={shift} value={shift}>
-                            {shift}
-                          </MenuItem>
-                        ))}
-                      </Select>
+                      <FormControl variant="standard" fullWidth>
+                        <InputLabel>shift</InputLabel>
+                        <Select
+                          value={code.shift}
+                          onChange={(event) =>
+                            handleCodeChange(day, codeId, event)
+                          }
+                          size="small"
+                          variant="standard"
+                          name="shift"
+                          label="shift"
+                          fullWidth
+                        >
+                          {Object.keys(shifts).map((shift) => (
+                            <MenuItem key={shift} value={shift}>
+                              {shift}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
                     </Grid>
                   </Grid>
-                  <Grid item>
-                    <IconButton
-                      color="secondary"
-                      onClick={() => handleCodeDelete(day, codeId)}
-                    >
-                      <RemoveCircleOutlineIcon />
-                    </IconButton>
-                  </Grid>
+                </Paper>
+
+                <Grid item>
+                  <IconButton
+                    color="secondary"
+                    onClick={() => handleCodeDelete(day, codeId)}
+                  >
+                    <RemoveCircleOutlineIcon />
+                  </IconButton>
                 </Grid>
-              ))}
-              <Grid
-                item
-                container
-                spacing={1}
-                alignItems="center"
-                style={{ flexWrap: "nowrap" }}
-              >
-                <AddField handleAddCode={handleAddCode} day={day} />
               </Grid>
+            ))}
+            <Grid
+              item
+              container
+              spacing={1}
+              alignItems="center"
+              style={{ flexWrap: "nowrap" }}
+            >
+              <AddField handleAddCode={handleAddCode} day={day} />
             </Grid>
-          </Paper>
+          </Grid>
+          {/* </Paper> */}
         </Grid>
-      ))}
-    </Grid>
+        {/* ))}
+        </Grid> */}
+      </Grid>
+    </>
   );
 };
 
