@@ -132,17 +132,14 @@ const CodeList = ({
           >
             <List>
               {Object.entries(codesN).map(([id, day]) => (
-                <>
-                  <ListItem key={id}>
-                    <ListItemButton
-                      selected={selectedId === id}
-                      onClick={(event) => handleListItemClick(event, id)}
-                    >
-                      <ListItemText primary={daysShortLong[id]} />
-                    </ListItemButton>
-                  </ListItem>
-                  {/* <Divider /> */}
-                </>
+                <ListItem key={id}>
+                  <ListItemButton
+                    selected={selectedId === id}
+                    onClick={(event) => handleListItemClick(event, id)}
+                  >
+                    <ListItemText primary={daysShortLong[id]} />
+                  </ListItemButton>
+                </ListItem>
               ))}
             </List>
           </Box>

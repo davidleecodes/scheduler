@@ -1,30 +1,50 @@
 import { Button, Grid } from "@mui/material";
+import { shuffleArray, daysShort } from "./utils";
+import dayjs from "dayjs";
 
 const Generator = ({
   employees,
   codes,
   schedule,
-  userAdjustedSchedule,
   setuserAdjustedSchedule,
   dateRange,
 }) => {
   const handleGenerate = () => {
-    const randomizedEmployeeIds = Object.keys(employees).sort(
-      () => Math.random() - 0.5
-    );
-    const updatedUserAdjustedSchedule = { ...userAdjustedSchedule };
+    const shuffledEmployeeIds = shuffleArray(Object.keys(employees));
+    const updatedUserAdjustedSchedule = {};
 
     dateRange.forEach((day) => {
-      Object.keys(codes[day.dayOfWeek]).forEach((codeId) => {
-        let index = 0;
-        let employeeId = randomizedEmployeeIds[index];
+      const prevDay = dayjs(day.date).subtract(1, "day");
+      const prevDayDate = prevDay.format("MM-DD-YYYY");
+      const prevDayWeekday = daysShort[prevDay.weekday()];
 
-        while (schedule[employeeId] && schedule[employeeId][day.date]) {
+      const shuffledCodes = shuffleArray(Object.keys(codes[day.dayOfWeek]));
+
+      shuffledCodes.forEach((codeId) => {
+        let index = 0;
+        let employeeId = shuffledEmployeeIds[index];
+        let isCurrShiftMorning =
+          codes[day.dayOfWeek][codeId].shift === "morning";
+
+        // while employee on layer 1 has something, or if on layer 2 employee had night day before and current code is day shift,  pick another employee
+        while (
+          (index <= shuffledEmployeeIds.length &&
+            schedule[employeeId] &&
+            schedule[employeeId][day.date]) ||
+          (index <= shuffledEmployeeIds.length &&
+            isCurrShiftMorning &&
+            updatedUserAdjustedSchedule[employeeId] &&
+            updatedUserAdjustedSchedule[employeeId][prevDayDate] &&
+            codes[prevDayWeekday][
+              updatedUserAdjustedSchedule[employeeId][prevDayDate]
+            ].shift === "evening")
+        ) {
           index++;
-          employeeId = randomizedEmployeeIds[index];
+          employeeId = shuffledEmployeeIds[index];
         }
-        let removedEmployee = randomizedEmployeeIds.splice(index, 1);
-        randomizedEmployeeIds.push(removedEmployee[0]);
+
+        let removedEmployee = shuffledEmployeeIds.splice(index, 1);
+        shuffledEmployeeIds.push(removedEmployee[0]);
 
         updatedUserAdjustedSchedule[employeeId] = {
           ...updatedUserAdjustedSchedule[employeeId],

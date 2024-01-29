@@ -49,4 +49,18 @@ function iterateArrayId(array, startKey) {
   }
 }
 
-export { daysShort, iterateArrayId, daysShortLong };
+/**
+ *
+ * @param {string[]} array  array to be shuffled
+ * @returns
+ */
+const shuffleArray = (array) => {
+  const shuffledArray = [...array];
+  for (let i = shuffledArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]];
+  }
+  return shuffledArray;
+};
+
+export { daysShort, iterateArrayId, daysShortLong, shuffleArray };

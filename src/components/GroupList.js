@@ -211,17 +211,14 @@ const GroupList = ({ groups, employees, setGroups, setEmployees }) => {
             </Grid>
             <List>
               {Object.entries(groups).map(([id, group]) => (
-                <>
-                  <ListItem key={id}>
-                    <ListItemButton
-                      selected={selectedId === id}
-                      onClick={(event) => handleListItemClick(event, id)}
-                    >
-                      <ListItemText primary={group.name} />
-                    </ListItemButton>
-                  </ListItem>
-                  {/* <Divider /> */}
-                </>
+                <ListItem key={id}>
+                  <ListItemButton
+                    selected={selectedId === id}
+                    onClick={(event) => handleListItemClick(event, id)}
+                  >
+                    <ListItemText primary={group.name} />
+                  </ListItemButton>
+                </ListItem>
               ))}
             </List>
           </Box>

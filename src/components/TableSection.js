@@ -103,7 +103,6 @@ const TableSection = ({
                 codes={codes}
                 schedule={schedule}
                 dateRange={dateRange}
-                userAdjustedSchedule={userAdjustedSchedule}
                 setuserAdjustedSchedule={setuserAdjustedSchedule}
               />
             </Grid>
