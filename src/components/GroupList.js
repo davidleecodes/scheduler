@@ -166,7 +166,7 @@ const GroupList = ({ groups, employees, setGroups, setEmployees }) => {
   const handleListItemClick = (event, id) => {
     setSelectedId(id);
   };
-  console.log("group list");
+  // console.log("group list");
   const groupId = selectedId;
   const group = groups[groupId];
 

@@ -72,7 +72,7 @@ const EmployeeList = ({
   const handleListItemClick = (event, id) => {
     setSelectedId(id);
   };
-  console.log("employee list");
+  // console.log("employee list");
 
   const employeeId = selectedId;
 

@@ -57,6 +57,8 @@ const scheduleRangeInt = {
   numOfWks: 6,
 };
 
+const daysOffPerWeekInt = 5;
+
 const codeInt = {
   Sun: {
     Sun1: { name: "a10", shift: "morning" },
@@ -102,4 +104,10 @@ const codeInt = {
   // Add: ["x", "y", "z"],
 };
 
-export { employeesInit, groupsInit, scheduleRangeInt, codeInt };
+export {
+  employeesInit,
+  groupsInit,
+  scheduleRangeInt,
+  codeInt,
+  daysOffPerWeekInt,
+};

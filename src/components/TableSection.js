@@ -6,6 +6,7 @@ import ScheduleTable from "./ScheduleTable";
 import ScheduleRange from "./ScheduleRange";
 import ExportCsv from "./ExportCsv";
 import Generator from "./Generator";
+import WeekDaysOff from "./WeekDaysOff";
 import { daysShort } from "./utils";
 
 // const dateRangeInt = [
@@ -24,6 +25,8 @@ const TableSection = ({
   setSchedule,
   userAdjustedSchedule,
   setuserAdjustedSchedule,
+  daysOffPerWeek,
+  setDaysOffPerWeek,
 }) => {
   const dateRange = useMemo(() => {
     const date = [];
@@ -93,6 +96,10 @@ const TableSection = ({
             scheduleRange={scheduleRange}
             setScheduleRange={setScheduleRange}
           />
+          <WeekDaysOff
+            daysOffPerWeek={daysOffPerWeek}
+            setDaysOffPerWeek={setDaysOffPerWeek}
+          />
         </Grid>
 
         <Grid item>
@@ -133,6 +140,7 @@ const TableSection = ({
           userAdjustedSchedule={userAdjustedSchedule}
           setuserAdjustedSchedule={setuserAdjustedSchedule}
           employeeCodeCount={employeeCodeCount}
+          daysOffPerWeek={daysOffPerWeek}
         />
       </Grid>
     </>

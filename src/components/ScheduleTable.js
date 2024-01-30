@@ -32,15 +32,61 @@ const ScheduleTable = ({
   userAdjustedSchedule,
   setuserAdjustedSchedule,
   employeeCodeCount,
+  daysOffPerWeek,
 }) => {
+  const [userScheduleMappedCodes, setUserScheduleMappedCodes] = useState({});
   const [scheduleMappedCodes, setScheduleMappedCodes] = useState({});
+  const [error, setError] = useState();
+
+  const getCodeName = (weekDay, codeId) => {
+    const name = codes[weekDay][codeId]
+      ? codes[weekDay][codeId].name
+      : codes.Add[codeId] && codes.Add[codeId].name;
+    return name;
+  };
 
   const handleCellChange = (event, date, employeeId) => {
     const codeId = event.target.value;
-    const schDay = scheduleMappedCodes[date];
-
+    const schDay = userScheduleMappedCodes[date];
+    const weekDay = dayjs(date).format("ddd");
+    setError("");
     const newSchedule = { ...userAdjustedSchedule };
 
+    //check validation for offDays per week
+    if (getCodeName(weekDay, codeId) === "v") {
+      const dayjsDate = dayjs(date);
+      let codesArray = [];
+      let codesObj = {};
+      //0= sun, sat =6
+      for (let i = 0; i <= 6; i++) {
+        const currDate = dayjsDate.day(i).format("MM-DD-YYYY");
+        const currWeekDay = dayjsDate.day(i).format("ddd");
+        const currUserSchDay = userScheduleMappedCodes[currDate];
+
+        if (currUserSchDay) {
+          const codeNames = Object.keys(currUserSchDay).flatMap((codeId) => {
+            const name = getCodeName(currWeekDay, codeId);
+            const nameArray = Array(currUserSchDay[codeId].length).fill(name);
+            return nameArray;
+          });
+          codesArray.push(...codeNames);
+        }
+        // currUserSchDay && codesArray.push(...Object.keys(currUserSchDay));
+        const currSchDay = scheduleMappedCodes[currDate];
+        currSchDay && codesArray.push(...Object.keys(currSchDay));
+      }
+      codesArray.forEach((code) => {
+        codesObj[code] = codesObj[code] ? codesObj[code] + 1 : 1;
+      });
+      if (codesObj.v >= daysOffPerWeek) {
+        setError(
+          `max num of days off per week reached 
+        ${dayjsDate.day(0).format("MM-DD-YYYY")} - 
+        ${dayjsDate.day(6).format("MM-DD-YYYY")}`
+        );
+        return;
+      }
+    }
     //swap codeId
     if (schDay && schDay[codeId] && !codes.Add[codeId]) {
       const swapEmployeeId = schDay[codeId];
@@ -56,8 +102,27 @@ const ScheduleTable = ({
   };
 
   useEffect(() => {
-    let scheduleMappedCodes = {};
+    let userScheduleMappedCodes = {};
     Object.entries(userAdjustedSchedule).forEach(([employeeId, employee]) => {
+      Object.entries(employee).forEach(([date, codeId]) => {
+        if (codeId) {
+          userScheduleMappedCodes[date] = {
+            ...userScheduleMappedCodes[date],
+            [codeId]:
+              userScheduleMappedCodes[date] &&
+              userScheduleMappedCodes[date][codeId]
+                ? [...userScheduleMappedCodes[date][codeId], employeeId]
+                : [employeeId],
+          };
+        }
+      });
+    });
+    setUserScheduleMappedCodes(userScheduleMappedCodes);
+  }, [userAdjustedSchedule]);
+
+  useEffect(() => {
+    let scheduleMappedCodes = {};
+    Object.entries(schedule).forEach(([employeeId, employee]) => {
       Object.entries(employee).forEach(([date, codeId]) => {
         if (codeId) {
           scheduleMappedCodes[date] = {
@@ -68,7 +133,7 @@ const ScheduleTable = ({
       });
     });
     setScheduleMappedCodes(scheduleMappedCodes);
-  }, [userAdjustedSchedule]);
+  }, [schedule]);
 
   useEffect(() => {
     const newSchedule = { ...schedule };
@@ -155,14 +220,15 @@ const ScheduleTable = ({
   };
 
   const codesMatch = (day) => {
-    const scheduleDayCodes = Object.keys(scheduleMappedCodes[day.date]);
+    const scheduleDayCodes = Object.keys(userScheduleMappedCodes[day.date]);
     const dayCodes = Object.keys(codes[day.dayOfWeek]);
     return dayCodes.every((c) => scheduleDayCodes.includes(c));
   };
 
-  console.log("table");
+  // console.log("table");
   return (
     <>
+      {error && <p style={{ color: "red" }}>{error}</p>}
       <TableContainer component={Paper}>
         <Table size="small" stickyHeader>
           <TableHead>
@@ -178,7 +244,7 @@ const ScheduleTable = ({
                   padding="none"
                   style={{
                     border:
-                      scheduleMappedCodes[day.date] && codesMatch(day)
+                      userScheduleMappedCodes[day.date] && codesMatch(day)
                         ? "lightgreen 3px solid"
                         : "",
                     borderRadius: 2,
@@ -228,7 +294,7 @@ const ScheduleTable = ({
                               day={day}
                               codes={codes}
                               dayScheduleMappedCodes={
-                                scheduleMappedCodes[day.date]
+                                userScheduleMappedCodes[day.date]
                               }
                               empSchedule={schedule[employeeId]}
                               empUserAdjustedSchedule={
@@ -264,7 +330,7 @@ const CodeSelect = ({
   empUserAdjustedSchedule,
   handleCellChange,
 }) => {
-  // const schDay = scheduleMappedCodes[day.date];
+  // const schDay = userScheduleMappedCodes[day.date];
   const dayOfWeek = day.dayOfWeek;
   const highLight =
     (dayOfWeek === "Sat" || dayOfWeek === "Sun") &&

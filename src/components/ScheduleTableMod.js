@@ -112,7 +112,7 @@ const ScheduleTable = ({
     (group) => group.employees
   );
   // console.log(groupEmployeesIdArray, schedule);
-  console.log("table");
+  // console.log("table");
   return (
     <>
       <Grid container sx={{ flexWrap: "nowrap" }}>
@@ -174,7 +174,7 @@ const ColumnData = ({
 
         newSchedule[date] = newSchedule[date] ? { ...newSchedule[date] } : {};
         newSchedule[date][employeeId] = codeId;
-        console.log(newSchedule);
+        // console.log(newSchedule);
         return newSchedule;
       });
     },

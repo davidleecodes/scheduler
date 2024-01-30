@@ -18,6 +18,7 @@ import {
   groupsInit,
   scheduleRangeInt,
   codeInt,
+  daysOffPerWeekInt,
 } from "./initalStates";
 
 const Settings = () => {
@@ -27,6 +28,7 @@ const Settings = () => {
   const [codes, setCodes] = useState(codeInt);
   const [schedule, setSchedule] = useState({});
   const [userAdjustedSchedule, setuserAdjustedSchedule] = useState({});
+  const [daysOffPerWeek, setDaysOffPerWeek] = useState(daysOffPerWeekInt);
 
   return (
     <Grid container spacing={4}>
@@ -100,6 +102,8 @@ const Settings = () => {
             setSchedule={setSchedule}
             userAdjustedSchedule={userAdjustedSchedule}
             setuserAdjustedSchedule={setuserAdjustedSchedule}
+            daysOffPerWeek={daysOffPerWeek}
+            setDaysOffPerWeek={setDaysOffPerWeek}
           />
         </Grid>
       </Grid>

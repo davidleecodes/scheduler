@@ -115,7 +115,7 @@ const CodeList = ({
   const handleListItemClick = (event, id) => {
     setSelectedId(id);
   };
-  console.log("code list");
+  // console.log("code list");
   const { Internal, ...codesN } = codes;
   const day = selectedId;
   return (
