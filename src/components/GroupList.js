@@ -125,6 +125,8 @@ const GroupList = ({ groups, employees, setGroups, setEmployees }) => {
 
   const handleRemoveGroup = (groupId) => {
     const { [groupId]: group, ...rest } = groups;
+    setSelectedId(Object.keys(rest)[0]);
+
     setGroups(rest);
   };
   const handleRuleDelete = (ruleId, groupId) => {

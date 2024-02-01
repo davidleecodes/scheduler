@@ -6,7 +6,7 @@ const employeesInit = {
     },
     offDays: {
       o1: ["02/01/2024", "02/02/2024"],
-      o2: ["01/25/2024", "01/30/2024"],
+      o2: ["01/25/2024", "01/29/2024"],
     },
     group: "g1",
   },
@@ -15,6 +15,10 @@ const employeesInit = {
     // groupRules: {
     //   interval: { data: { startDay: "01/06/2024" } },
     // },
+    offDays: {
+      o3: ["01/29/2024", "01/30/2024"],
+    },
+    group: "g3",
   },
   e3: {
     name: "carl",

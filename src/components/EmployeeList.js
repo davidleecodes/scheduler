@@ -49,6 +49,7 @@ const EmployeeList = ({
 
   const onDeleteEmployee = (employeeId) => {
     const { [employeeId]: employee, ...rest } = employees;
+    setSelectedId(Object.keys(rest)[0]);
     setEmployees(rest);
     deleteEmployeeFromGroup(employeeId);
     deleteEmployeeFromSchedule(employeeId);
@@ -182,7 +183,7 @@ const EmployeeList = ({
 };
 
 const OffDays = ({ employee, employeeId, setEmployees }) => {
-  const offDays = employee?.offDays;
+  const offDays = employee?.offDays || [];
   const [dates, setDates] = useState(["", ""]);
   // const [end, setEnd] = useState();
 
@@ -194,7 +195,10 @@ const OffDays = ({ employee, employeeId, setEmployees }) => {
         ...prev[employeeId],
         offDays: {
           ...prev[employeeId].offDays,
-          [iterateArrayId(offDayIds, "o")]: dates,
+          [iterateArrayId(offDayIds, "o")]: [
+            dates[0].format("MM/DD/YYYY"),
+            dates[1].format("MM/DD/YYYY"),
+          ],
           //  {
           //   start: start.format("MM/DD/YYYY"),
           //   end: end.format("MM/DD/YYYY"),
@@ -202,8 +206,7 @@ const OffDays = ({ employee, employeeId, setEmployees }) => {
         },
       },
     }));
-    // setStart(null);
-    // setEnd(null);
+    console.log(offDayIds, employee);
     setDates(["", ""]);
   };
 
