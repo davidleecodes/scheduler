@@ -26,9 +26,12 @@ const EmployeeList = ({
   groups,
   setGroups,
   setuserAdjustedSchedule,
+  scheduleMappedCodes,
+  daysOffPerWeek,
 }) => {
   const [selectedId, setSelectedId] = React.useState(Object.keys(employees)[0]);
   const [newEmployeeName, setNewEmployeeName] = useState("");
+  const [error, setError] = useState();
 
   const deleteEmployeeFromGroup = (employeeId) => {
     const updatedGroups = { ...groups };
@@ -123,6 +126,8 @@ const EmployeeList = ({
         {/* <Grid item container direction={"column"} spacing={1}>
         {Object.keys(employees).map((employeeId) => ( */}
         <Grid item style={{ flexGrow: 1 }}>
+          {error && <p style={{ color: "red" }}>{error}</p>}
+
           <Grid container key={employeeId} spacing={3} style={{ flexGrow: 1 }}>
             <Grid item>
               <Grid item container spacing={2}>
@@ -142,6 +147,9 @@ const EmployeeList = ({
                     employee={employees[employeeId]}
                     employeeId={employeeId}
                     setEmployees={setEmployees}
+                    setError={setError}
+                    scheduleMappedCodes={scheduleMappedCodes}
+                    daysOffPerWeek={daysOffPerWeek}
                   />
                 </Grid>
               </Grid>
@@ -182,12 +190,56 @@ const EmployeeList = ({
   );
 };
 
-const OffDays = ({ employee, employeeId, setEmployees }) => {
+const OffDays = ({
+  employee,
+  employeeId,
+  setEmployees,
+  setError,
+  scheduleMappedCodes,
+  daysOffPerWeek,
+}) => {
   const offDays = employee?.offDays || [];
   const [dates, setDates] = useState(["", ""]);
   // const [end, setEnd] = useState();
 
   const handleAddOffDay = () => {
+    console.log(scheduleMappedCodes);
+    const start = dayjs(dates[0]);
+    const end = dayjs(dates[1]);
+    let codesArray = [];
+    let codesObj = {};
+    let currentDate = start.day(0);
+
+    while (currentDate.isSameOrBefore(end)) {
+      //find the number of codes v in the same week
+      for (let i = 0; i <= 6; i++) {
+        let day = currentDate.day(i).format("MM-DD-YYYY");
+        const currSchDay = scheduleMappedCodes[day];
+        if (currSchDay) {
+          const codeNames = Object.keys(currSchDay).flatMap((codeId) => {
+            const nameArray = Array(currSchDay[codeId].length).fill(codeId);
+            return nameArray;
+          });
+          codesArray.push(...codeNames);
+        }
+      }
+      currentDate = currentDate.add(1, "week");
+    }
+    codesArray.forEach((code) => {
+      codesObj[code] = codesObj[code] ? codesObj[code] + 1 : 1;
+    });
+
+    if (codesObj.v >= daysOffPerWeek) {
+      setError(
+        `max num of days off per week reached `
+        // ${dayjsDate.day(0).format("MM-DD-YYYY")} -
+        // ${dayjsDate.day(6).format("MM-DD-YYYY")}
+      );
+      return;
+    }
+
+    //validate
+    // setError("test");
     const offDayIds = Object.keys(offDays);
     setEmployees((prev) => ({
       ...prev,
@@ -281,6 +333,7 @@ const OffDays = ({ employee, employeeId, setEmployees }) => {
         <RangePicker
           value={dates}
           onChange={(dateStrings) => setDates(dateStrings)}
+          disabledDate={(d) => d.isBefore(dayjs().subtract("1", "days"))}
         />
         {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DatePicker

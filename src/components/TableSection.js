@@ -27,6 +27,7 @@ const TableSection = ({
   setuserAdjustedSchedule,
   daysOffPerWeek,
   setDaysOffPerWeek,
+  scheduleMappedCodes,
 }) => {
   const dateRange = useMemo(() => {
     const date = [];
@@ -141,6 +142,7 @@ const TableSection = ({
           setuserAdjustedSchedule={setuserAdjustedSchedule}
           employeeCodeCount={employeeCodeCount}
           daysOffPerWeek={daysOffPerWeek}
+          scheduleMappedCodes={scheduleMappedCodes}
         />
       </Grid>
     </>

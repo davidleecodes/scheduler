@@ -16,7 +16,7 @@ const employeesInit = {
     //   interval: { data: { startDay: "01/06/2024" } },
     // },
     offDays: {
-      o3: ["01/29/2024", "01/30/2024"],
+      o3: ["01/29/2024", "01/29/2024"],
     },
     group: "g3",
   },

@@ -33,9 +33,9 @@ const ScheduleTable = ({
   setuserAdjustedSchedule,
   employeeCodeCount,
   daysOffPerWeek,
+  scheduleMappedCodes,
 }) => {
   const [userScheduleMappedCodes, setUserScheduleMappedCodes] = useState({});
-  const [scheduleMappedCodes, setScheduleMappedCodes] = useState({});
   const [error, setError] = useState();
 
   const getCodeName = (weekDay, codeId) => {
@@ -73,12 +73,21 @@ const ScheduleTable = ({
         }
         // currUserSchDay && codesArray.push(...Object.keys(currUserSchDay));
         const currSchDay = scheduleMappedCodes[currDate];
-        currSchDay && codesArray.push(...Object.keys(currSchDay));
+        if (currSchDay) {
+          const codeNames = Object.keys(currSchDay).flatMap((codeId) => {
+            // const name = getCodeName(currWeekDay, codeId);
+            const nameArray = Array(currSchDay[codeId].length).fill(codeId);
+            return nameArray;
+          });
+          codesArray.push(...codeNames);
+        }
+
+        // currSchDay && codesArray.push(...Object.keys(currSchDay));
       }
       codesArray.forEach((code) => {
         codesObj[code] = codesObj[code] ? codesObj[code] + 1 : 1;
       });
-      // console.log(codesObj, scheduleMappedCodes);
+      console.log(codesObj, scheduleMappedCodes);
 
       if (codesObj.v >= daysOffPerWeek) {
         setError(
@@ -121,21 +130,6 @@ const ScheduleTable = ({
     });
     setUserScheduleMappedCodes(userScheduleMappedCodes);
   }, [userAdjustedSchedule]);
-
-  useEffect(() => {
-    let scheduleMappedCodes = {};
-    Object.entries(schedule).forEach(([employeeId, employee]) => {
-      Object.entries(employee).forEach(([date, codeId]) => {
-        if (codeId) {
-          scheduleMappedCodes[date] = {
-            ...scheduleMappedCodes[date],
-            [codeId]: employeeId,
-          };
-        }
-      });
-    });
-    setScheduleMappedCodes(scheduleMappedCodes);
-  }, [schedule]);
 
   useEffect(() => {
     const newSchedule = { ...schedule };
@@ -181,11 +175,16 @@ const ScheduleTable = ({
                 const offDayEnd = dayjs(offDay[1]);
 
                 if (
-                  startDate.isSameOrBefore(offDayStart) ||
-                  endDate.isSameOrAfter(offDayEnd)
+                  offDayStart.isBetween(startDate, endDate) ||
+                  offDayEnd.isBetween(startDate, endDate)
                 ) {
-                  let currentDate = offDayStart;
-                  while (currentDate.isSameOrBefore(offDayEnd)) {
+                  let currentDate = startDate.isSameOrAfter(offDayStart)
+                    ? startDate
+                    : offDayStart;
+                  let end = endDate.isSameOrBefore(offDayEnd)
+                    ? endDate
+                    : offDayEnd;
+                  while (currentDate.isSameOrBefore(end)) {
                     const formattedDate = currentDate.format("MM-DD-YYYY");
                     newSchedule[employeeId] = {
                       ...newSchedule[employeeId],

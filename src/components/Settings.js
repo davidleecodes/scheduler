@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Grid } from "@mui/material";
 import {
   AccordionGroup,
@@ -29,6 +29,25 @@ const Settings = () => {
   const [schedule, setSchedule] = useState({});
   const [userAdjustedSchedule, setuserAdjustedSchedule] = useState({});
   const [daysOffPerWeek, setDaysOffPerWeek] = useState(daysOffPerWeekInt);
+  const [scheduleMappedCodes, setScheduleMappedCodes] = useState({});
+
+  useEffect(() => {
+    let scheduleMappedCodes = {};
+    Object.entries(schedule).forEach(([employeeId, employee]) => {
+      Object.entries(employee).forEach(([date, codeId]) => {
+        if (codeId) {
+          scheduleMappedCodes[date] = {
+            ...scheduleMappedCodes[date],
+            [codeId]:
+              scheduleMappedCodes[date] && scheduleMappedCodes[date][codeId]
+                ? [...scheduleMappedCodes[date][codeId], employeeId]
+                : [employeeId],
+          };
+        }
+      });
+    });
+    setScheduleMappedCodes(scheduleMappedCodes);
+  }, [schedule]);
 
   return (
     <Grid container spacing={4}>
@@ -71,6 +90,8 @@ const Settings = () => {
                 groups={groups}
                 setGroups={setGroups}
                 setuserAdjustedSchedule={setuserAdjustedSchedule}
+                scheduleMappedCodes={scheduleMappedCodes}
+                daysOffPerWeek={daysOffPerWeek}
               />
             </AccordionDetails>
           </Accordion>
@@ -104,6 +125,7 @@ const Settings = () => {
             setuserAdjustedSchedule={setuserAdjustedSchedule}
             daysOffPerWeek={daysOffPerWeek}
             setDaysOffPerWeek={setDaysOffPerWeek}
+            scheduleMappedCodes={scheduleMappedCodes}
           />
         </Grid>
       </Grid>
