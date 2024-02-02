@@ -55,8 +55,8 @@ const ScheduleTable = ({
     //check validation for offDays per week
     if (getCodeName(weekDay, codeId) === "v") {
       const dayjsDate = dayjs(date);
-      let codesArray = [];
-      let codesObj = {};
+      let codesObject = {};
+
       //0= sun, sat =6
       for (let i = 0; i <= 6; i++) {
         const currDate = dayjsDate.day(i).format("MM-DD-YYYY");
@@ -64,32 +64,30 @@ const ScheduleTable = ({
         const currUserSchDay = userScheduleMappedCodes[currDate];
 
         if (currUserSchDay) {
-          const codeNames = Object.keys(currUserSchDay).flatMap((codeId) => {
+          Object.keys(currUserSchDay).forEach((codeId) => {
             const name = getCodeName(currWeekDay, codeId);
-            const nameArray = Array(currUserSchDay[codeId].length).fill(name);
-            return nameArray;
+            const num = currUserSchDay[codeId].length;
+            if (num) {
+              codesObject[name] = codesObject[name]
+                ? codesObject[name] + num
+                : num;
+            }
           });
-          codesArray.push(...codeNames);
         }
-        // currUserSchDay && codesArray.push(...Object.keys(currUserSchDay));
         const currSchDay = scheduleMappedCodes[currDate];
         if (currSchDay) {
-          const codeNames = Object.keys(currSchDay).flatMap((codeId) => {
+          Object.keys(currSchDay).forEach((codeId) => {
             // const name = getCodeName(currWeekDay, codeId);
-            const nameArray = Array(currSchDay[codeId].length).fill(codeId);
-            return nameArray;
+            const num = currSchDay[codeId].length;
+            if (num) {
+              codesObject[codeId] = codesObject[codeId]
+                ? codesObject[codeId] + num
+                : num;
+            }
           });
-          codesArray.push(...codeNames);
         }
-
-        // currSchDay && codesArray.push(...Object.keys(currSchDay));
       }
-      codesArray.forEach((code) => {
-        codesObj[code] = codesObj[code] ? codesObj[code] + 1 : 1;
-      });
-      console.log(codesObj, scheduleMappedCodes);
-
-      if (codesObj.v >= daysOffPerWeek) {
+      if (codesObject.v >= daysOffPerWeek) {
         setError(
           `max num of days off per week reached 
         ${dayjsDate.day(0).format("MM-DD-YYYY")} - 
@@ -101,8 +99,6 @@ const ScheduleTable = ({
     //swap codeId
     if (schDay && schDay[codeId] && !codes.Add[codeId]) {
       const swapEmployeeId = schDay[codeId];
-      // const { [date]: removeDate, ...rest } = newSchedule[swapEmployeeId];
-      // newSchedule[swapEmployeeId] = rest;
       delete newSchedule[swapEmployeeId][date];
     }
     newSchedule[employeeId] = newSchedule[employeeId]
@@ -132,43 +128,13 @@ const ScheduleTable = ({
   }, [userAdjustedSchedule]);
 
   useEffect(() => {
-    const newSchedule = { ...schedule };
+    const newSchedule = {};
+    // const newSchedule = { ...schedule };
     Object.values(groups).forEach((group) => {
       group.employees &&
         group.employees.forEach((employeeId) => {
           const employee = employees[employeeId];
           if (employee) {
-            if (employee.groupRules) {
-              Object.entries(employee.groupRules).forEach(
-                ([groupRuleId, employeeGroupRule]) => {
-                  if (group.groupRules && group.groupRules[groupRuleId]) {
-                    const employeeGroupRuleData = employeeGroupRule.data;
-                    const groupRule = groupRulesCollection[groupRuleId];
-                    const groupGroupRuleData =
-                      group.groupRules[groupRuleId].data;
-
-                    if (Object.keys(groupGroupRuleData).length === 0) return;
-                    const result = groupRule.group.onChange(
-                      startDate,
-                      endDate,
-                      employeeGroupRuleData,
-                      groupGroupRuleData
-                    );
-                    //Todo: ...rest is overwriting offDays
-                    newSchedule[employeeId] = {
-                      ...newSchedule[employeeId],
-                      ...result,
-                    };
-
-                    setSchedule(newSchedule);
-                  }
-                }
-              );
-            } else {
-              newSchedule[employeeId] = {};
-              setSchedule(newSchedule);
-            }
-
             if (employee.offDays) {
               Object.entries(employee.offDays).forEach(([offDayId, offDay]) => {
                 const offDayStart = dayjs(offDay[0]);
@@ -194,10 +160,40 @@ const ScheduleTable = ({
                     currentDate = currentDate.add(1, "day");
                   }
 
-                  setSchedule(newSchedule);
+                  // setSchedule(newSchedule);
                 }
               });
             }
+
+            if (employee.groupRules) {
+              Object.entries(employee.groupRules).forEach(
+                ([groupRuleId, employeeGroupRule]) => {
+                  if (group.groupRules && group.groupRules[groupRuleId]) {
+                    const employeeGroupRuleData = employeeGroupRule.data;
+                    const groupRule = groupRulesCollection[groupRuleId];
+                    const groupGroupRuleData =
+                      group.groupRules[groupRuleId].data;
+
+                    if (Object.keys(groupGroupRuleData).length === 0) return;
+                    const result = groupRule.group.onChange(
+                      startDate,
+                      endDate,
+                      employeeGroupRuleData,
+                      groupGroupRuleData
+                    );
+                    //Todo: ...rest is overwriting offDays
+                    newSchedule[employeeId] = {
+                      ...newSchedule[employeeId],
+                      ...result,
+                    };
+
+                    // setSchedule(newSchedule);
+                  }
+                }
+              );
+            }
+
+            setSchedule(newSchedule);
           }
         });
     });

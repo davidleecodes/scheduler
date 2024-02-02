@@ -12,9 +12,7 @@ import {
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { Typography } from "@mui/joy";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-// import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+
 import { iterateArrayId } from "./utils";
 import dayjs from "dayjs";
 import { DatePicker, Space } from "antd";
@@ -200,46 +198,47 @@ const OffDays = ({
 }) => {
   const offDays = employee?.offDays || [];
   const [dates, setDates] = useState(["", ""]);
-  // const [end, setEnd] = useState();
 
   const handleAddOffDay = () => {
-    console.log(scheduleMappedCodes);
+    setError("");
+    // console.log(scheduleMappedCodes);
     const start = dayjs(dates[0]);
     const end = dayjs(dates[1]);
-    let codesArray = [];
-    let codesObj = {};
     let currentDate = start.day(0);
 
     while (currentDate.isSameOrBefore(end)) {
-      //find the number of codes v in the same week
+      // validate find the number of codes v in the same week
+      let codesObject = {};
+
       for (let i = 0; i <= 6; i++) {
-        let day = currentDate.day(i).format("MM-DD-YYYY");
-        const currSchDay = scheduleMappedCodes[day];
+        const day = currentDate.day(i);
+        const formatedDay = day.format("MM-DD-YYYY");
+        const currSchDay = scheduleMappedCodes[formatedDay];
         if (currSchDay) {
-          const codeNames = Object.keys(currSchDay).flatMap((codeId) => {
-            const nameArray = Array(currSchDay[codeId].length).fill(codeId);
-            return nameArray;
+          Object.keys(currSchDay).forEach((codeId) => {
+            const num =
+              currSchDay[codeId].length +
+              (day.isBetween(start, end, null, "[]") ? 1 : 0);
+            if (num) {
+              codesObject[codeId] = codesObject[codeId]
+                ? codesObject[codeId] + num
+                : num;
+            }
           });
-          codesArray.push(...codeNames);
         }
+      }
+      console.log(codesObject);
+      if (codesObject.v >= daysOffPerWeek) {
+        setError(
+          `max num of days off per week reached 
+          ${currentDate.day(0).format("MM-DD-YYYY")} -
+           ${currentDate.day(6).format("MM-DD-YYYY")}`
+        );
+        return;
       }
       currentDate = currentDate.add(1, "week");
     }
-    codesArray.forEach((code) => {
-      codesObj[code] = codesObj[code] ? codesObj[code] + 1 : 1;
-    });
 
-    if (codesObj.v >= daysOffPerWeek) {
-      setError(
-        `max num of days off per week reached `
-        // ${dayjsDate.day(0).format("MM-DD-YYYY")} -
-        // ${dayjsDate.day(6).format("MM-DD-YYYY")}
-      );
-      return;
-    }
-
-    //validate
-    // setError("test");
     const offDayIds = Object.keys(offDays);
     setEmployees((prev) => ({
       ...prev,
@@ -251,10 +250,6 @@ const OffDays = ({
             dates[0].format("MM/DD/YYYY"),
             dates[1].format("MM/DD/YYYY"),
           ],
-          //  {
-          //   start: start.format("MM/DD/YYYY"),
-          //   end: end.format("MM/DD/YYYY"),
-          // },
         },
       },
     }));
@@ -263,6 +258,8 @@ const OffDays = ({
   };
 
   const handleOffDayDelete = (offDayId) => {
+    setError("");
+
     const updatedOffDays = { ...offDays };
     delete updatedOffDays[offDayId];
     setEmployees((prev) => ({
@@ -274,6 +271,8 @@ const OffDays = ({
     }));
   };
   const handleDateChange = (dateStrings, offDayId) => {
+    setError("");
+
     setEmployees((prev) => ({
       ...prev,
       [employeeId]: {
