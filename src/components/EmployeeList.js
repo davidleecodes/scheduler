@@ -1,14 +1,5 @@
 import React, { useState } from "react";
-import {
-  TextField,
-  IconButton,
-  Grid,
-  Box,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemText,
-} from "@mui/material";
+import { TextField, IconButton, Grid } from "@mui/material";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { Typography } from "@mui/joy";
@@ -16,6 +7,7 @@ import { Typography } from "@mui/joy";
 import { iterateArrayId } from "./utils";
 import dayjs from "dayjs";
 import { DatePicker, Space } from "antd";
+import ListNavContiner from "./ListNavContainer";
 const { RangePicker } = DatePicker;
 
 const EmployeeList = ({
@@ -27,8 +19,7 @@ const EmployeeList = ({
   scheduleMappedCodes,
   daysOffPerWeek,
 }) => {
-  const [selectedId, setSelectedId] = React.useState(Object.keys(employees)[0]);
-  const [newEmployeeName, setNewEmployeeName] = useState("");
+  const [selectedId, setSelectedId] = useState(Object.keys(employees)[0]);
   const [error, setError] = useState();
 
   const deleteEmployeeFromGroup = (employeeId) => {
@@ -56,11 +47,9 @@ const EmployeeList = ({
     deleteEmployeeFromSchedule(employeeId);
   };
 
-  const handleAddEmployee = () => {
-    const data = { name: newEmployeeName };
+  const handleAddEmployee = (data) => {
     const employeeIds = Object.keys(employees);
     setEmployees({ ...employees, [iterateArrayId(employeeIds, "e")]: data });
-    setNewEmployeeName("");
   };
 
   const handleOnChange = (employeeId, event) => {
@@ -71,119 +60,49 @@ const EmployeeList = ({
     }));
   };
 
-  const handleListItemClick = (event, id) => {
-    setSelectedId(id);
-  };
   // console.log("employee list");
 
   const employeeId = selectedId;
 
   return (
     <>
-      <Grid container>
-        <Grid item>
-          <Box
-            sx={{
-              width: "100%",
-              minWidth: 200,
-              maxWidth: 400,
-              bgcolor: "InfoBackground",
-            }}
-          >
-            <Grid item container style={{ flexWrap: "nowrap" }}>
-              <TextField
-                label="New Employee Name"
-                value={newEmployeeName}
-                onChange={(e) => setNewEmployeeName(e.target.value)}
-                size="small"
-                variant="standard"
-              />
-              <IconButton
-                variant="contained"
-                color="primary"
-                onClick={handleAddEmployee}
-                disabled={!newEmployeeName}
-              >
-                <AddCircleOutlineIcon />
-              </IconButton>
-            </Grid>
-            <List>
-              {Object.entries(employees).map(([id, employee]) => (
-                <ListItem key={id}>
-                  <ListItemButton
-                    selected={selectedId === id}
-                    onClick={(event) => handleListItemClick(event, id)}
-                  >
-                    <ListItemText primary={employee.name} />
-                  </ListItemButton>
-                </ListItem>
-              ))}
-            </List>
-          </Box>
-        </Grid>
-        {/* <Grid item container direction={"column"} spacing={1}>
-        {Object.keys(employees).map((employeeId) => ( */}
+      <ListNavContiner
+        collection={employees}
+        onAddItem={handleAddEmployee}
+        addLabel={"new Employee Name"}
+        selectedId={selectedId}
+        setSelectedId={setSelectedId}
+        deleteLabel={"delete employee"}
+        onDeleteItem={onDeleteEmployee}
+      >
         <Grid item style={{ flexGrow: 1 }}>
           {error && <p style={{ color: "red" }}>{error}</p>}
 
-          <Grid container key={employeeId} spacing={3} style={{ flexGrow: 1 }}>
-            <Grid item>
-              <Grid item container spacing={2}>
-                <Grid item xs={12}>
-                  <TextField
-                    value={employees[employeeId].name}
-                    onChange={(event) => handleOnChange(employeeId, event)}
-                    size="small"
-                    variant="standard"
-                    name="name"
-                    label="Name"
-                  />
-                </Grid>
-                <Grid item>
-                  <Typography>off days</Typography>
-                  <OffDays
-                    employee={employees[employeeId]}
-                    employeeId={employeeId}
-                    setEmployees={setEmployees}
-                    setError={setError}
-                    scheduleMappedCodes={scheduleMappedCodes}
-                    daysOffPerWeek={daysOffPerWeek}
-                  />
-                </Grid>
-              </Grid>
+          <Grid item container spacing={2}>
+            <Grid item xs={12}>
+              <TextField
+                value={employees[employeeId].name}
+                onChange={(event) => handleOnChange(employeeId, event)}
+                size="small"
+                variant="standard"
+                name="name"
+                label="Name"
+              />
             </Grid>
-
             <Grid item>
-              <IconButton
-                onClick={() => onDeleteEmployee(employeeId)}
-                color="secondary"
-              >
-                <RemoveCircleOutlineIcon />
-              </IconButton>
+              <Typography>off days</Typography>
+              <OffDays
+                employee={employees[employeeId]}
+                employeeId={employeeId}
+                setEmployees={setEmployees}
+                setError={setError}
+                scheduleMappedCodes={scheduleMappedCodes}
+                daysOffPerWeek={daysOffPerWeek}
+              />
             </Grid>
           </Grid>
-          {/* </Grid>
-        ))} */}
-
-          {/* <Grid item container style={{ flexWrap: "nowrap" }}>
-            <TextField
-              label="New Employee Name"
-              value={newEmployeeName}
-              onChange={(e) => setNewEmployeeName(e.target.value)}
-              size="small"
-              variant="standard"
-            />
-            <IconButton
-              variant="contained"
-              color="primary"
-              onClick={handleAddEmployee}
-              disabled={!newEmployeeName}
-            >
-              <AddCircleOutlineIcon />
-            </IconButton>
-          </Grid> */}
         </Grid>
-      </Grid>
+      </ListNavContiner>
     </>
   );
 };
@@ -201,7 +120,6 @@ const OffDays = ({
 
   const handleAddOffDay = () => {
     setError("");
-    // console.log(scheduleMappedCodes);
     const start = dayjs(dates[0]);
     const end = dayjs(dates[1]);
     let currentDate = start.day(0);
@@ -302,30 +220,6 @@ const OffDays = ({
             >
               <RemoveCircleOutlineIcon />
             </IconButton>
-            {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker
-                format="MM/DD/YYYY"
-                value={dayjs(offDay.start)}
-                onChange={(value) => handleDateChange(offDayId, value, "start")}
-                name="start"
-                slotProps={{ textField: { size: "small" } }}
-              />
-            </LocalizationProvider>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker
-                format="MM/DD/YYYY"
-                value={dayjs(offDay.end)}
-                onChange={(value) => handleDateChange(offDayId, value, "end")}
-                name="end"
-                slotProps={{ textField: { size: "small" } }}
-              />
-              <IconButton
-                color="secondary"
-                onClick={() => handleOffDayDelete(offDayId)}
-              >
-                <RemoveCircleOutlineIcon />
-              </IconButton>
-            </LocalizationProvider> */}
           </Grid>
         ))}
       <Grid>
@@ -334,22 +228,7 @@ const OffDays = ({
           onChange={(dateStrings) => setDates(dateStrings)}
           disabledDate={(d) => d.isBefore(dayjs().subtract("1", "days"))}
         />
-        {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <DatePicker
-            format="MM/DD/YYYY"
-            value={start}
-            onChange={(newValue) => setStart(newValue)}
-            slotProps={{ textField: { size: "small" } }}
-            disablePast
-          />
-          <DatePicker
-            format="MM/DD/YYYY"
-            value={end}
-            onChange={(newValue) => setEnd(newValue)}
-            slotProps={{ textField: { size: "small" } }}
-            disablePast
-          />
-        </LocalizationProvider> */}
+
         <IconButton
           variant="contained"
           color="primary"

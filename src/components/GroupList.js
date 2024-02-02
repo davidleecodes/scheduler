@@ -7,35 +7,20 @@ import {
   AccordionDetails,
   AccordionGroup,
 } from "@mui/joy";
-import {
-  TextField,
-  Grid,
-  IconButton,
-  Button,
-  Box,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemText,
-} from "@mui/material";
+import { TextField, Grid, IconButton, Button } from "@mui/material";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import ListNavContiner from "./ListNavContainer";
 
 import { groupRulesCollection } from "./GroupRulesCollection";
 import { AddEmployeeField, AddRuleField } from "./GroupListHelper";
 import { iterateArrayId } from "./utils";
 
 const GroupList = ({ groups, employees, setGroups, setEmployees }) => {
-  const [newGroupName, setNewGroupName] = useState("");
-  const [selectedId, setSelectedId] = React.useState(Object.keys(groups)[0]);
+  const [selectedId, setSelectedId] = useState(Object.keys(groups)[0]);
 
-  const handleAddGroup = () => {
-    const data = { name: newGroupName };
+  const handleAddGroup = (data) => {
     const groupIds = Object.keys(groups);
-    // const lastId = groupIds[groupIds.length - 1];
-    // const newId = lastId ? `g${parseInt(lastId.slice(1)) + 1}` : "g1";
     setGroups({ ...groups, [iterateArrayId(groupIds, "g")]: data });
-    setNewGroupName("");
   };
 
   const addGroupToEmployee = (groupId, employeeId) => {
@@ -165,73 +150,25 @@ const GroupList = ({ groups, employees, setGroups, setEmployees }) => {
     updatedGroups[groupId].employees = updatedEmployees;
     setGroups(updatedGroups);
   };
-  const handleListItemClick = (event, id) => {
-    setSelectedId(id);
-  };
+
   // console.log("group list");
   const groupId = selectedId;
   const group = groups[groupId];
 
   return (
     <>
-      <Grid container>
-        <Grid item>
-          <Box
-            sx={{
-              width: "100%",
-              minWidth: 200,
-              maxWidth: 400,
-              bgcolor: "InfoBackground",
-            }}
-          >
-            <Grid
-              item
-              container
-              spacing={1}
-              alignItems="center"
-              style={{ flexWrap: "nowrap" }}
-            >
-              <Grid item style={{ flexGrow: 1 }}>
-                <TextField
-                  label="Add Group"
-                  value={newGroupName}
-                  onChange={(e) => setNewGroupName(e.target.value)}
-                  size="small"
-                  fullWidth
-                />
-              </Grid>
-              <Grid item>
-                <IconButton
-                  variant="contained"
-                  color="primary"
-                  onClick={handleAddGroup}
-                  disabled={!newGroupName}
-                >
-                  <AddCircleOutlineIcon />
-                </IconButton>
-              </Grid>
-            </Grid>
-            <List>
-              {Object.entries(groups).map(([id, group]) => (
-                <ListItem key={id}>
-                  <ListItemButton
-                    selected={selectedId === id}
-                    onClick={(event) => handleListItemClick(event, id)}
-                  >
-                    <ListItemText primary={group.name} />
-                  </ListItemButton>
-                </ListItem>
-              ))}
-            </List>
-          </Box>
-        </Grid>
+      <ListNavContiner
+        collection={groups}
+        onAddItem={handleAddGroup}
+        addLabel={"new group Name"}
+        selectedId={selectedId}
+        setSelectedId={setSelectedId}
+        deleteLabel={"delete group"}
+        onDeleteItem={handleRemoveGroup}
+      >
         <Grid item style={{ flexGrow: 1 }}>
           <Grid item container direction={"column"} spacing={1}>
-            {/* <AccordionGroup size={"sm"}>
-              {Object.entries(groups).map(([groupId, group]) => ( */}
             <Grid item key={groupId}>
-              {/* <Accordion defaultExpanded={true}> */}
-              {/* <AccordionSummary> */}
               <TextField
                 name="name"
                 value={group.name}
@@ -239,9 +176,7 @@ const GroupList = ({ groups, employees, setGroups, setEmployees }) => {
                 variant="standard"
                 label="Group Name"
               />
-              {/* </AccordionSummary> */}
-              {/* <AccordionDetails> */}
-              {/*  */}
+
               <AccordionGroup size={"sm"}>
                 <Accordion defaultExpanded={true}>
                   <AccordionSummary>
@@ -374,24 +309,10 @@ const GroupList = ({ groups, employees, setGroups, setEmployees }) => {
                   </AccordionDetails>
                 </Accordion>
               </AccordionGroup>
-              {/*  */}
-              <Grid item sx={{ mt: 1, mb: 2 }}>
-                <Button
-                  variant="contained"
-                  size="small"
-                  onClick={() => handleRemoveGroup(groupId)}
-                >
-                  delete group
-                </Button>
-              </Grid>
-              {/* </AccordionDetails> */}
-              {/* </Accordion> */}
             </Grid>
-            {/* ))}
-            </AccordionGroup> */}
           </Grid>
         </Grid>
-      </Grid>
+      </ListNavContiner>
     </>
   );
 };
