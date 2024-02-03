@@ -1,12 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Grid } from "@mui/material";
-import {
-  AccordionGroup,
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Typography,
-} from "@mui/joy";
+import { Collapse, Flex } from "antd";
 
 import EmployeeList from "./EmployeeList";
 import GroupList from "./GroupList";
@@ -49,9 +42,51 @@ const Settings = () => {
     setScheduleMappedCodes(scheduleMappedCodes);
   }, [schedule]);
 
+  const items = [
+    {
+      key: "1",
+      label: "Codes",
+      children: (
+        <CodeList
+          codes={codes}
+          setCodes={setCodes}
+          userAdjustedSchedule={userAdjustedSchedule}
+          setuserAdjustedSchedule={setuserAdjustedSchedule}
+        />
+      ),
+    },
+    {
+      key: "2",
+      label: "Employees",
+      children: (
+        <EmployeeList
+          employees={employees}
+          setEmployees={setEmployees}
+          groups={groups}
+          setGroups={setGroups}
+          setuserAdjustedSchedule={setuserAdjustedSchedule}
+          scheduleMappedCodes={scheduleMappedCodes}
+          daysOffPerWeek={daysOffPerWeek}
+        />
+      ),
+    },
+    {
+      key: "3",
+      label: "Groups",
+      children: (
+        <GroupList
+          groups={groups}
+          employees={employees}
+          setGroups={setGroups}
+          setEmployees={setEmployees}
+        />
+      ),
+    },
+  ];
+
   return (
-    <Grid container spacing={4}>
-      <Grid item xs={12}>
+    <>
+      <Flex gap="middle" vertical>
         <ImportExport
           employees={employees}
           groups={groups}
@@ -62,74 +97,25 @@ const Settings = () => {
           setScheduleRange={setScheduleRange}
           setCodes={setCodes}
         />
-      </Grid>
-      <Grid item xs={12}>
-        <AccordionGroup size={"sm"}>
-          <Accordion>
-            <AccordionSummary>
-              <Typography variant="h6">Codes</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <CodeList
-                codes={codes}
-                setCodes={setCodes}
-                userAdjustedSchedule={userAdjustedSchedule}
-                setuserAdjustedSchedule={setuserAdjustedSchedule}
-              />
-            </AccordionDetails>
-          </Accordion>
-          {/*  */}
-          <Accordion>
-            <AccordionSummary>
-              <Typography variant="h6">Employees</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <EmployeeList
-                employees={employees}
-                setEmployees={setEmployees}
-                groups={groups}
-                setGroups={setGroups}
-                setuserAdjustedSchedule={setuserAdjustedSchedule}
-                scheduleMappedCodes={scheduleMappedCodes}
-                daysOffPerWeek={daysOffPerWeek}
-              />
-            </AccordionDetails>
-          </Accordion>
-          {/*  */}
-          <Accordion>
-            <AccordionSummary>
-              <Typography variant="h6">Groups</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <GroupList
-                groups={groups}
-                employees={employees}
-                setGroups={setGroups}
-                setEmployees={setEmployees}
-              />
-            </AccordionDetails>
-          </Accordion>
-        </AccordionGroup>
-        {/*  */}
 
-        <Grid item sx={{ mt: 5 }}>
-          <TableSection
-            scheduleRange={scheduleRange}
-            setScheduleRange={setScheduleRange}
-            employees={employees}
-            groups={groups}
-            codes={codes}
-            schedule={schedule}
-            setSchedule={setSchedule}
-            userAdjustedSchedule={userAdjustedSchedule}
-            setuserAdjustedSchedule={setuserAdjustedSchedule}
-            daysOffPerWeek={daysOffPerWeek}
-            setDaysOffPerWeek={setDaysOffPerWeek}
-            scheduleMappedCodes={scheduleMappedCodes}
-          />
-        </Grid>
-      </Grid>
-    </Grid>
+        <Collapse items={items} ghost />
+
+        <TableSection
+          scheduleRange={scheduleRange}
+          setScheduleRange={setScheduleRange}
+          employees={employees}
+          groups={groups}
+          codes={codes}
+          schedule={schedule}
+          setSchedule={setSchedule}
+          userAdjustedSchedule={userAdjustedSchedule}
+          setuserAdjustedSchedule={setuserAdjustedSchedule}
+          daysOffPerWeek={daysOffPerWeek}
+          setDaysOffPerWeek={setDaysOffPerWeek}
+          scheduleMappedCodes={scheduleMappedCodes}
+        />
+      </Flex>
+    </>
   );
 };
 
