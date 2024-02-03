@@ -87,7 +87,7 @@ const ListNavContiner = ({
         </Sider>
         <Layout>
           <Header />
-          <Content style={{ margin: "24px 16px 0" }}>
+          <Content style={{ margin: "12px 8px 0" }}>
             <div
               style={{
                 padding: 24,
@@ -100,7 +100,7 @@ const ListNavContiner = ({
               {children}
             </div>
           </Content>
-          <Footer style={{ margin: "24px 16px ", padding: 0 }}>
+          <Footer style={{ margin: "12px 8px ", padding: 0 }}>
             <Flex justify="flex-end">
               <Popconfirm
                 title="Delete the task"

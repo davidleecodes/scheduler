@@ -4,7 +4,7 @@ const WeekDaysOff = ({ daysOffPerWeek, setDaysOffPerWeek }) => {
   return (
     <>
       <Form layout="inline">
-        <Form.Item label="off days per week">
+        <Form.Item label="off days (week)">
           <InputNumber
             min={1}
             value={daysOffPerWeek}

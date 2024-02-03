@@ -11,7 +11,7 @@ import {
 import EmployeeList from "./EmployeeList";
 import GroupList from "./GroupList";
 import CodeList from "./CodeList";
-import { ImportExport } from "./ExportImportSetting";
+import { ImportExport } from "./ImportExportSetting";
 import TableSection from "./TableSection";
 import {
   employeesInit,

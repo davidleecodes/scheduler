@@ -1,4 +1,5 @@
-import { Button, Grid } from "@mui/material";
+import { Button } from "antd";
+
 import { shuffleArray, daysShort } from "./utils";
 import dayjs from "dayjs";
 
@@ -57,11 +58,9 @@ const Generator = ({
 
   return (
     <>
-      <Grid item sx={{ mb: 1 }}>
-        <Button variant="contained" size="small" onClick={handleGenerate}>
-          Generate
-        </Button>
-      </Grid>
+      <Button type="primary" onClick={handleGenerate}>
+        Generate
+      </Button>
     </>
   );
 };

@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Grid } from "@mui/material";
+import { Button, Flex } from "antd";
 
 function exportToJsonFile(data, fileName) {
   const jsonData = JSON.stringify(data, null, 2);
@@ -23,11 +23,7 @@ const Export = ({ employees, groups, scheduleRange, codes }) => {
 
   return (
     <>
-      <Button
-        variant="contained"
-        size="small"
-        onClick={handleExportButtonClick}
-      >
+      <Button type="primary" onClick={handleExportButtonClick}>
         Export Settings
       </Button>
     </>
@@ -59,7 +55,7 @@ const Import = ({ setEmployees, setGroups, setScheduleRange, setCodes }) => {
 
   return (
     <>
-      <Button variant="contained" size="small" component="label">
+      <Button type="primary" component="label">
         Import Settings
         <input type="file" hidden onChange={handleFileChange} />
       </Button>
@@ -79,24 +75,22 @@ const ImportExport = ({
   setCodes,
 }) => {
   return (
-    <Grid container spacing={1} justifyContent="flex-end">
-      <Grid item>
+    <>
+      <Flex justify="flex-end" gap="small">
         <Import
           setEmployees={setEmployees}
           setGroups={setGroups}
           setScheduleRange={setScheduleRange}
           setCodes={setCodes}
         />
-      </Grid>
-      <Grid item>
         <Export
           employees={employees}
           groups={groups}
           scheduleRange={scheduleRange}
           codes={codes}
         />
-      </Grid>
-    </Grid>
+      </Flex>
+    </>
   );
 };
 

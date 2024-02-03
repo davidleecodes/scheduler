@@ -1,4 +1,5 @@
-import { Button, Grid } from "@mui/material";
+// import { Button, Grid } from "@mui/material";
+import { Button, Flex, Upload } from "antd";
 
 const ExportCsv = ({
   dateRange,
@@ -61,11 +62,9 @@ const ExportCsv = ({
 
   return (
     <>
-      <Grid item sx={{ mb: 1 }}>
-        <Button variant="contained" size="small" onClick={handleExportCSV}>
-          Export as CSV
-        </Button>
-      </Grid>
+      <Button type="primary" onClick={handleExportCSV}>
+        Export as CSV
+      </Button>
     </>
   );
 };

@@ -1,19 +1,14 @@
 import React from "react";
-import { TextField, IconButton, Grid } from "@mui/material";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
-import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import dayjs from "dayjs";
+import { Form, InputNumber, Button, DatePicker, Space } from "antd";
+import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 
 function ScheduleRange({ scheduleRange, setScheduleRange }) {
   const handleDateChange = (date) => {
     setScheduleRange({ ...scheduleRange, selectedDate: date });
   };
 
-  const handleNumOfWksChange = (event) => {
-    const value = event.target.value;
+  const handleNumOfWksChange = (value) => {
     setScheduleRange({ ...scheduleRange, numOfWks: value });
   };
 
@@ -35,40 +30,52 @@ function ScheduleRange({ scheduleRange, setScheduleRange }) {
 
   return (
     <>
-      <Grid item container direction={"column"} spacing={3}>
-        <Grid item container direction={"row"} spacing={1}>
-          <Grid item>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker
-                format="MM/DD/YYYY"
-                value={dayjs(scheduleRange.selectedDate)}
-                onChange={handleDateChange}
-                slotProps={{ textField: { size: "small" } }}
-              />
-            </LocalizationProvider>
-          </Grid>
+      <Form layout="inline">
+        <Form.Item label="day">
+          <DatePicker
+            format="MM/DD/YYYY"
+            value={dayjs(scheduleRange.selectedDate)}
+            onChange={handleDateChange}
+            allowClear={false}
+          />
+        </Form.Item>
 
-          <Grid item>
-            <TextField
+        <Form.Item label="num (weeks)">
+          <InputNumber
+            value={scheduleRange.numOfWks}
+            onChange={(value) => handleNumOfWksChange(value)}
+            min={1}
+            max={11}
+          />
+        </Form.Item>
+
+        {/* <TextField
               label="Number of Weeks"
               type="number"
               value={scheduleRange.numOfWks}
               onChange={handleNumOfWksChange}
               size="small"
               inputProps={{ min: 1, max: 11 }}
-            />
-          </Grid>
-          <Grid item>
-            <IconButton color="primary" onClick={handleGoBack}>
-              <ArrowBackIosNewIcon />
-            </IconButton>
+            /> */}
 
-            <IconButton color="primary" onClick={handleAdvance}>
-              <ArrowForwardIosIcon />
-            </IconButton>
-          </Grid>
-        </Grid>
-      </Grid>
+        <Space gap="small">
+          <Button
+            onClick={handleGoBack}
+            icon={<LeftOutlined />}
+            shape="circle"
+            type="primary"
+            size="small"
+          />
+
+          <Button
+            onClick={handleAdvance}
+            icon={<RightOutlined />}
+            shape="circle"
+            type="primary"
+            size="small"
+          />
+        </Space>
+      </Form>
     </>
   );
 }
