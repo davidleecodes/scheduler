@@ -1,17 +1,18 @@
 import React, { useState } from "react";
-import {
-  TextField,
-  Grid,
-  IconButton,
-  Box,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemText,
-  Button,
-} from "@mui/material";
 
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import { UserOutlined, PlusOutlined } from "@ant-design/icons";
+import {
+  Layout,
+  Menu,
+  theme,
+  Button,
+  Flex,
+  Input,
+  Empty,
+  Popconfirm,
+} from "antd";
+
+const { Header, Content, Footer, Sider } = Layout;
 
 const ListNavContiner = ({
   collection,
@@ -30,75 +31,91 @@ const ListNavContiner = ({
     onAddItem(data);
     setNewItemName("");
   };
+  const {
+    token: { colorBgContainer, borderRadiusSM },
+  } = theme.useToken();
 
+  const items = Object.entries(collection).map(([id, data]) => ({
+    key: id,
+    icon: React.createElement(UserOutlined),
+    label: data.name,
+  }));
+  const [collapsed, setCollapsed] = useState(false);
+  const confirm = (e) => {
+    onDeleteItem(selectedId);
+  };
   return (
     <>
-      <Grid container>
-        <Grid item>
-          <Box
-            sx={{
-              width: "100%",
-              minWidth: 200,
-              maxWidth: 400,
-              bgcolor: "InfoBackground",
+      <Layout>
+        <Sider
+          onCollapse={(value) => setCollapsed(value)}
+          breakpoint="lg"
+          collapsedWidth="0"
+          theme="light"
+        >
+          <Menu
+            theme="light"
+            mode="inline"
+            defaultSelectedKeys={["1"]}
+            items={items}
+            selectedKeys={[selectedId]}
+            onClick={({ key }) => setSelectedId(key)}
+          />
+          <Flex
+            align="center"
+            gap="small"
+            style={{
+              margin: 4,
+              position: collapsed ? "relative" : "absolute",
+              bottom: 0,
             }}
           >
-            <Grid
-              item
-              container
-              spacing={1}
-              alignItems="center"
-              style={{ flexWrap: "nowrap" }}
+            <Input
+              placeholder={addLabel}
+              value={newItemName}
+              onChange={(e) => setNewItemName(e.target.value)}
+            />
+            <Button
+              onClick={handleAddToCollection}
+              disabled={!newItemName}
+              icon={<PlusOutlined />}
+              shape="circle"
+              type="primary"
+              size="small"
+            />
+          </Flex>
+        </Sider>
+        <Layout>
+          <Header />
+          <Content style={{ margin: "24px 16px 0" }}>
+            <div
+              style={{
+                padding: 24,
+                minHeight: 360,
+                background: colorBgContainer,
+                borderRadius: borderRadiusSM,
+              }}
             >
-              <Grid item style={{ flexGrow: 1 }}>
-                <TextField
-                  label={addLabel}
-                  value={newItemName}
-                  onChange={(e) => setNewItemName(e.target.value)}
-                  size="small"
-                  fullWidth
-                />
-              </Grid>
-              <Grid item>
-                <IconButton
-                  variant="contained"
-                  color="primary"
-                  onClick={handleAddToCollection}
-                  disabled={!newItemName}
-                >
-                  <AddCircleOutlineIcon />
-                </IconButton>
-              </Grid>
-            </Grid>
-            <List>
-              {Object.entries(collection).map(([id, item]) => (
-                <ListItem key={id}>
-                  <ListItemButton
-                    selected={selectedId === id}
-                    onClick={() => setSelectedId(id)}
-                  >
-                    <ListItemText primary={item.name} />
-                  </ListItemButton>
-                </ListItem>
-              ))}
-            </List>
-          </Box>
-        </Grid>
-        <Grid item style={{ flexGrow: 1 }}>
-          <Grid item container direction={"column"} spacing={1}>
-            {children}
-            <Grid item sx={{ mt: 1, mb: 2 }}>
-              <Button
-                variant="contained"
-                size="small"
-                onClick={() => onDeleteItem(selectedId)}
+              {!children && <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />}
+              {children}
+            </div>
+          </Content>
+          <Footer style={{ margin: "24px 16px ", padding: 0 }}>
+            <Flex justify="flex-end">
+              <Popconfirm
+                title="Delete the task"
+                description="Are you sure to delete this task?"
+                onConfirm={confirm}
+                // onCancel={cancel}
+                okText="Yes"
+                cancelText="No"
               >
-                {deleteLabel}
-              </Button>
-            </Grid>
-          </Grid>
-        </Grid>
-      </Grid>
+                <Button type="primary">{deleteLabel}</Button>
+              </Popconfirm>
+            </Flex>
+          </Footer>
+        </Layout>
+      </Layout>
     </>
   );
 };

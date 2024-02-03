@@ -1,13 +1,11 @@
 import React, { useState } from "react";
-import { TextField, IconButton, Grid } from "@mui/material";
-import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import { Typography } from "@mui/joy";
-
-import { iterateArrayId } from "./utils";
 import dayjs from "dayjs";
-import { DatePicker, Space } from "antd";
+import { DatePicker, Space, Button, Form, Input } from "antd";
+import { PlusOutlined, MinusOutlined } from "@ant-design/icons";
+
 import ListNavContiner from "./ListNavContainer";
+import { iterateArrayId } from "./utils";
+
 const { RangePicker } = DatePicker;
 
 const EmployeeList = ({
@@ -49,7 +47,9 @@ const EmployeeList = ({
 
   const handleAddEmployee = (data) => {
     const employeeIds = Object.keys(employees);
-    setEmployees({ ...employees, [iterateArrayId(employeeIds, "e")]: data });
+    const newId = iterateArrayId(employeeIds, "e");
+    setEmployees({ ...employees, [newId]: data });
+    setSelectedId(newId);
   };
 
   const handleOnChange = (employeeId, event) => {
@@ -63,7 +63,16 @@ const EmployeeList = ({
   // console.log("employee list");
 
   const employeeId = selectedId;
-
+  const formItemLayout = {
+    labelCol: {
+      xs: { span: 24 },
+      sm: { span: 4 },
+    },
+    wrapperCol: {
+      xs: { span: 24 },
+      sm: { span: 16 },
+    },
+  };
   return (
     <>
       <ListNavContiner
@@ -75,33 +84,33 @@ const EmployeeList = ({
         deleteLabel={"delete employee"}
         onDeleteItem={onDeleteEmployee}
       >
-        <Grid item style={{ flexGrow: 1 }}>
-          {error && <p style={{ color: "red" }}>{error}</p>}
-
-          <Grid item container spacing={2}>
-            <Grid item xs={12}>
-              <TextField
-                value={employees[employeeId].name}
-                onChange={(event) => handleOnChange(employeeId, event)}
-                size="small"
-                variant="standard"
-                name="name"
-                label="Name"
-              />
-            </Grid>
-            <Grid item>
-              <Typography>off days</Typography>
-              <OffDays
-                employee={employees[employeeId]}
-                employeeId={employeeId}
-                setEmployees={setEmployees}
-                setError={setError}
-                scheduleMappedCodes={scheduleMappedCodes}
-                daysOffPerWeek={daysOffPerWeek}
-              />
-            </Grid>
-          </Grid>
-        </Grid>
+        {employees[employeeId] && (
+          <>
+            {error && <p style={{ color: "red" }}>{error}</p>}
+            <Form
+              {...formItemLayout}
+              layout="horizontal"
+              style={{ maxWidth: 500 }}
+            >
+              <Form.Item label="name">
+                <Input
+                  value={employees[employeeId].name}
+                  onChange={(event) => handleOnChange(employeeId, event)}
+                />
+              </Form.Item>
+              <Form.Item label="offDays">
+                <OffDays
+                  employee={employees[employeeId]}
+                  employeeId={employeeId}
+                  setEmployees={setEmployees}
+                  setError={setError}
+                  scheduleMappedCodes={scheduleMappedCodes}
+                  daysOffPerWeek={daysOffPerWeek}
+                />
+              </Form.Item>
+            </Form>
+          </>
+        )}
       </ListNavContiner>
     </>
   );
@@ -205,39 +214,42 @@ const OffDays = ({
 
   return (
     <>
-      {offDays &&
-        Object.entries(offDays).map(([offDayId, offDay]) => (
-          <Grid key={offDayId}>
-            <RangePicker
-              value={[dayjs(offDay[0]), dayjs(offDay[1])]}
-              onChange={(dateStrings) =>
-                handleDateChange(dateStrings, offDayId)
-              }
-            />
-            <IconButton
-              color="secondary"
-              onClick={() => handleOffDayDelete(offDayId)}
-            >
-              <RemoveCircleOutlineIcon />
-            </IconButton>
-          </Grid>
-        ))}
-      <Grid>
-        <RangePicker
-          value={dates}
-          onChange={(dateStrings) => setDates(dateStrings)}
-          disabledDate={(d) => d.isBefore(dayjs().subtract("1", "days"))}
-        />
+      <Space direction="vertical">
+        {offDays &&
+          Object.entries(offDays).map(([offDayId, offDay]) => (
+            <Space size="small">
+              <RangePicker
+                value={[dayjs(offDay[0]), dayjs(offDay[1])]}
+                onChange={(dateStrings) =>
+                  handleDateChange(dateStrings, offDayId)
+                }
+              />
 
-        <IconButton
-          variant="contained"
-          color="primary"
-          onClick={handleAddOffDay}
-          disabled={!dates[0] && !dates[1]}
-        >
-          <AddCircleOutlineIcon />
-        </IconButton>
-      </Grid>
+              <Button
+                onClick={() => handleOffDayDelete(offDayId)}
+                icon={<MinusOutlined />}
+                shape="circle"
+                size="small"
+              />
+            </Space>
+          ))}
+        <Space>
+          <RangePicker
+            value={dates}
+            onChange={(dateStrings) => setDates(dateStrings)}
+            disabledDate={(d) => d.isBefore(dayjs().subtract("1", "days"))}
+          />
+
+          <Button
+            onClick={handleAddOffDay}
+            disabled={!dates[0] && !dates[1]}
+            icon={<PlusOutlined />}
+            shape="circle"
+            type="primary"
+            size="small"
+          />
+        </Space>
+      </Space>
     </>
   );
 };
