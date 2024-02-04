@@ -43,20 +43,11 @@ function ScheduleRange({ scheduleRange, setScheduleRange }) {
         <Form.Item label="num (weeks)">
           <InputNumber
             value={scheduleRange.numOfWks}
-            onChange={(value) => handleNumOfWksChange(value)}
+            onChange={handleNumOfWksChange}
             min={1}
             max={11}
           />
         </Form.Item>
-
-        {/* <TextField
-              label="Number of Weeks"
-              type="number"
-              value={scheduleRange.numOfWks}
-              onChange={handleNumOfWksChange}
-              size="small"
-              inputProps={{ min: 1, max: 11 }}
-            /> */}
 
         <Space gap="small">
           <Button

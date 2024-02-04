@@ -10,6 +10,17 @@ import {
 } from "@mui/material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { groupRulesCollection } from "./GroupRulesCollection";
+import {
+  Layout,
+  Menu,
+  theme,
+  Button,
+  Flex,
+  Input,
+  Empty,
+  Popconfirm,
+} from "antd";
+import { UserOutlined, PlusOutlined } from "@ant-design/icons";
 
 const AddEmployeeField = ({ employees, handleAddEmployee, groupId, group }) => {
   const [selectedEmployee, setSelectedEmployee] = useState("");
@@ -66,7 +77,15 @@ const AddEmployeeField = ({ employees, handleAddEmployee, groupId, group }) => {
             </Select>
           </FormControl>
         </Grid>
-        <Grid item>
+        <Button
+          onClick={handleAdd}
+          disabled={!selectedEmployee}
+          icon={<PlusOutlined />}
+          shape="circle"
+          type="primary"
+          size="small"
+        />
+        {/* <Grid item>
           <IconButton
             variant="contained"
             color="primary"
@@ -75,7 +94,7 @@ const AddEmployeeField = ({ employees, handleAddEmployee, groupId, group }) => {
           >
             <AddCircleOutlineIcon />
           </IconButton>
-        </Grid>
+        </Grid> */}
       </Grid>
     </>
   );
@@ -126,7 +145,15 @@ const AddRuleField = ({ handleAddRule, groupId, group }) => {
             </Select>
           </FormControl>
         </Grid>
-        <Grid item>
+        <Button
+          onClick={handleAdd}
+          disabled={!selectedRule}
+          icon={<PlusOutlined />}
+          shape="circle"
+          type="primary"
+          size="small"
+        />
+        {/* <Grid item>
           <IconButton
             variant="contained"
             color="primary"
@@ -135,7 +162,7 @@ const AddRuleField = ({ handleAddRule, groupId, group }) => {
           >
             <AddCircleOutlineIcon />
           </IconButton>
-        </Grid>
+        </Grid> */}
       </Grid>
     </>
   );

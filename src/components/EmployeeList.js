@@ -217,7 +217,7 @@ const OffDays = ({
       <Space direction="vertical">
         {offDays &&
           Object.entries(offDays).map(([offDayId, offDay]) => (
-            <Space size="small">
+            <Space size="small" key={offDayId}>
               <RangePicker
                 value={[dayjs(offDay[0]), dayjs(offDay[1])]}
                 onChange={(dateStrings) =>

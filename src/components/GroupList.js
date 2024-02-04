@@ -1,19 +1,14 @@
 import React, { useState } from "react";
-import { Typography } from "@mui/joy";
-import { Sheet as Paper } from "@mui/joy";
-import {
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  AccordionGroup,
-} from "@mui/joy";
-import { TextField, Grid, IconButton, Button } from "@mui/material";
-import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
+
 import ListNavContiner from "./ListNavContainer";
 
 import { groupRulesCollection } from "./GroupRulesCollection";
 import { AddEmployeeField, AddRuleField } from "./GroupListHelper";
 import { iterateArrayId } from "./utils";
+import { geekblue } from "@ant-design/colors";
+import { Button, Form, Input, Flex, Collapse, theme, Typography } from "antd";
+import { MinusOutlined } from "@ant-design/icons";
+const { Title, Paragraph, Text } = Typography;
 
 const GroupList = ({ groups, employees, setGroups, setEmployees }) => {
   const [selectedId, setSelectedId] = useState(Object.keys(groups)[0]);
@@ -152,11 +147,23 @@ const GroupList = ({ groups, employees, setGroups, setEmployees }) => {
     updatedGroups[groupId].employees = updatedEmployees;
     setGroups(updatedGroups);
   };
+  const formItemLayout = {
+    labelCol: {
+      xs: { span: 24 },
+      sm: { span: 4 },
+    },
+    wrapperCol: {
+      xs: { span: 24 },
+      sm: { span: 16 },
+    },
+  };
 
   // console.log("group list");
   const groupId = selectedId;
   const group = groups[groupId];
-
+  const {
+    token: { colorBgElevated, borderRadiusSM, colorPrimary },
+  } = theme.useToken();
   return (
     <>
       <ListNavContiner
@@ -168,152 +175,174 @@ const GroupList = ({ groups, employees, setGroups, setEmployees }) => {
         deleteLabel={"delete group"}
         onDeleteItem={handleRemoveGroup}
       >
-        <Grid item style={{ flexGrow: 1 }}>
-          <Grid item container direction={"column"} spacing={1}>
-            <Grid item key={groupId}>
-              <TextField
-                name="name"
-                value={group.name}
-                onChange={(event) => handleOnChange(groupId, event)}
-                variant="standard"
-                label="Group Name"
+        {group && (
+          <>
+            <Flex vertical gap="small">
+              <Form
+                {...formItemLayout}
+                layout="horizontal"
+                style={{ maxWidth: 500 }}
+              >
+                <Form.Item label="name">
+                  <Input
+                    value={group.name}
+                    onChange={(event) => handleOnChange(groupId, event)}
+                  />
+                </Form.Item>
+              </Form>
+
+              <Collapse
+                ghost
+                items={[
+                  {
+                    key: "1",
+                    label: "rules",
+                    children: (
+                      <>
+                        <Flex gap="small" vertical>
+                          {group.groupRules &&
+                            Object.keys(group.groupRules).map((ruleId) => {
+                              const Rule =
+                                groupRulesCollection[ruleId].group.component;
+                              return (
+                                <Flex gap="small" key={ruleId} align="center">
+                                  <Flex
+                                    gap="small"
+                                    vertical
+                                    style={{
+                                      background: geekblue[0],
+                                      borderRadius: borderRadiusSM,
+                                      padding: "2px 8px",
+                                      flexGrow: 1,
+                                    }}
+                                  >
+                                    <Rule
+                                      ruleData={group.groupRules[ruleId]?.data}
+                                      setGroups={setGroups}
+                                      groupId={groupId}
+                                      groups={groups}
+                                    />
+                                  </Flex>
+
+                                  <Button
+                                    onClick={() =>
+                                      handleRuleDelete("interval", groupId)
+                                    }
+                                    icon={<MinusOutlined />}
+                                    shape="circle"
+                                    size="small"
+                                  />
+                                </Flex>
+                              );
+                            })}
+                          <AddRuleField
+                            group={group}
+                            handleAddRule={handleAddRule}
+                            groupId={groupId}
+                          />
+                        </Flex>
+                      </>
+                    ),
+                  },
+                ]}
               />
 
-              <AccordionGroup size={"sm"}>
-                <Accordion defaultExpanded={true}>
-                  <AccordionSummary>
-                    <Typography variant="h6"> Rules:</Typography>
-                  </AccordionSummary>
-                  <AccordionDetails>
-                    <Grid item container spacing={1}>
-                      {group.groupRules &&
-                        Object.keys(group.groupRules).map((ruleId) => {
-                          const Rule =
-                            groupRulesCollection[ruleId].group.component;
-                          return (
-                            <Grid
-                              item
-                              container
-                              key={ruleId}
-                              style={{ flexWrap: "nowrap" }}
-                              spacing={1}
-                            >
-                              <Grid item style={{ flexGrow: 1 }}>
-                                <Paper sx={{ mb: 1, p: 1 }}>
-                                  <Rule
-                                    ruleData={group.groupRules[ruleId]?.data}
-                                    setGroups={setGroups}
-                                    groupId={groupId}
-                                    groups={groups}
-                                  />
-                                </Paper>
-                              </Grid>
-                              <Grid item>
-                                <IconButton
-                                  color="secondary"
-                                  onClick={() =>
-                                    handleRuleDelete("interval", groupId)
-                                  }
-                                >
-                                  <RemoveCircleOutlineIcon />
-                                </IconButton>
-                              </Grid>
-                            </Grid>
-                          );
-                        })}
-                      <AddRuleField
-                        group={group}
-                        handleAddRule={handleAddRule}
-                        groupId={groupId}
-                      />
-                    </Grid>
-                  </AccordionDetails>
-                </Accordion>
-
-                {/*  */}
-                <Accordion defaultExpanded={true}>
-                  <AccordionSummary>
-                    <Typography variant="h6"> Employees:</Typography>
-                  </AccordionSummary>
-                  <AccordionDetails>
-                    <Grid item container spacing={1}>
-                      {group.employees &&
-                        group.employees.map((employeeId) => {
-                          if (employees[employeeId]) {
-                            return (
-                              <Grid
-                                item
-                                key={employeeId}
-                                container
-                                style={{ flexWrap: "nowrap" }}
-                                spacing={1}
-                              >
-                                <Grid item style={{ flexGrow: 1 }}>
-                                  <Paper sx={{ mb: 1, p: 1 }}>
-                                    <Typography variant="subtitle1">
-                                      {employees[employeeId].name}
-                                    </Typography>
-                                    {employees[employeeId].groupRules &&
-                                      Object.keys(
-                                        employees[employeeId].groupRules
-                                      ).map((ruleId) => {
-                                        const Rule =
-                                          groupRulesCollection[ruleId].employee
-                                            .component;
-                                        return (
-                                          <Rule
-                                            key={ruleId}
-                                            ruleData={
-                                              employees[employeeId].groupRules[
-                                                ruleId
-                                              ].data
-                                            }
-                                            employees={employees}
-                                            setEmployees={setEmployees}
-                                            employeeId={employeeId}
-                                            groupRuleData={
-                                              group.groupRules &&
-                                              group.groupRules[ruleId] &&
-                                              group.groupRules[ruleId].data
-                                            }
-                                          />
-                                        );
-                                      })}
-                                  </Paper>
-                                </Grid>
-                                <Grid item>
-                                  <IconButton
-                                    onClick={(event) =>
-                                      handleDeleteEmployee(
-                                        employeeId,
-                                        groupId,
-                                        event
-                                      )
-                                    }
-                                    color="secondary"
+              <Collapse
+                ghost
+                items={[
+                  {
+                    key: "1",
+                    label: "employees",
+                    children: (
+                      <>
+                        <Flex gap="small" vertical>
+                          {group.employees &&
+                            group.employees.map((employeeId) => {
+                              if (employees[employeeId]) {
+                                return (
+                                  <Flex
+                                    gap="small"
+                                    align="center"
+                                    key={employeeId}
                                   >
-                                    <RemoveCircleOutlineIcon />
-                                  </IconButton>
-                                </Grid>
-                              </Grid>
-                            );
-                          }
-                          return <></>;
-                        })}
+                                    <Flex
+                                      gap="small"
+                                      vertical
+                                      style={{
+                                        background: geekblue[0],
+                                        borderRadius: borderRadiusSM,
+                                        padding: "2px 8px",
+                                        flexGrow: 1,
+                                      }}
+                                    >
+                                      <Text strong>
+                                        {employees[employeeId].name}
+                                      </Text>
+                                      <Form
+                                        // {...formItemLayout}
+                                        layout="horizontal"
+                                        style={{ maxWidth: 500 }}
+                                      >
+                                        {employees[employeeId].groupRules &&
+                                          Object.keys(
+                                            employees[employeeId].groupRules
+                                          ).map((ruleId) => {
+                                            const Rule =
+                                              groupRulesCollection[ruleId]
+                                                .employee.component;
+                                            return (
+                                              <Rule
+                                                key={ruleId}
+                                                ruleData={
+                                                  employees[employeeId]
+                                                    .groupRules[ruleId].data
+                                                }
+                                                employees={employees}
+                                                setEmployees={setEmployees}
+                                                employeeId={employeeId}
+                                                groupRuleData={
+                                                  group.groupRules &&
+                                                  group.groupRules[ruleId] &&
+                                                  group.groupRules[ruleId].data
+                                                }
+                                              />
+                                            );
+                                          })}
+                                      </Form>
+                                    </Flex>
 
-                      <AddEmployeeField
-                        employees={employees}
-                        handleAddEmployee={handleAddEmployee}
-                        groupId={groupId}
-                        group={group}
-                      />
-                    </Grid>
-                  </AccordionDetails>
-                </Accordion>
-              </AccordionGroup>
-            </Grid>
-          </Grid>
-        </Grid>
+                                    <Button
+                                      onClick={(event) =>
+                                        handleDeleteEmployee(
+                                          employeeId,
+                                          groupId,
+                                          event
+                                        )
+                                      }
+                                      icon={<MinusOutlined />}
+                                      shape="circle"
+                                      size="small"
+                                    />
+                                  </Flex>
+                                );
+                              }
+                            })}
+
+                          <AddEmployeeField
+                            employees={employees}
+                            handleAddEmployee={handleAddEmployee}
+                            groupId={groupId}
+                            group={group}
+                          />
+                        </Flex>
+                      </>
+                    ),
+                  },
+                ]}
+              />
+            </Flex>
+          </>
+        )}
       </ListNavContiner>
     </>
   );

@@ -1,85 +1,68 @@
 import React, { useState } from "react";
-import {
-  Checkbox,
-  FormControlLabel,
-  Grid,
-  InputLabel,
-  TextField,
-} from "@mui/material";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+
 import dayjs from "dayjs";
 import { daysShort } from "./utils";
-
-// const localeData = require("dayjs/plugin/localeData");
-// dayjs.extend(localeData);
-
-// const daysShort = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-// const weekdaysShort = daysShort.map((day) => day.toLowerCase());
-
+import {
+  Form,
+  InputNumber,
+  Button,
+  DatePicker,
+  Space,
+  Checkbox,
+  Typography,
+} from "antd";
+const { Title, Paragraph, Text } = Typography;
 const IntervalGroup = ({ ruleData, setGroups, groupId, groups }) => {
   const [selectedDays, setSelectedDays] = useState(ruleData?.days || []);
   const [everyNumberOfWeeks, setEveryNumberOfWeeks] = useState(
     ruleData?.everyNumberOfWeeks || ""
   );
 
-  const handleDayChange = (day) => {
-    const newSelectedDays = selectedDays.includes(day)
-      ? selectedDays.filter((d) => d !== day)
-      : [...selectedDays, day];
-    setSelectedDays(newSelectedDays);
-
+  const handleDayChange = (checkedDays) => {
+    setSelectedDays(checkedDays);
     const updatedGroups = { ...groups };
-    updatedGroups[groupId].groupRules.interval.data.days = newSelectedDays;
+    updatedGroups[groupId].groupRules.interval.data.days = checkedDays;
     setGroups(updatedGroups);
   };
 
-  const handleEveryNumberOfWeeksChange = (event) => {
-    setEveryNumberOfWeeks(event.target.value);
+  const handleEveryNumberOfWeeksChange = (value) => {
+    setEveryNumberOfWeeks(value);
     const updatedGroups = { ...groups };
-    updatedGroups[groupId].groupRules.interval.data.everyNumberOfWeeks =
-      event.target.value;
+    updatedGroups[groupId].groupRules.interval.data.everyNumberOfWeeks = value;
 
     setGroups(updatedGroups);
   };
-
+  const formItemLayout = {
+    labelCol: {
+      xs: { span: 24 },
+      sm: { span: 4 },
+    },
+    wrapperCol: {
+      xs: { span: 24 },
+      sm: { span: 16 },
+    },
+  };
   return (
-    <Grid container spacing={1}>
-      <Grid item style={{ width: 120 }}>
-        <InputLabel>Group Interval</InputLabel>
-      </Grid>
-      <Grid item>
-        <Grid container alignItems="flex-end" spacing={2}>
-          <Grid item sx={{ mr: 5 }} style={{ minWidth: "120px" }}>
-            <TextField
-              label="Num of Wks"
-              type="number"
-              value={everyNumberOfWeeks}
-              onChange={handleEveryNumberOfWeeksChange}
-              inputProps={{ min: 2, max: 10 }}
-              size="small"
-              variant="standard"
-              fullWidth
-            />
-          </Grid>
-          {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day) => (
-            <Grid item key={day}>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={selectedDays.includes(day)}
-                    onChange={() => handleDayChange(day)}
-                    size="small"
-                  />
-                }
-                label={day}
-              />
-            </Grid>
-          ))}
-        </Grid>
-      </Grid>
-    </Grid>
+    <>
+      <Text strong>group interval</Text>
+      <Form layout="horizontal" style={{ maxWidth: 500 }}>
+        <Form.Item label="num of weeks">
+          <InputNumber
+            value={everyNumberOfWeeks}
+            onChange={handleEveryNumberOfWeeksChange}
+            min={2}
+            max={10}
+          />
+        </Form.Item>
+        {/* <Form.Item label="days"> */}
+        <Checkbox.Group
+          options={daysShort}
+          value={selectedDays}
+          onChange={handleDayChange}
+        />
+        {/* </Form.Item> */}
+      </Form>
+    </>
   );
 };
 
@@ -98,7 +81,6 @@ const IntervalEmployee = ({
     groupRuleData &&
     groupRuleData.days &&
     groupRuleData.days.map((day) => daysShort.indexOf(day));
-  // groupRuleData.days.map((day) => weekdaysShort.indexOf(day.toLowerCase()));
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
@@ -112,22 +94,18 @@ const IntervalEmployee = ({
       : false;
   }
   return (
-    <Grid container spacing={1}>
-      <Grid item style={{ width: 120 }}>
-        <InputLabel>Group Interval</InputLabel>
-      </Grid>
-      <Grid item>
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <DatePicker
-            format="MM/DD/YYYY"
-            value={selectedDate}
-            onChange={handleDateChange}
-            // shouldDisableDate={disableDay}
-            slotProps={{ textField: { size: "small" } }}
-          />
-        </LocalizationProvider>
-      </Grid>
-    </Grid>
+    <>
+      {/* <Form layout="inline"> */}
+      <Form.Item label="group interval">
+        <DatePicker
+          format="MM/DD/YYYY"
+          value={selectedDate}
+          onChange={handleDateChange}
+          allowClear={false}
+        />
+      </Form.Item>
+      {/* </Form> */}
+    </>
   );
 };
 
@@ -135,10 +113,7 @@ const intervalGroupOnChange = (startDate, endDate, employeeData, groupData) => {
   const { days, everyNumberOfWeeks } = groupData;
   const { startDay } = employeeData;
 
-  const selectedDaysIndex = days.map((day) =>
-    // weekdaysShort.indexOf(day.toLowerCase())
-    daysShort.indexOf(day)
-  );
+  const selectedDaysIndex = days.map((day) => daysShort.indexOf(day));
   let startDateMod = startDate.subtract(1, "day");
   const endDateMod = dayjs(endDate).add(1, "day");
 
