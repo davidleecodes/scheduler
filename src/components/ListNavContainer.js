@@ -23,6 +23,7 @@ const ListNavContiner = ({
   setSelectedId,
   deleteLabel,
   onDeleteItem,
+  isSimple,
 }) => {
   const [newItemName, setNewItemName] = useState("");
 
@@ -61,29 +62,31 @@ const ListNavContiner = ({
             selectedKeys={[selectedId]}
             onClick={({ key }) => setSelectedId(key)}
           />
-          <Flex
-            align="center"
-            gap="small"
-            style={{
-              margin: 4,
-              position: collapsed ? "relative" : "absolute",
-              bottom: 0,
-            }}
-          >
-            <Input
-              placeholder={addLabel}
-              value={newItemName}
-              onChange={(e) => setNewItemName(e.target.value)}
-            />
-            <Button
-              onClick={handleAddToCollection}
-              disabled={!newItemName}
-              icon={<PlusOutlined />}
-              shape="circle"
-              type="primary"
-              size="small"
-            />
-          </Flex>
+          {!isSimple && (
+            <Flex
+              align="center"
+              gap="small"
+              style={{
+                margin: 4,
+                position: collapsed ? "relative" : "absolute",
+                bottom: 0,
+              }}
+            >
+              <Input
+                placeholder={addLabel}
+                value={newItemName}
+                onChange={(e) => setNewItemName(e.target.value)}
+              />
+              <Button
+                onClick={handleAddToCollection}
+                disabled={!newItemName}
+                icon={<PlusOutlined />}
+                shape="circle"
+                type="primary"
+                size="small"
+              />
+            </Flex>
+          )}
         </Sider>
         <Layout>
           <Header />
@@ -101,18 +104,20 @@ const ListNavContiner = ({
             </div>
           </Content>
           <Footer style={{ margin: "12px 8px ", padding: 0 }}>
-            <Flex justify="flex-end">
-              <Popconfirm
-                title="Delete the task"
-                description="Are you sure to delete this task?"
-                onConfirm={confirm}
-                // onCancel={cancel}
-                okText="Yes"
-                cancelText="No"
-              >
-                <Button type="primary">{deleteLabel}</Button>
-              </Popconfirm>
-            </Flex>
+            {!isSimple && (
+              <Flex justify="flex-end">
+                <Popconfirm
+                  title="Delete the task"
+                  description="Are you sure to delete this task?"
+                  onConfirm={confirm}
+                  // onCancel={cancel}
+                  okText="Yes"
+                  cancelText="No"
+                >
+                  <Button type="primary">{deleteLabel}</Button>
+                </Popconfirm>
+              </Flex>
+            )}
           </Footer>
         </Layout>
       </Layout>

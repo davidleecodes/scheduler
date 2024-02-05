@@ -187,6 +187,7 @@ const GroupList = ({ groups, employees, setGroups, setEmployees }) => {
                   <Input
                     value={group.name}
                     onChange={(event) => handleOnChange(groupId, event)}
+                    name="name"
                   />
                 </Form.Item>
               </Form>
@@ -282,6 +283,7 @@ const GroupList = ({ groups, employees, setGroups, setEmployees }) => {
                                         // {...formItemLayout}
                                         layout="horizontal"
                                         style={{ maxWidth: 500 }}
+                                        // size="small"
                                       >
                                         {employees[employeeId].groupRules &&
                                           Object.keys(

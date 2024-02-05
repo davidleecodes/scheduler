@@ -91,11 +91,13 @@ const EmployeeList = ({
               {...formItemLayout}
               layout="horizontal"
               style={{ maxWidth: 500 }}
+              // size="small"
             >
               <Form.Item label="name">
                 <Input
                   value={employees[employeeId].name}
                   onChange={(event) => handleOnChange(employeeId, event)}
+                  name="name"
                 />
               </Form.Item>
               <Form.Item label="offDays">

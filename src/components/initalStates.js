@@ -70,17 +70,17 @@ const codeInt = {
     Sun3: { name: "b30", shift: "evening" },
   },
   Mon: {
-    Mon1: { name: "a10", shift: "morning" },
+    Mon1: { name: "d10", shift: "morning" },
     Mon2: { name: "b10", shift: "morning" },
     Mon3: { name: "b30", shift: "evening" },
   },
   Tue: {
-    Tue1: { name: "a10", shift: "morning" },
+    Tue1: { name: "c10", shift: "morning" },
     Tue2: { name: "b10", shift: "morning" },
     Tue3: { name: "b30", shift: "evening" },
   },
   Wed: {
-    Wed1: { name: "a10", shift: "morning" },
+    Wed1: { name: "e10", shift: "morning" },
     Wed2: { name: "b10", shift: "morning" },
     Wed3: { name: "b30", shift: "evening" },
   },
