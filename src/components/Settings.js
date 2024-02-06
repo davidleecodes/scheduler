@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Collapse, Flex } from "antd";
+import { Collapse, Flex, Tabs } from "antd";
 
 import EmployeeList from "./EmployeeList";
 import GroupList from "./GroupList";
@@ -87,19 +87,21 @@ const Settings = () => {
   return (
     <>
       <Flex gap="middle" vertical>
-        <ImportExport
-          employees={employees}
-          groups={groups}
-          scheduleRange={scheduleRange}
-          codes={codes}
-          setEmployees={setEmployees}
-          setGroups={setGroups}
-          setScheduleRange={setScheduleRange}
-          setCodes={setCodes}
-        />
+        <div style={{ maxWidth: 1200, margin: "auto", width: "100%" }}>
+          <ImportExport
+            employees={employees}
+            groups={groups}
+            scheduleRange={scheduleRange}
+            codes={codes}
+            setEmployees={setEmployees}
+            setGroups={setGroups}
+            setScheduleRange={setScheduleRange}
+            setCodes={setCodes}
+          />
 
-        <Collapse items={items} ghost />
-
+          {/* <Collapse items={items} ghost /> */}
+          <Tabs defaultActiveKey="1" items={items} />
+        </div>
         <TableSection
           scheduleRange={scheduleRange}
           setScheduleRange={setScheduleRange}

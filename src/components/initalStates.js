@@ -31,6 +31,9 @@ const employeesInit = {
     name: "dawn",
     group: "g3",
   },
+  e5: {
+    name: "ellen",
+  },
 };
 
 const groupsInit = {

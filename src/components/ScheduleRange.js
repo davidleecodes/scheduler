@@ -30,25 +30,25 @@ function ScheduleRange({ scheduleRange, setScheduleRange }) {
 
   return (
     <>
-      <Form layout="inline">
-        <Form.Item label="day">
-          <DatePicker
-            format="MM/DD/YYYY"
-            value={dayjs(scheduleRange.selectedDate)}
-            onChange={handleDateChange}
-            allowClear={false}
-          />
-        </Form.Item>
+      <Form.Item label="day">
+        <DatePicker
+          format="MM/DD/YYYY"
+          value={dayjs(scheduleRange.selectedDate)}
+          onChange={handleDateChange}
+          allowClear={false}
+        />
+      </Form.Item>
 
-        <Form.Item label="num (weeks)">
-          <InputNumber
-            value={scheduleRange.numOfWks}
-            onChange={handleNumOfWksChange}
-            min={1}
-            max={11}
-          />
-        </Form.Item>
+      <Form.Item label="num (weeks)">
+        <InputNumber
+          value={scheduleRange.numOfWks}
+          onChange={handleNumOfWksChange}
+          min={1}
+          max={11}
+        />
+      </Form.Item>
 
+      <Form.Item>
         <Space gap="small">
           <Button
             onClick={handleGoBack}
@@ -66,7 +66,7 @@ function ScheduleRange({ scheduleRange, setScheduleRange }) {
             size="small"
           />
         </Space>
-      </Form>
+      </Form.Item>
     </>
   );
 }

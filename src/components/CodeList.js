@@ -129,7 +129,7 @@ const CodeList = ({
             <Text strong>{daysShortLong[day]}</Text>
 
             {Object.entries(codesN[day]).map(([codeId, code]) => (
-              <Flex gap="small">
+              <Flex gap="small" key={codeId}>
                 <Flex
                   gap="small"
                   style={{

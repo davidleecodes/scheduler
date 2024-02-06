@@ -1,36 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 
-import {
-  Grid,
-  MenuItem,
-  IconButton,
-  Select,
-  FormControl,
-  InputLabel,
-} from "@mui/material";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { groupRulesCollection } from "./GroupRulesCollection";
-import {
-  Layout,
-  Menu,
-  theme,
-  Button,
-  Flex,
-  Input,
-  Empty,
-  Popconfirm,
-} from "antd";
-import { UserOutlined, PlusOutlined } from "@ant-design/icons";
+import { Select } from "antd";
 
 const AddEmployeeField = ({ employees, handleAddEmployee, groupId, group }) => {
-  const [selectedEmployee, setSelectedEmployee] = useState("");
-
-  const handleAdd = () => {
-    if (selectedEmployee) {
-      handleAddEmployee(groupId, selectedEmployee);
-      setSelectedEmployee("");
-    }
-  };
   const filterEmployeesEnteries = () => {
     if (group?.employees) {
       const array = Object.entries(employees).filter(
@@ -41,129 +14,50 @@ const AddEmployeeField = ({ employees, handleAddEmployee, groupId, group }) => {
   };
 
   const filterEmployees = filterEmployeesEnteries();
-  // const filterEmployees = employees;
+  const options = Object.keys(filterEmployees).map((employeeId) => ({
+    value: employeeId,
+    label: (
+      <div style={employees[employeeId].group ? { color: "lightgrey" } : {}}>
+        {employees[employeeId].name}
+      </div>
+    ),
+  }));
 
   return (
     <>
-      <Grid
-        item
-        container
-        spacing={1}
-        alignItems="center"
-        style={{ flexWrap: "nowrap" }}
-      >
-        <Grid item style={{ flexGrow: 1 }}>
-          <FormControl fullWidth size="small">
-            <InputLabel id="employee-add-label">add employee</InputLabel>
-            <Select
-              labelId="employee-add-label"
-              fullWidth
-              value={selectedEmployee}
-              label="add employee"
-              onChange={(e) => setSelectedEmployee(e.target.value)}
-            >
-              <MenuItem value="">None</MenuItem>
-              {Object.keys(filterEmployees).map((employeeId) => (
-                <MenuItem
-                  key={employeeId}
-                  value={employeeId}
-                  style={
-                    employees[employeeId].group ? { color: "lightgrey" } : {}
-                  }
-                >
-                  {employees[employeeId].name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </Grid>
-        <Button
-          onClick={handleAdd}
-          disabled={!selectedEmployee}
-          icon={<PlusOutlined />}
-          shape="circle"
-          type="primary"
-          size="small"
-        />
-        {/* <Grid item>
-          <IconButton
-            variant="contained"
-            color="primary"
-            onClick={handleAdd}
-            disabled={!selectedEmployee}
-          >
-            <AddCircleOutlineIcon />
-          </IconButton>
-        </Grid> */}
-      </Grid>
+      <Select
+        value={null}
+        onSelect={(value) => {
+          handleAddEmployee(groupId, value);
+        }}
+        options={options}
+        placeholder="add employee"
+      />
     </>
   );
 };
 
 const AddRuleField = ({ handleAddRule, groupId, group }) => {
-  const [selectedRule, setSelectedRule] = useState("");
-
-  const handleAdd = () => {
-    if (selectedRule) {
-      handleAddRule(groupId, selectedRule);
-      setSelectedRule("");
-    }
-  };
   const filteredgroupRulesCollection = group.groupRules
     ? Object.keys(groupRulesCollection).filter(
         (ruleId) => !Object.keys(group.groupRules).includes(ruleId)
       )
     : Object.keys(groupRulesCollection);
 
+  const options = filteredgroupRulesCollection.map((ruleId) => ({
+    value: ruleId,
+    label: ruleId,
+  }));
   return (
     <>
-      <Grid
-        item
-        container
-        spacing={1}
-        alignItems="center"
-        style={{ flexWrap: "nowrap" }}
-      >
-        <Grid item style={{ flexGrow: 1 }}>
-          <FormControl fullWidth size="small">
-            <InputLabel id="rule-add-label">add rule</InputLabel>
-
-            <Select
-              labelId="rule-add-label"
-              label="add rule"
-              fullWidth
-              value={selectedRule}
-              onChange={(e) => setSelectedRule(e.target.value)}
-            >
-              <MenuItem value="">None</MenuItem>
-
-              {filteredgroupRulesCollection.map((ruleId) => (
-                <MenuItem key={ruleId} value={ruleId}>
-                  {ruleId}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </Grid>
-        <Button
-          onClick={handleAdd}
-          disabled={!selectedRule}
-          icon={<PlusOutlined />}
-          shape="circle"
-          type="primary"
-          size="small"
-        />
-        {/* <Grid item>
-          <IconButton
-            variant="contained"
-            color="primary"
-            onClick={handleAdd}
-            disabled={!selectedRule}
-          >
-            <AddCircleOutlineIcon />
-          </IconButton>
-        </Grid> */}
-      </Grid>
+      <Select
+        value={null}
+        onSelect={(value) => {
+          handleAddRule(groupId, value);
+        }}
+        options={options}
+        placeholder="add rule"
+      />
     </>
   );
 };

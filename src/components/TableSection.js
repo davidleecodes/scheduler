@@ -1,7 +1,6 @@
 import React, { useMemo } from "react";
 import dayjs from "dayjs";
-import { Grid } from "@mui/material";
-
+import { Flex, Form } from "antd";
 import ScheduleTable from "./ScheduleTable";
 import ScheduleRange from "./ScheduleRange";
 import ExportCsv from "./ExportCsv";
@@ -91,44 +90,40 @@ const TableSection = ({
 
   return (
     <>
-      <Grid container justifyContent="space-between">
-        <Grid item>
-          <ScheduleRange
-            scheduleRange={scheduleRange}
-            setScheduleRange={setScheduleRange}
-          />
-          <WeekDaysOff
-            daysOffPerWeek={daysOffPerWeek}
-            setDaysOffPerWeek={setDaysOffPerWeek}
-          />
-        </Grid>
+      <Flex gap="small" vertical>
+        <div style={{ maxWidth: 1200, margin: "auto", width: "100%" }}>
+          <Flex gap="small">
+            <Form layout="inline">
+              <ScheduleRange
+                scheduleRange={scheduleRange}
+                setScheduleRange={setScheduleRange}
+              />
+              <WeekDaysOff
+                daysOffPerWeek={daysOffPerWeek}
+                setDaysOffPerWeek={setDaysOffPerWeek}
+              />
+            </Form>
+          </Flex>
 
-        <Grid item>
-          <Grid container spacing={1}>
-            <Grid item>
-              <Generator
-                employees={employees}
-                codes={codes}
-                schedule={schedule}
-                dateRange={dateRange}
-                setuserAdjustedSchedule={setuserAdjustedSchedule}
-              />
-            </Grid>
-            <Grid item>
-              <ExportCsv
-                dateRange={dateRange}
-                groups={groups}
-                employees={employees}
-                schedule={schedule}
-                userAdjustedSchedule={userAdjustedSchedule}
-                employeeCodeCount={employeeCodeCount}
-                codes={codes}
-              />
-            </Grid>
-          </Grid>
-        </Grid>
-      </Grid>
-      <Grid item sx={{ mt: 1 }}>
+          <Flex gap="small" justify="flex-end">
+            <Generator
+              employees={employees}
+              codes={codes}
+              schedule={schedule}
+              dateRange={dateRange}
+              setuserAdjustedSchedule={setuserAdjustedSchedule}
+            />
+            <ExportCsv
+              dateRange={dateRange}
+              groups={groups}
+              employees={employees}
+              schedule={schedule}
+              userAdjustedSchedule={userAdjustedSchedule}
+              employeeCodeCount={employeeCodeCount}
+              codes={codes}
+            />
+          </Flex>
+        </div>
         <ScheduleTable
           dateRange={dateRange}
           startDate={startDate}
@@ -144,7 +139,7 @@ const TableSection = ({
           daysOffPerWeek={daysOffPerWeek}
           scheduleMappedCodes={scheduleMappedCodes}
         />
-      </Grid>
+      </Flex>
     </>
   );
 };

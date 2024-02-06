@@ -3,7 +3,6 @@ import { Sheet as Paper } from "@mui/joy";
 
 import {
   Box,
-  Grid,
   TableContainer,
   TableHead,
   TableRow,
@@ -26,7 +25,6 @@ const ScheduleTable = ({
   startDate,
   endDate,
   employees,
-  scheduleRange,
   groups,
   codes,
   schedule,
@@ -34,9 +32,104 @@ const ScheduleTable = ({
   userAdjustedSchedule,
   setuserAdjustedSchedule,
   employeeCodeCount,
+  daysOffPerWeek,
+  scheduleMappedCodes,
 }) => {
+  const [userScheduleMappedCodes, setUserScheduleMappedCodes] = useState({});
+  const [error, setError] = useState();
+
+  const getCodeName = (weekDay, codeId) => {
+    const name = codes[weekDay][codeId]
+      ? codes[weekDay][codeId].name
+      : codes.Add[codeId] && codes.Add[codeId].name;
+    return name;
+  };
+
+  const handleCellChange = (event, date, employeeId) => {
+    const codeId = event.target.value;
+    const schDay = userScheduleMappedCodes[date];
+    const weekDay = dayjs(date).format("ddd");
+    setError("");
+    const newSchedule = { ...userAdjustedSchedule };
+
+    //check validation for offDays per week
+    if (getCodeName(weekDay, codeId) === "v") {
+      const dayjsDate = dayjs(date);
+      let codesObject = {};
+
+      //0= sun, sat =6
+      for (let i = 0; i <= 6; i++) {
+        const currDate = dayjsDate.day(i).format("MM-DD-YYYY");
+        const currWeekDay = dayjsDate.day(i).format("ddd");
+        const currUserSchDay = userScheduleMappedCodes[currDate];
+
+        if (currUserSchDay) {
+          Object.keys(currUserSchDay).forEach((codeId) => {
+            const name = getCodeName(currWeekDay, codeId);
+            const num = currUserSchDay[codeId].length;
+            if (num) {
+              codesObject[name] = codesObject[name]
+                ? codesObject[name] + num
+                : num;
+            }
+          });
+        }
+        const currSchDay = scheduleMappedCodes[currDate];
+        if (currSchDay) {
+          Object.keys(currSchDay).forEach((codeId) => {
+            // const name = getCodeName(currWeekDay, codeId);
+            const num = currSchDay[codeId].length;
+            if (num) {
+              codesObject[codeId] = codesObject[codeId]
+                ? codesObject[codeId] + num
+                : num;
+            }
+          });
+        }
+      }
+      if (codesObject.v >= daysOffPerWeek) {
+        setError(
+          `max num of days off per week reached 
+        ${dayjsDate.day(0).format("MM-DD-YYYY")} - 
+        ${dayjsDate.day(6).format("MM-DD-YYYY")}`
+        );
+        return;
+      }
+    }
+    //swap codeId
+    if (schDay && schDay[codeId] && !codes.Add[codeId]) {
+      const swapEmployeeId = schDay[codeId];
+      delete newSchedule[swapEmployeeId][date];
+    }
+    newSchedule[employeeId] = newSchedule[employeeId]
+      ? { ...newSchedule[employeeId] }
+      : {};
+    newSchedule[employeeId][date] = codeId;
+    setuserAdjustedSchedule(newSchedule);
+  };
+
   useEffect(() => {
-    const newSchedule = { ...schedule };
+    let userScheduleMappedCodes = {};
+    Object.entries(userAdjustedSchedule).forEach(([employeeId, employee]) => {
+      Object.entries(employee).forEach(([date, codeId]) => {
+        if (codeId) {
+          userScheduleMappedCodes[date] = {
+            ...userScheduleMappedCodes[date],
+            [codeId]:
+              userScheduleMappedCodes[date] &&
+              userScheduleMappedCodes[date][codeId]
+                ? [...userScheduleMappedCodes[date][codeId], employeeId]
+                : [employeeId],
+          };
+        }
+      });
+    });
+    setUserScheduleMappedCodes(userScheduleMappedCodes);
+  }, [userAdjustedSchedule]);
+
+  useEffect(() => {
+    const newSchedule = {};
+    // const newSchedule = { ...schedule };
     Object.values(groups).forEach((group) => {
       group.employees &&
         group.employees.forEach((employeeId) => {
@@ -44,253 +137,264 @@ const ScheduleTable = ({
           if (employee) {
             if (employee.offDays) {
               Object.entries(employee.offDays).forEach(([offDayId, offDay]) => {
-                const offDayStart = dayjs(offDay.start);
-                const offDayEnd = dayjs(offDay.end);
+                const offDayStart = dayjs(offDay[0]);
+                const offDayEnd = dayjs(offDay[1]);
 
                 if (
-                  startDate.isSameOrBefore(offDayStart) ||
-                  endDate.isSameOrAfter(offDayEnd)
+                  offDayStart.isBetween(startDate, endDate) ||
+                  offDayEnd.isBetween(startDate, endDate)
                 ) {
-                  let currentDate = offDayStart;
-                  while (currentDate.isSameOrBefore(offDayEnd)) {
+                  let currentDate = startDate.isSameOrAfter(offDayStart)
+                    ? startDate
+                    : offDayStart;
+                  let end = endDate.isSameOrBefore(offDayEnd)
+                    ? endDate
+                    : offDayEnd;
+                  while (currentDate.isSameOrBefore(end)) {
                     const formattedDate = currentDate.format("MM-DD-YYYY");
-                    newSchedule[formattedDate] = {
-                      ...newSchedule[formattedDate],
-                      [employeeId]: "v",
+                    newSchedule[employeeId] = {
+                      ...newSchedule[employeeId],
+                      [formattedDate]: "v",
                     };
 
                     currentDate = currentDate.add(1, "day");
                   }
 
-                  setSchedule(newSchedule);
+                  // setSchedule(newSchedule);
                 }
               });
             }
 
-            // if (employee.groupRules) {
-            //   Object.entries(employee.groupRules).forEach(
-            //     ([groupRuleId, employeeGroupRule]) => {
-            //       if (group.groupRules && group.groupRules[groupRuleId]) {
-            //         const employeeGroupRuleData = employeeGroupRule.data;
-            //         const groupRule = groupRulesCollection[groupRuleId];
-            //         const groupGroupRuleData =
-            //           group.groupRules[groupRuleId].data;
+            if (employee.groupRules) {
+              Object.entries(employee.groupRules).forEach(
+                ([groupRuleId, employeeGroupRule]) => {
+                  if (group.groupRules && group.groupRules[groupRuleId]) {
+                    const employeeGroupRuleData = employeeGroupRule.data;
+                    const groupRule = groupRulesCollection[groupRuleId];
+                    const groupGroupRuleData =
+                      group.groupRules[groupRuleId].data;
 
-            //         if (Object.keys(groupGroupRuleData).length === 0) return;
-            //         const result = groupRule.group.onChange(
-            //           startDate,
-            //           endDate,
-            //           employeeGroupRuleData,
-            //           groupGroupRuleData
-            //         );
-            //         newSchedule[employeeId] = {
-            //           ...newSchedule[employeeId],
-            //           ...result,
-            //         };
+                    if (
+                      !groupGroupRuleData ||
+                      Object.keys(groupGroupRuleData).length === 0
+                    )
+                      return;
+                    const result = groupRule.group.onChange(
+                      startDate,
+                      endDate,
+                      employeeGroupRuleData,
+                      groupGroupRuleData
+                    );
+                    //Todo: ...rest is overwriting offDays
+                    newSchedule[employeeId] = {
+                      ...newSchedule[employeeId],
+                      ...result,
+                    };
 
-            //         setSchedule(newSchedule);
-            //       }
-            //     }
-            //   );
-            // } else {
-            //   newSchedule[employeeId] = {};
-            //   setSchedule(newSchedule);
-            // }
+                    // setSchedule(newSchedule);
+                  }
+                }
+              );
+            }
+
+            setSchedule(newSchedule);
           }
         });
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [employees, endDate, groups, startDate]);
 
-  // const codesMatch = (day) => {
-  //   const scheduleDayCodes = Object.values(userAdjustedSchedule[day.date]);
-  //   const dayCodes = Object.keys(codes[day.dayOfWeek]);
-  //   return dayCodes.every((c) => scheduleDayCodes.includes(c));
-  // };
+  const dayStack = (date) => {
+    const splitDate = date.split("-");
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+        }}
+        justifyContent="center"
+        alignItems="center"
+      >
+        <Box>{splitDate[0]}</Box>
+        <Box>{splitDate[1]}</Box>
+      </Box>
+    );
+  };
 
-  const groupEmployeesIdArray = Object.values(groups).flatMap(
-    (group) => group.employees
-  );
-  // console.log(groupEmployeesIdArray, schedule);
+  const codesMatch = (day) => {
+    const scheduleDayCodes = Object.keys(userScheduleMappedCodes[day.date]);
+    const dayCodes = Object.keys(codes[day.dayOfWeek]);
+    return dayCodes.every((c) => scheduleDayCodes.includes(c));
+  };
+
   // console.log("table");
   return (
     <>
-      <Grid container sx={{ flexWrap: "nowrap" }}>
-        {dateRange.map((day) => (
-          <Grid
-            container
-            direction="row"
-            key={day.date}
-            sx={{
-              display: "flex !important",
-              flexDirection: "row",
-            }}
-          >
-            <Grid
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                minWidth: 30,
-              }}
-            >
-              <ColumnData
-                day={day}
-                groupEmployeesIdArray={groupEmployeesIdArray}
-                codes={codes}
-                schedule={schedule}
-                userAdjustedSchedule={userAdjustedSchedule}
-                setuserAdjustedSchedule={setuserAdjustedSchedule}
-              />
-            </Grid>
-          </Grid>
-        ))}
-      </Grid>
+      {error && <p style={{ color: "red" }}>{error}</p>}
+      <TableContainer component={Paper}>
+        <Table size="small" stickyHeader>
+          <TableHead>
+            <TableRow>
+              {/*  */}
+              <TableCell padding="none"></TableCell>
+              <TableCell padding="none"></TableCell>
+              {/*  */}
+              {dateRange.map((day) => (
+                <TableCell
+                  key={day.date}
+                  align="center"
+                  padding="none"
+                  style={{
+                    border:
+                      userScheduleMappedCodes[day.date] && codesMatch(day)
+                        ? "lightgreen 3px solid"
+                        : "",
+                    borderRadius: 2,
+                    backgroundColor:
+                      day.dayOfWeek === "Sun" || day.dayOfWeek === "Sat"
+                        ? "#FFC0CB"
+                        : "transparent",
+                  }}
+                >
+                  {dayStack(day.date)}
+
+                  {day.dayOfWeek}
+                </TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
+          {Object.values(groups).map((group) => (
+            <TableBody key={group.name}>
+              {group.employees &&
+                group.employees.map((employeeId, idx) => {
+                  if (employees[employeeId]) {
+                    return (
+                      <TableRow key={employeeId}>
+                        {idx === 0 && (
+                          <TableCell
+                            rowSpan={group.employees.length}
+                            style={{ padding: 1 }}
+                          >
+                            <div
+                              style={{
+                                writingMode: "vertical-lr",
+                                transform: " rotate(180deg)",
+                              }}
+                            >
+                              {group.name}
+                            </div>
+                          </TableCell>
+                        )}
+
+                        <TableCell padding="none">
+                          {employees[employeeId].name}
+                        </TableCell>
+                        {dateRange.map((day) => (
+                          <React.Fragment key={day.date}>
+                            <CodeSelect
+                              employeeId={employeeId}
+                              day={day}
+                              codes={codes}
+                              dayScheduleMappedCodes={
+                                userScheduleMappedCodes[day.date]
+                              }
+                              empSchedule={schedule[employeeId]}
+                              empUserAdjustedSchedule={
+                                userAdjustedSchedule[employeeId]
+                              }
+                              handleCellChange={handleCellChange}
+                            />
+                          </React.Fragment>
+                        ))}
+                        <TableCell>
+                          <div style={{ whiteSpace: "nowrap" }}>
+                            {employeeCodeCount(employeeId)}
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  } else return <></>;
+                })}
+            </TableBody>
+          ))}
+        </Table>
+      </TableContainer>
     </>
   );
 };
 
-const ColumnData = ({
+const CodeSelect = ({
+  employeeId,
   day,
-  groupEmployeesIdArray,
   codes,
-  schedule,
-  userAdjustedSchedule,
-  setuserAdjustedSchedule,
-  // handleCellChange,
+  dayScheduleMappedCodes,
+  empSchedule,
+  empUserAdjustedSchedule,
+  handleCellChange,
 }) => {
-  const handleCellChange = useCallback(
-    (event, date, employeeId) => {
-      const codeId = event.target.value;
-      const schDay = userAdjustedSchedule[date];
-      const codeIndex = schDay ? Object.values(schDay).indexOf(codeId) : -1;
-
-      setuserAdjustedSchedule((prev) => {
-        const newSchedule = { ...prev };
-        //swap codeId
-        if (codeIndex !== -1 && !codes.Add[codeId]) {
-          const swapEmployeeId = Object.keys(schDay)[codeIndex];
-          delete newSchedule[date][swapEmployeeId];
-        }
-
-        newSchedule[date] = newSchedule[date] ? { ...newSchedule[date] } : {};
-        newSchedule[date][employeeId] = codeId;
-        // console.log(newSchedule);
-        return newSchedule;
-      });
-    },
-    [codes.Add, setuserAdjustedSchedule, userAdjustedSchedule]
-  );
-  const splitDate = day.date.split("-");
-  // console.log("column");
-
+  // const schDay = userScheduleMappedCodes[day.date];
+  const dayOfWeek = day.dayOfWeek;
+  const highLight =
+    (dayOfWeek === "Sat" || dayOfWeek === "Sun") &&
+    empSchedule &&
+    !empSchedule[day.date];
+  // console.log("cell");
   return (
-    <>
-      <div
-        style={{
-          // border:
-          //   scheduleMappedCodes[day.date] && codesMatch(day)
-          //     ? "lightgreen 3px solid"
-          //     : "",
-          // borderRadius: 2,
-          backgroundColor:
-            day.dayOfWeek === "Sun" || day.dayOfWeek === "Sat"
-              ? "#FFC0CB"
-              : "transparent",
+    <TableCell
+      key={day.date}
+      align="center"
+      style={{
+        padding: 1,
+        backgroundColor: highLight ? yellow[200] : "initial",
+      }}
+    >
+      <Select
+        labelId="demo-simple-select-standard-label"
+        value={
+          (empUserAdjustedSchedule && empUserAdjustedSchedule[day.date]) ||
+          (empSchedule && empSchedule[day.date]) ||
+          ""
+        }
+        sx={{
+          "& div.MuiSelect-select.MuiInputBase-input": {
+            padding: 0,
+          },
+          "& svg": { display: "none" },
         }}
+        onChange={(event) => handleCellChange(event, day.date, employeeId)}
+        variant="standard"
       >
-        <div>{splitDate[0]}</div>
-        <div>{splitDate[1]}</div>
-        <div>{day.dayOfWeek}</div>
-      </div>
-      {groupEmployeesIdArray.map((employeeId) => (
-        <div key={employeeId}>
-          <CodeSelect
-            employeeId={employeeId}
-            day={day}
-            codes={codes}
-            daySchedule={schedule[day.date]}
-            dayUserAdjustedSchedule={userAdjustedSchedule[day.date]}
-            handleCellChange={handleCellChange}
-          />
-        </div>
-      ))}
-    </>
+        {empSchedule && empSchedule[day.date] && (
+          <MenuItem value=" ">" "</MenuItem>
+        )}
+        {Object.entries(codes[day.dayOfWeek]).map(([codeId, code]) => (
+          <MenuItem
+            key={codeId}
+            value={codeId}
+            style={
+              dayScheduleMappedCodes && dayScheduleMappedCodes[codeId]
+                ? { color: "lightgrey" }
+                : {}
+            }
+          >
+            {code.name}
+          </MenuItem>
+        ))}
+        {Object.entries(codes.Add).map(([codeId, code]) => (
+          <MenuItem key={codeId} value={codeId}>
+            {code.name}
+          </MenuItem>
+        ))}
+        {Object.entries(codes.Internal).map(([codeId, code]) => (
+          <MenuItem key={codeId} value={codeId} style={{ display: "none" }}>
+            {code.name}
+          </MenuItem>
+        ))}
+
+        <MenuItem value="">clear</MenuItem>
+      </Select>
+    </TableCell>
   );
 };
-const CodeSelect = memo(
-  ({
-    employeeId,
-    day,
-    codes,
-    daySchedule,
-    dayUserAdjustedSchedule,
-    handleCellChange,
-  }) => {
-    const dayOfWeek = day.dayOfWeek;
-    const highLight =
-      (dayOfWeek === "Sat" || dayOfWeek === "Sun") &&
-      ((daySchedule && !daySchedule[employeeId]) || !daySchedule);
 
-    // const dayCodes = dayUserAdjustedSchedule
-    //   ? Object.values(dayUserAdjustedSchedule)
-    //   : [];
-
-    return (
-      <div
-        key={day.date}
-        align="center"
-        style={{
-          padding: 1,
-          backgroundColor: highLight ? yellow[200] : "initial",
-        }}
-      >
-        <Select
-          labelId="demo-simple-select-standard-label"
-          value={
-            (dayUserAdjustedSchedule && dayUserAdjustedSchedule[employeeId]) ||
-            (daySchedule && daySchedule[employeeId]) ||
-            ""
-          }
-          sx={{
-            "& div.MuiSelect-select.MuiInputBase-input": {
-              padding: 0,
-            },
-            "& svg": { display: "none" },
-          }}
-          onChange={(event) => handleCellChange(event, day.date, employeeId)}
-          variant="standard"
-        >
-          {daySchedule && daySchedule[employeeId] && (
-            <MenuItem value=" ">" "</MenuItem>
-          )}
-          {Object.entries(codes[day.dayOfWeek]).map(([codeId, code]) => (
-            <MenuItem
-              key={codeId}
-              value={codeId}
-              // style={
-              //   dayCodes && dayCodes.includes(codeId)
-              //     ? { color: "lightgrey" }
-              //     : {}
-              // }
-            >
-              {code.name}
-            </MenuItem>
-          ))}
-          {Object.entries(codes.Add).map(([codeId, code]) => (
-            <MenuItem key={codeId} value={codeId}>
-              {code.name}
-            </MenuItem>
-          ))}
-          {Object.entries(codes.Internal).map(([codeId, code]) => (
-            <MenuItem key={codeId} value={codeId} style={{ display: "none" }}>
-              {code.name}
-            </MenuItem>
-          ))}
-
-          <MenuItem value="">clear</MenuItem>
-        </Select>
-      </div>
-    );
-  }
-);
 export default ScheduleTable;
