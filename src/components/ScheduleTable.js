@@ -221,6 +221,12 @@ const ScheduleTable = ({
   const codesMatch = (day) => {
     const scheduleDayCodes = Object.keys(userScheduleMappedCodes[day.date]);
     const dayCodes = Object.keys(codes[day.dayOfWeek]);
+    // console.log(
+    //   day.date,
+    //   scheduleDayCodes,
+    //   dayCodes,
+    //   userScheduleMappedCodes[day.date]
+    // );
     return dayCodes.every((c) => scheduleDayCodes.includes(c));
   };
 

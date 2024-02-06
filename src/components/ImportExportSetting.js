@@ -15,9 +15,15 @@ function exportToJsonFile(data, fileName) {
   URL.revokeObjectURL(url);
 }
 
-const Export = ({ employees, groups, scheduleRange, codes }) => {
+const Export = ({
+  employees,
+  groups,
+  scheduleRange,
+  codes,
+  daysOffPerWeek,
+}) => {
   const handleExportButtonClick = () => {
-    const state = { employees, groups, scheduleRange, codes };
+    const state = { employees, groups, scheduleRange, codes, daysOffPerWeek };
     exportToJsonFile(state, "exportedSettings.json");
   };
 

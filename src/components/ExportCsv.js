@@ -9,6 +9,7 @@ const ExportCsv = ({
   userAdjustedSchedule,
   employeeCodeCount,
   codes,
+  daysOffPerWeek,
 }) => {
   const handleExportCSV = () => {
     const csvContent = generateCSVContent(schedule);

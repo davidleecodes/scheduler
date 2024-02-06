@@ -97,6 +97,7 @@ const Settings = () => {
             setGroups={setGroups}
             setScheduleRange={setScheduleRange}
             setCodes={setCodes}
+            daysOffPerWeek={daysOffPerWeek}
           />
 
           {/* <Collapse items={items} ghost /> */}

@@ -3,6 +3,9 @@ import React from "react";
 import { groupRulesCollection } from "./GroupRulesCollection";
 import { Select } from "antd";
 
+const filterOption = (input, option) =>
+  (option?.label ?? "").toLowerCase().includes(input.toLowerCase());
+
 const AddEmployeeField = ({ employees, handleAddEmployee, groupId, group }) => {
   const filterEmployeesEnteries = () => {
     if (group?.employees) {
@@ -16,11 +19,8 @@ const AddEmployeeField = ({ employees, handleAddEmployee, groupId, group }) => {
   const filterEmployees = filterEmployeesEnteries();
   const options = Object.keys(filterEmployees).map((employeeId) => ({
     value: employeeId,
-    label: (
-      <div style={employees[employeeId].group ? { color: "lightgrey" } : {}}>
-        {employees[employeeId].name}
-      </div>
-    ),
+    label: employees[employeeId].name,
+    className: employees[employeeId].group && "selected-opt",
   }));
 
   return (
@@ -32,6 +32,8 @@ const AddEmployeeField = ({ employees, handleAddEmployee, groupId, group }) => {
         }}
         options={options}
         placeholder="add employee"
+        filterOption={filterOption}
+        showSearch
       />
     </>
   );
@@ -48,6 +50,7 @@ const AddRuleField = ({ handleAddRule, groupId, group }) => {
     value: ruleId,
     label: ruleId,
   }));
+
   return (
     <>
       <Select
@@ -57,6 +60,8 @@ const AddRuleField = ({ handleAddRule, groupId, group }) => {
         }}
         options={options}
         placeholder="add rule"
+        filterOption={filterOption}
+        showSearch
       />
     </>
   );

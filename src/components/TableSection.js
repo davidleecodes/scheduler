@@ -107,7 +107,7 @@ const TableSection = ({
 
           <Flex gap="small" justify="flex-end">
             <Generator
-              employees={employees}
+              groups={groups}
               codes={codes}
               schedule={schedule}
               dateRange={dateRange}

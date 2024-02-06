@@ -4,16 +4,19 @@ import { shuffleArray, daysShort } from "./utils";
 import dayjs from "dayjs";
 
 const Generator = ({
-  employees,
+  groups,
   codes,
   schedule,
   setuserAdjustedSchedule,
   dateRange,
 }) => {
   const handleGenerate = () => {
-    const shuffledEmployeeIds = shuffleArray(Object.keys(employees));
+    // only employees in groups
+    const groupEmployeeIds = Object.values(groups).flatMap(
+      (group) => group.employees
+    );
+    const shuffledEmployeeIds = shuffleArray(groupEmployeeIds);
     const updatedUserAdjustedSchedule = {};
-
     dateRange.forEach((day) => {
       const prevDay = dayjs(day.date).subtract(1, "day");
       const prevDayDate = prevDay.format("MM-DD-YYYY");

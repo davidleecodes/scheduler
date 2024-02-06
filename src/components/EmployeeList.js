@@ -156,7 +156,7 @@ const OffDays = ({
           });
         }
       }
-      console.log(codesObject);
+      // console.log(codesObject);
       if (codesObject.v >= daysOffPerWeek) {
         setError(
           `max num of days off per week reached 
@@ -182,7 +182,7 @@ const OffDays = ({
         },
       },
     }));
-    console.log(offDayIds, employee);
+    // console.log(offDayIds, employee);
     setDates(["", ""]);
   };
 
