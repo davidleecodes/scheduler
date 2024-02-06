@@ -12,8 +12,9 @@ import {
   Popconfirm,
 } from "antd";
 
-const { Header, Content, Footer, Sider } = Layout;
+const { Search } = Input;
 
+const { Header, Content, Footer, Sider } = Layout;
 const ListNavContiner = ({
   collection,
   onAddItem,
@@ -45,6 +46,9 @@ const ListNavContiner = ({
   const confirm = (e) => {
     onDeleteItem(selectedId);
   };
+  const onSearch = (value, event, info) => {
+    console.log(value, event, info);
+  };
   return (
     <>
       <Layout>
@@ -54,6 +58,15 @@ const ListNavContiner = ({
           collapsedWidth="0"
           theme="light"
         >
+          <Search
+            placeholder="search"
+            allowClear
+            // enterButton="Search"
+            onSearch={onSearch}
+            style={{
+              padding: "0 4px",
+            }}
+          />
           <Menu
             theme="light"
             mode="inline"
