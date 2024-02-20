@@ -26,29 +26,36 @@ const ListNavContiner = ({
   onDeleteItem,
   isSimple,
 }) => {
-  const [newItemName, setNewItemName] = useState("");
-
-  const handleAddToCollection = () => {
-    const data = { name: newItemName };
-    onAddItem(data);
-    setNewItemName("");
-  };
   const {
     token: { colorBgContainer, borderRadiusSM },
   } = theme.useToken();
+
+  const [newItemName, setNewItemName] = useState("");
+  const [collapsed, setCollapsed] = useState(false);
 
   const items = Object.entries(collection).map(([id, data]) => ({
     key: id,
     icon: React.createElement(UserOutlined),
     label: data.name,
   }));
-  const [collapsed, setCollapsed] = useState(false);
+
+  const [filteredItems, setFilteredItems] = useState(items);
+
+  const handleAddToCollection = () => {
+    const data = { name: newItemName };
+    onAddItem(data);
+    setNewItemName("");
+  };
+
   const confirm = (e) => {
     onDeleteItem(selectedId);
   };
-  const onSearch = (value, event, info) => {
-    console.log(value, event, info);
+
+  const onSearch = (value) => {
+    let filtered = items.filter((item) => item.label.includes(value));
+    setFilteredItems(filtered);
   };
+
   return (
     <>
       <Layout>
@@ -58,20 +65,21 @@ const ListNavContiner = ({
           collapsedWidth="0"
           theme="light"
         >
-          <Search
-            placeholder="search"
-            allowClear
-            // enterButton="Search"
-            onSearch={onSearch}
-            style={{
-              padding: "0 4px",
-            }}
-          />
+          {!isSimple && (
+            <Search
+              placeholder="search"
+              allowClear
+              onSearch={onSearch}
+              style={{
+                padding: "0 4px",
+              }}
+            />
+          )}
           <Menu
             theme="light"
             mode="inline"
             defaultSelectedKeys={["1"]}
-            items={items}
+            items={filteredItems}
             selectedKeys={[selectedId]}
             onClick={({ key }) => setSelectedId(key)}
           />

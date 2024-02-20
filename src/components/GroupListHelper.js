@@ -31,7 +31,7 @@ const AddEmployeeField = ({ employees, handleAddEmployee, groupId, group }) => {
           handleAddEmployee(groupId, value);
         }}
         options={options}
-        placeholder="add employee"
+        placeholder="chose employee"
         filterOption={filterOption}
         showSearch
       />
@@ -59,7 +59,7 @@ const AddRuleField = ({ handleAddRule, groupId, group }) => {
           handleAddRule(groupId, value);
         }}
         options={options}
-        placeholder="add rule"
+        placeholder="chose rule"
         filterOption={filterOption}
         showSearch
       />

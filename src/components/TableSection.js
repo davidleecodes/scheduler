@@ -59,6 +59,9 @@ const TableSection = ({
     const count = (employeeSchedule) => {
       Object.entries(employeeSchedule).forEach(([date, codeId]) => {
         const day = daysShort[dayjs(date).weekday()];
+        if (day === "Sun" || day === "Sat") {
+          codeCounts.weekend = codeCounts.weekend ? codeCounts.weekend + 1 : 1;
+        }
         if (codeId !== "" && codeId !== " ") {
           if (codes[day][codeId]) {
             const codeShift = codes[day][codeId].shift;
