@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import dayjs from "dayjs";
-import { DatePicker, Space, Button, Form, Input } from "antd";
+import { DatePicker, Space, Button, Form, Input, Checkbox } from "antd";
 import { PlusOutlined, MinusOutlined } from "@ant-design/icons";
 
 import ListNavContiner from "./ListNavContainer";
-import { iterateArrayId } from "./utils";
+import { iterateArrayId, daysShort } from "./utils";
 
 const { RangePicker } = DatePicker;
 
@@ -100,7 +100,15 @@ const EmployeeList = ({
                   name="name"
                 />
               </Form.Item>
-              <Form.Item label="offDays">
+              <Form.Item label="shift days">
+                <ShiftDays
+                  employee={employees[employeeId]}
+                  employeeId={employeeId}
+                  setEmployees={setEmployees}
+                />
+              </Form.Item>
+
+              <Form.Item label="off days">
                 <OffDays
                   employee={employees[employeeId]}
                   employeeId={employeeId}
@@ -115,6 +123,28 @@ const EmployeeList = ({
         )}
       </ListNavContiner>
     </>
+  );
+};
+
+const ShiftDays = ({ employee, employeeId, setEmployees }) => {
+  const [selectedDays, setSelectedDays] = useState(
+    employee.shiftDays ? employee.shiftDays : daysShort
+  );
+
+  const handleDayChange = (checkedDays) => {
+    setSelectedDays(checkedDays);
+    setEmployees((prev) => ({
+      ...prev,
+      [employeeId]: { ...prev[employeeId], shiftDays: checkedDays },
+    }));
+  };
+
+  return (
+    <Checkbox.Group
+      options={daysShort}
+      value={selectedDays}
+      onChange={handleDayChange}
+    />
   );
 };
 

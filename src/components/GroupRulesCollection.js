@@ -148,6 +148,36 @@ const intervalGroupOnChange = (startDate, endDate, employeeData, groupData) => {
   return result;
 };
 
+const MaxShiftGroup = ({ ruleData, setGroups, groupId, groups }) => {
+  const [numberOfShifts, setNumberOfShifts] = useState(
+    ruleData?.numberOfShifts || ""
+  );
+
+  const handleNumberOfShiftsChange = (value) => {
+    setNumberOfShifts(value);
+    const updatedGroups = { ...groups };
+    updatedGroups[groupId].groupRules.maxShift.data.numberOfShifts = value;
+
+    setGroups(updatedGroups);
+  };
+
+  return (
+    <>
+      <Text strong>max shifts per employee per week</Text>
+      <Form layout="horizontal" style={{ maxWidth: 500 }}>
+        <Form.Item label="number of shifts">
+          <InputNumber
+            value={numberOfShifts}
+            onChange={handleNumberOfShiftsChange}
+            min={2}
+            max={10}
+          />
+        </Form.Item>
+      </Form>
+    </>
+  );
+};
+
 const groupRulesCollection = {
   interval: {
     group: {
@@ -158,6 +188,12 @@ const groupRulesCollection = {
     employee: {
       component: IntervalEmployee,
       defaultValues: { data: { startDay: dayjs() } },
+    },
+  },
+  maxShift: {
+    group: {
+      component: MaxShiftGroup,
+      defaultValues: { data: { numberOfShifts: 4 } },
     },
   },
 };

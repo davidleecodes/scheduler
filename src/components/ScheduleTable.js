@@ -1,9 +1,9 @@
-import React, { useEffect, useState, memo, useCallback } from "react";
-import { Space, Table, Tag, Flex, Typography, Select, Input } from "antd";
-// import { Select, MenuItem } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Table, Flex, Typography, Select } from "antd";
 import { groupRulesCollection } from "./GroupRulesCollection";
 import dayjs from "dayjs";
-// import "./style.css";
+import { daysShort } from "./utils";
+
 // {emp1:{
 //     date:'code'
 // }}
@@ -123,6 +123,30 @@ const ScheduleTable = ({
         group.employees.forEach((employeeId) => {
           const employee = employees[employeeId];
           if (employee) {
+            if (employee.shiftDays) {
+              let nonShiftDays = daysShort.reduce((acc, day, index) => {
+                if (!employee.shiftDays.includes(day)) {
+                  return [...acc, index];
+                }
+                return acc;
+              }, []);
+              let currDate = startDate;
+
+              while (currDate.isSameOrBefore(endDate.add(1, "day"))) {
+                for (const dayIndex of nonShiftDays) {
+                  // console.log(currDate.day(dayIndex).format("MM-DD-YYYY"));
+                  // console.log(nonShiftDays, currDate, endDate);
+
+                  newSchedule[employeeId] = {
+                    ...newSchedule[employeeId],
+                    [currDate.weekday(dayIndex).format("MM-DD-YYYY")]: "x",
+                  };
+                }
+
+                currDate = currDate.add(1, "week");
+              }
+            }
+
             if (employee.offDays) {
               Object.entries(employee.offDays).forEach(([offDayId, offDay]) => {
                 const offDayStart = dayjs(offDay[0]);

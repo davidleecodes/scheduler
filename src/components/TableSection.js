@@ -52,8 +52,6 @@ const TableSection = ({
     return startDate.add(scheduleRange.numOfWks, "week").subtract(1, "day");
   }, [scheduleRange.numOfWks, startDate]);
 
-  // const daysShort = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-
   const employeeCodeCount = (employeeId) => {
     const codeCounts = {};
     const count = (employeeSchedule) => {
