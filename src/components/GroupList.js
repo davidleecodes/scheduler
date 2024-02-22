@@ -43,19 +43,21 @@ const GroupList = ({ groups, employees, setGroups, setEmployees }) => {
 
     if (groupRules) {
       Object.keys(groupRules).forEach((selectedRule) => {
-        updatedEmployees[employeeId] = {
-          ...updatedEmployee,
-          groupRules: updatedEmployee?.groupRules
-            ? {
-                ...updatedEmployee.groupRules,
-                [selectedRule]:
-                  groupRulesCollection[selectedRule].employee.defaultValues,
-              }
-            : {
-                [selectedRule]:
-                  groupRulesCollection[selectedRule].employee.defaultValues,
-              },
-        };
+        if (groupRulesCollection[selectedRule].employee) {
+          updatedEmployees[employeeId] = {
+            ...updatedEmployee,
+            groupRules: updatedEmployee?.groupRules
+              ? {
+                  ...updatedEmployee.groupRules,
+                  [selectedRule]:
+                    groupRulesCollection[selectedRule].employee.defaultValues,
+                }
+              : {
+                  [selectedRule]:
+                    groupRulesCollection[selectedRule].employee.defaultValues,
+                },
+          };
+        }
       });
     } else {
       const { groupRules, ...rest } = updatedEmployees[employeeId];
@@ -189,7 +191,7 @@ const GroupList = ({ groups, employees, setGroups, setEmployees }) => {
       <ListNavContiner
         collection={groups}
         onAddItem={handleAddGroup}
-        addLabel={"new group Name"}
+        addLabel={"new group name"}
         selectedId={selectedId}
         setSelectedId={setSelectedId}
         deleteLabel={"delete group"}

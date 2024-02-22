@@ -43,6 +43,7 @@ const groupsInit = {
     employees: ["e1", "e3"],
     groupRules: {
       interval: { data: { days: ["Sat", "Sun"], everyNumberOfWeeks: 3 } },
+      maxShift: { data: { numberOfShifts: 4 } },
     },
   },
   // g2: {

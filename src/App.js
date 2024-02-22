@@ -17,13 +17,14 @@ function App() {
             /* here is your component tokens */
             cellPaddingInlineSM: 0, //default 8 horzintal
             cellPaddingBlockSM: 4, //default 8 vertical
-            // cellFontSizeSM: 12, // default14
+            cellFontSizeSM: 12, // default14
           },
           Select: {
             /* here is your component tokens */
             // optionPadding: 0,
             // controlPaddingHorizontalSM: 0,
             // paddingXS: 0,
+            // optionFontSize: 14,
           },
         },
       }}

@@ -148,6 +148,15 @@ const intervalGroupOnChange = (startDate, endDate, employeeData, groupData) => {
   return result;
 };
 
+const maxShiftGenLogic = (employeeId, employeeShiftCount, data) => {
+  const { numberOfShifts, weekYear } = data;
+  // console.log(employeeId, employeeShiftCount, data, numberOfShifts);
+
+  if (!employeeShiftCount[employeeId]) return true;
+  if (employeeShiftCount[employeeId][weekYear] >= numberOfShifts) return false;
+  return true;
+};
+
 const MaxShiftGroup = ({ ruleData, setGroups, groupId, groups }) => {
   const [numberOfShifts, setNumberOfShifts] = useState(
     ruleData?.numberOfShifts || ""
@@ -194,6 +203,8 @@ const groupRulesCollection = {
     group: {
       component: MaxShiftGroup,
       defaultValues: { data: { numberOfShifts: 4 } },
+      genLogic: maxShiftGenLogic,
+      genGroupToEmployee: true,
     },
   },
 };

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Table, Flex, Typography, Select } from "antd";
+
+import { Table, Flex, Typography, Select, theme } from "antd";
 import { groupRulesCollection } from "./GroupRulesCollection";
 import dayjs from "dayjs";
 import { daysShort } from "./utils";
@@ -7,7 +8,7 @@ import { daysShort } from "./utils";
 // {emp1:{
 //     date:'code'
 // }}
-import { yellow } from "@ant-design/colors";
+import { yellow, green } from "@ant-design/colors";
 const ScheduleTable = ({
   dateRange,
   startDate,
@@ -26,6 +27,9 @@ const ScheduleTable = ({
   const [userScheduleMappedCodes, setUserScheduleMappedCodes] = useState({});
   const [error, setError] = useState();
   const { Title, Paragraph, Text, Link } = Typography;
+  const {
+    token: { colorBgContainer, borderRadiusSM },
+  } = theme.useToken();
 
   const getCodeName = (weekDay, codeId) => {
     const name = codes[weekDay][codeId]
@@ -224,14 +228,14 @@ const ScheduleTable = ({
         justify="center"
         align="center"
         style={{
-          border:
+          borderTop:
             userScheduleMappedCodes[day.date] && codesMatch(day)
-              ? "lightgreen 3px solid"
-              : "",
+              ? `${green[2]} thick solid`
+              : `${colorBgContainer} thick solid`,
           borderRadius: 2,
           backgroundColor:
             day.dayOfWeek === "Sun" || day.dayOfWeek === "Sat"
-              ? "#FFC0CB"
+              ? yellow[1]
               : "transparent",
         }}
       >
@@ -319,7 +323,7 @@ const ScheduleTable = ({
     title: "count",
     dataIndex: "employeeCodeCount",
     key: "employeeCodeCount",
-    width: 200,
+    width: 220,
     // fixed: "right",
   });
 
@@ -345,7 +349,7 @@ const ScheduleTable = ({
         dataSource={data}
         size="small"
         pagination={false}
-        scroll={{ x: 1800, y: 1000 }}
+        scroll={{ x: 1400, y: 1000 }}
         // tableLayout="auto"
       />
     </>
@@ -401,7 +405,7 @@ const CodeSelect = ({
     (option?.label ?? "").toLowerCase().includes(input.toLowerCase());
   return (
     //
-    <div style={{ backgroundColor: highLight ? yellow[2] : "initial" }}>
+    <div style={{ backgroundColor: highLight ? yellow[1] : "initial" }}>
       <Select
         size="small"
         variant="borderless"

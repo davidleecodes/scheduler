@@ -7,6 +7,7 @@ import ExportCsv from "./ExportCsv";
 import Generator from "./Generator";
 import WeekDaysOff from "./WeekDaysOff";
 import { daysShort } from "./utils";
+import { ConfigProvider } from "antd";
 
 // const dateRangeInt = [
 //     {
@@ -58,7 +59,7 @@ const TableSection = ({
       Object.entries(employeeSchedule).forEach(([date, codeId]) => {
         const day = daysShort[dayjs(date).weekday()];
         if (day === "Sun" || day === "Sat") {
-          codeCounts.weekend = codeCounts.weekend ? codeCounts.weekend + 1 : 1;
+          codeCounts.wknd = codeCounts.wknd ? codeCounts.wknd + 1 : 1;
         }
         if (codeId !== "" && codeId !== " ") {
           if (codes[day][codeId]) {
@@ -110,6 +111,7 @@ const TableSection = ({
             <Generator
               groups={groups}
               codes={codes}
+              employees={employees}
               schedule={schedule}
               dateRange={dateRange}
               setuserAdjustedSchedule={setuserAdjustedSchedule}
@@ -125,21 +127,29 @@ const TableSection = ({
             />
           </Flex>
         </div>
-        <ScheduleTable
-          dateRange={dateRange}
-          startDate={startDate}
-          endDate={endDate}
-          employees={employees}
-          groups={groups}
-          codes={codes}
-          schedule={schedule}
-          setSchedule={setSchedule}
-          userAdjustedSchedule={userAdjustedSchedule}
-          setuserAdjustedSchedule={setuserAdjustedSchedule}
-          employeeCodeCount={employeeCodeCount}
-          daysOffPerWeek={daysOffPerWeek}
-          scheduleMappedCodes={scheduleMappedCodes}
-        />
+        <ConfigProvider
+          theme={{
+            token: {
+              fontSize: 12,
+            },
+          }}
+        >
+          <ScheduleTable
+            dateRange={dateRange}
+            startDate={startDate}
+            endDate={endDate}
+            employees={employees}
+            groups={groups}
+            codes={codes}
+            schedule={schedule}
+            setSchedule={setSchedule}
+            userAdjustedSchedule={userAdjustedSchedule}
+            setuserAdjustedSchedule={setuserAdjustedSchedule}
+            employeeCodeCount={employeeCodeCount}
+            daysOffPerWeek={daysOffPerWeek}
+            scheduleMappedCodes={scheduleMappedCodes}
+          />
+        </ConfigProvider>
       </Flex>
     </>
   );

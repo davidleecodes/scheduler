@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import { DatePicker, Space, Button, Form, Input, Checkbox } from "antd";
 import { PlusOutlined, MinusOutlined } from "@ant-design/icons";
@@ -78,7 +78,7 @@ const EmployeeList = ({
       <ListNavContiner
         collection={employees}
         onAddItem={handleAddEmployee}
-        addLabel={"new Employee Name"}
+        addLabel={"new employee name"}
         selectedId={selectedId}
         setSelectedId={setSelectedId}
         deleteLabel={"delete employee"}
@@ -130,6 +130,11 @@ const ShiftDays = ({ employee, employeeId, setEmployees }) => {
   const [selectedDays, setSelectedDays] = useState(
     employee.shiftDays ? employee.shiftDays : daysShort
   );
+
+  useEffect(() => {
+    setSelectedDays(employee.shiftDays ? employee.shiftDays : daysShort);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [employeeId]);
 
   const handleDayChange = (checkedDays) => {
     setSelectedDays(checkedDays);
