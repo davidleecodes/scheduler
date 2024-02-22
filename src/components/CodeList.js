@@ -6,20 +6,25 @@ import { geekblue } from "@ant-design/colors";
 import dayjs from "dayjs";
 import { daysShort, iterateArrayId, daysShortLong } from "./utils";
 import ListNavContiner from "./ListNavContainer";
+const { TextArea } = Input;
 
 const shiftOptions = [
   { value: "morning", label: "morning" },
   { value: "evening", label: "evening" },
   { value: "none", label: "none" },
 ];
-const AddField = ({ handleAddCode, day }) => {
+const AddField = ({ handleAddCode, day, selectedId }) => {
   const [newCodeName, setNewCodeName] = useState("");
+
+  const shift = selectedId === "Leave" ? "none" : shiftOptions[0].value; // default morning
+  const noShift = selectedId === "Leave" ? true : false;
 
   const handleAdd = () => {
     handleAddCode(day, {
       name: newCodeName,
-      shift: shiftOptions[0].value,
-    }); // default morning
+      shift: shift,
+      noShift: noShift,
+    });
     setNewCodeName("");
   };
   return (
@@ -160,28 +165,47 @@ const CodeList = ({
                       />
                     </Form.Item>
 
-                    <Form.Item label="shift">
-                      <Select
-                        onChange={(value) =>
-                          handleCodeChange(day, codeId, value, "shift")
-                        }
-                        name="shift"
-                        value={code.shift}
-                        options={shiftOptions}
+                    {!code.noShift && (
+                      <Form.Item label="shift">
+                        <Select
+                          onChange={(value) =>
+                            handleCodeChange(day, codeId, value, "shift")
+                          }
+                          name="shift"
+                          value={code.shift}
+                          options={shiftOptions}
+                        />
+                      </Form.Item>
+                    )}
+
+                    <Form.Item label="notes">
+                      <TextArea
+                        rows={1}
+                        placeholder="notes"
+                        value={code.notes}
+                        style={{
+                          width: 400,
+                        }}
                       />
                     </Form.Item>
                   </Form>
                 </Flex>
 
-                <Button
-                  onClick={() => handleCodeDelete(day, codeId)}
-                  icon={<MinusOutlined />}
-                  shape="circle"
-                  size="small"
-                />
+                {!code.noDelete && (
+                  <Button
+                    onClick={() => handleCodeDelete(day, codeId)}
+                    icon={<MinusOutlined />}
+                    shape="circle"
+                    size="small"
+                  />
+                )}
               </Flex>
             ))}
-            <AddField handleAddCode={handleAddCode} day={day} />
+            <AddField
+              handleAddCode={handleAddCode}
+              day={day}
+              selectedId={selectedId}
+            />
           </Flex>
         </>
       </ListNavContiner>

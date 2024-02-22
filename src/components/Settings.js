@@ -67,6 +67,7 @@ const Settings = () => {
           setuserAdjustedSchedule={setuserAdjustedSchedule}
           scheduleMappedCodes={scheduleMappedCodes}
           daysOffPerWeek={daysOffPerWeek}
+          codes={codes}
         />
       ),
     },

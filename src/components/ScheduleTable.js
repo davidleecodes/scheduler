@@ -26,9 +26,8 @@ const ScheduleTable = ({
 }) => {
   const [userScheduleMappedCodes, setUserScheduleMappedCodes] = useState({});
   const [error, setError] = useState();
-  const { Title, Paragraph, Text, Link } = Typography;
   const {
-    token: { colorBgContainer, borderRadiusSM },
+    token: { colorBgContainer },
   } = theme.useToken();
 
   const getCodeName = (weekDay, codeId) => {
@@ -40,28 +39,26 @@ const ScheduleTable = ({
 
   const handleCellChange = (codeId, date, employeeId) => {
     const schDay = userScheduleMappedCodes[date];
-    const weekDay = dayjs(date).format("ddd");
     setError("");
     const newSchedule = { ...userAdjustedSchedule };
 
     //check validation for offDays per week
-    if (getCodeName(weekDay, codeId) === "v") {
+    if (codeId in codes.Leave) {
+      console.log(codeId);
       const dayjsDate = dayjs(date);
       let codesObject = {};
 
       //0= sun, sat =6
       for (let i = 0; i <= 6; i++) {
         const currDate = dayjsDate.day(i).format("MM-DD-YYYY");
-        const currWeekDay = dayjsDate.day(i).format("ddd");
         const currUserSchDay = userScheduleMappedCodes[currDate];
 
         if (currUserSchDay) {
           Object.keys(currUserSchDay).forEach((codeId) => {
-            const name = getCodeName(currWeekDay, codeId);
             const num = currUserSchDay[codeId].length;
             if (num) {
-              codesObject[name] = codesObject[name]
-                ? codesObject[name] + num
+              codesObject[codeId] = codesObject[codeId]
+                ? codesObject[codeId] + num
                 : num;
             }
           });
@@ -69,7 +66,6 @@ const ScheduleTable = ({
         const currSchDay = scheduleMappedCodes[currDate];
         if (currSchDay) {
           Object.keys(currSchDay).forEach((codeId) => {
-            // const name = getCodeName(currWeekDay, codeId);
             const num = currSchDay[codeId].length;
             if (num) {
               codesObject[codeId] = codesObject[codeId]
@@ -79,7 +75,15 @@ const ScheduleTable = ({
           });
         }
       }
-      if (codesObject.v >= daysOffPerWeek) {
+      console.log(codesObject);
+
+      let offCount = Object.keys(codes.Leave).reduce((acc, code) => {
+        if (code in codesObject) return acc + codesObject[code];
+        return acc;
+      }, 0);
+      console.log(offCount);
+
+      if (offCount >= daysOffPerWeek) {
         setError(
           `max num of days off per week reached 
         ${dayjsDate.day(0).format("MM-DD-YYYY")} - 
@@ -89,7 +93,12 @@ const ScheduleTable = ({
       }
     }
     //swap codeId
-    if (schDay && schDay[codeId] && !codes.Add[codeId]) {
+    if (
+      schDay &&
+      schDay[codeId] &&
+      !codes.Leave[codeId] &&
+      !codes.Add[codeId]
+    ) {
       const swapEmployeeId = schDay[codeId];
       delete newSchedule[swapEmployeeId][date];
     }
@@ -153,8 +162,8 @@ const ScheduleTable = ({
 
             if (employee.offDays) {
               Object.entries(employee.offDays).forEach(([offDayId, offDay]) => {
-                const offDayStart = dayjs(offDay[0]);
-                const offDayEnd = dayjs(offDay[1]);
+                const offDayStart = dayjs(offDay.days[0]);
+                const offDayEnd = dayjs(offDay.days[1]);
 
                 if (
                   offDayStart.isBetween(startDate, endDate) ||
@@ -170,7 +179,7 @@ const ScheduleTable = ({
                     const formattedDate = currentDate.format("MM-DD-YYYY");
                     newSchedule[employeeId] = {
                       ...newSchedule[employeeId],
-                      [formattedDate]: "v",
+                      [formattedDate]: offDay.code,
                     };
 
                     currentDate = currentDate.add(1, "day");
@@ -386,6 +395,13 @@ const CodeSelect = ({
     value: " ",
     label: "-",
   });
+
+  options.push(
+    ...Object.entries(codes.Leave).map(([codeId, code]) => ({
+      value: codeId,
+      label: code.name,
+    }))
+  );
 
   options.push(
     ...Object.entries(codes.Add).map(([codeId, code]) => ({

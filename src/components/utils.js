@@ -31,6 +31,7 @@ const daysShortLong = {
   Sat: "Saturday",
   Sun: "Sunday",
   Add: "Additional",
+  Leave: "Leave",
 };
 
 /**

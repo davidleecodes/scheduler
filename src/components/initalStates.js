@@ -5,8 +5,8 @@ const employeesInit = {
       interval: { data: { startDay: "12/31/2023" } },
     },
     offDays: {
-      o1: ["02/01/2024", "02/02/2024"],
-      o2: ["01/25/2024", "01/29/2024"],
+      o1: { days: ["02/24/2024", "02/26/2024"], code: "v" },
+      o2: { days: ["03/01/2024", "03/02/2024"], code: "Leave1" },
     },
     shiftDays: ["Mon", "Thu", "Fri", "Sat", "Sun"],
     group: "g1",
@@ -17,7 +17,7 @@ const employeesInit = {
     //   interval: { data: { startDay: "01/06/2024" } },
     // },
     offDays: {
-      o3: ["01/29/2024", "01/29/2024"],
+      o3: { days: ["03/11/2024", "03/12/2024"], code: "Leave1" },
     },
     group: "g3",
   },
@@ -104,10 +104,29 @@ const codeInt = {
     Sat2: { name: "b10", shift: "morning" },
     Sat3: { name: "b30", shift: "evening" },
   },
+
+  Leave: {
+    v: {
+      name: "v",
+      shift: "none",
+      noShift: true,
+      noDelete: true,
+      notes: "default vacation",
+    },
+    Leave1: { name: "h", shift: "none", noShift: true },
+    Leave2: { name: "e", shift: "none", noShift: true },
+  },
   Add: {
-    Add1: { name: "x", shift: "none" },
-    Add2: { name: "v", shift: "none" },
-    Add3: { name: "h", shift: "none" },
+    x: {
+      name: "x",
+      shift: "none",
+      noShift: true,
+      noDelete: true,
+      notes: "marks days to not be assigned",
+    },
+    Add1: { name: "c", shift: "none" },
+    Add2: { name: "a", shift: "none" },
+    Add3: { name: "b", shift: "none" },
   },
   Internal: { x: { name: "x" }, h: { name: "h" }, v: { name: "v" } },
   // Add: ["x", "y", "z"],

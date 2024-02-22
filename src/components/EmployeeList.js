@@ -1,12 +1,23 @@
 import React, { useEffect, useState } from "react";
 import dayjs from "dayjs";
-import { DatePicker, Space, Button, Form, Input, Checkbox } from "antd";
+import { DatePicker, Space, Button, Form, Input, Checkbox, Select } from "antd";
 import { PlusOutlined, MinusOutlined } from "@ant-design/icons";
 
 import ListNavContiner from "./ListNavContainer";
 import { iterateArrayId, daysShort } from "./utils";
 
 const { RangePicker } = DatePicker;
+
+const formItemLayout = {
+  labelCol: {
+    xs: { span: 24 },
+    sm: { span: 4 },
+  },
+  wrapperCol: {
+    xs: { span: 24 },
+    sm: { span: 16 },
+  },
+};
 
 const EmployeeList = ({
   employees,
@@ -16,6 +27,7 @@ const EmployeeList = ({
   setuserAdjustedSchedule,
   scheduleMappedCodes,
   daysOffPerWeek,
+  codes,
 }) => {
   const [selectedId, setSelectedId] = useState(Object.keys(employees)[0]);
   const [error, setError] = useState();
@@ -63,16 +75,7 @@ const EmployeeList = ({
   // console.log("employee list");
 
   const employeeId = selectedId;
-  const formItemLayout = {
-    labelCol: {
-      xs: { span: 24 },
-      sm: { span: 4 },
-    },
-    wrapperCol: {
-      xs: { span: 24 },
-      sm: { span: 16 },
-    },
-  };
+
   return (
     <>
       <ListNavContiner
@@ -116,6 +119,7 @@ const EmployeeList = ({
                   setError={setError}
                   scheduleMappedCodes={scheduleMappedCodes}
                   daysOffPerWeek={daysOffPerWeek}
+                  codes={codes}
                 />
               </Form.Item>
             </Form>
@@ -145,11 +149,21 @@ const ShiftDays = ({ employee, employeeId, setEmployees }) => {
   };
 
   return (
-    <Checkbox.Group
-      options={daysShort}
-      value={selectedDays}
-      onChange={handleDayChange}
-    />
+    <>
+      <Checkbox.Group
+        options={daysShort}
+        value={selectedDays}
+        onChange={handleDayChange}
+      />
+
+      {/* <Form {...formItemLayout} layout="horizontal" style={{ maxWidth: 400 }}>
+        {daysShort.map((day) => (
+          <Form.Item label={day}>
+            <Select placeholder="chose shift" />
+          </Form.Item>
+        ))}
+      </Form> */}
+    </>
   );
 };
 
@@ -160,6 +174,7 @@ const OffDays = ({
   setError,
   scheduleMappedCodes,
   daysOffPerWeek,
+  codes,
 }) => {
   const offDays = employee?.offDays || [];
   const [dates, setDates] = useState(["", ""]);
@@ -191,8 +206,14 @@ const OffDays = ({
           });
         }
       }
-      // console.log(codesObject);
-      if (codesObject.v >= daysOffPerWeek) {
+      console.log(codesObject);
+      let offCount = Object.keys(codes.Leave).reduce((acc, code) => {
+        if (code in codesObject) return acc + codesObject[code];
+
+        return acc;
+      }, 0);
+      console.log(offCount);
+      if (offCount >= daysOffPerWeek) {
         setError(
           `max num of days off per week reached 
           ${currentDate.day(0).format("MM-DD-YYYY")} -
@@ -210,10 +231,13 @@ const OffDays = ({
         ...prev[employeeId],
         offDays: {
           ...prev[employeeId].offDays,
-          [iterateArrayId(offDayIds, "o")]: [
-            dates[0].format("MM/DD/YYYY"),
-            dates[1].format("MM/DD/YYYY"),
-          ],
+          [iterateArrayId(offDayIds, "o")]: {
+            days: [
+              dates[0].format("MM/DD/YYYY"),
+              dates[1].format("MM/DD/YYYY"),
+            ],
+            code: "v",
+          },
         },
       },
     }));
@@ -234,20 +258,31 @@ const OffDays = ({
       },
     }));
   };
-  const handleDateChange = (dateStrings, offDayId) => {
+  const handleChange = (data, name, offDayId) => {
     setError("");
-
+    console.log(data, name, offDayId);
     setEmployees((prev) => ({
       ...prev,
       [employeeId]: {
         ...prev[employeeId],
         offDays: {
           ...prev[employeeId].offDays,
-          [offDayId]: dateStrings,
+          [offDayId]: { ...prev[employeeId].offDays[offDayId], [name]: data },
         },
       },
     }));
   };
+
+  const optionCodes = codes.Leave;
+
+  const options = Object.keys(optionCodes).map((codeId) => ({
+    value: codeId,
+    label: optionCodes[codeId].name,
+    className: optionCodes[codeId].group && "selected-opt",
+  }));
+
+  const filterOption = (input, option) =>
+    (option?.label ?? "").toLowerCase().includes(input.toLowerCase());
 
   return (
     <>
@@ -256,12 +291,19 @@ const OffDays = ({
           Object.entries(offDays).map(([offDayId, offDay]) => (
             <Space size="small" key={offDayId}>
               <RangePicker
-                value={[dayjs(offDay[0]), dayjs(offDay[1])]}
-                onChange={(dateStrings) =>
-                  handleDateChange(dateStrings, offDayId)
+                value={[dayjs(offDay.days[0]), dayjs(offDay.days[1])]}
+                onChange={(date, dateString) =>
+                  handleChange(dateString, "days", offDayId)
                 }
               />
-
+              <Select
+                placeholder=" code"
+                options={options}
+                filterOption={filterOption}
+                showSearch
+                value={offDay.code}
+                onSelect={(value) => handleChange(value, "code", offDayId)}
+              />
               <Button
                 onClick={() => handleOffDayDelete(offDayId)}
                 icon={<MinusOutlined />}
