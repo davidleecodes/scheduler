@@ -25,7 +25,7 @@ const GroupList = ({ groups, employees, setGroups, setEmployees }) => {
   const handleAddGroup = (data) => {
     const groupIds = Object.keys(groups);
     const newId = iterateArrayId(groupIds, "g");
-    setGroups({ ...groups, [newId]: data });
+    setGroups({ ...groups, [newId]: { ...data, employees: [] } });
     setSelectedId(newId);
   };
 
@@ -60,6 +60,7 @@ const GroupList = ({ groups, employees, setGroups, setEmployees }) => {
         }
       });
     } else {
+      updatedEmployees[employeeId] = updatedEmployee;
       const { groupRules, ...rest } = updatedEmployees[employeeId];
       updatedEmployees[employeeId] = rest;
     }

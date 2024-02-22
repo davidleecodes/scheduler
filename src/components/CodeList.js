@@ -29,6 +29,7 @@ const AddField = ({ handleAddCode, day }) => {
           placeholder="New Code name"
           value={newCodeName}
           onChange={(e) => setNewCodeName(e.target.value)}
+          onPressEnter={handleAdd}
         />
 
         <Button

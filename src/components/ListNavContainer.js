@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { UserOutlined, PlusOutlined } from "@ant-design/icons";
 import {
@@ -32,14 +32,18 @@ const ListNavContiner = ({
 
   const [newItemName, setNewItemName] = useState("");
   const [collapsed, setCollapsed] = useState(false);
+  const [items, setItems] = useState([]);
+  const [filteredItems, setFilteredItems] = useState([]);
 
-  const items = Object.entries(collection).map(([id, data]) => ({
-    key: id,
-    icon: React.createElement(UserOutlined),
-    label: data.name,
-  }));
-
-  const [filteredItems, setFilteredItems] = useState(items);
+  useEffect(() => {
+    let items = Object.entries(collection).map(([id, data]) => ({
+      key: id,
+      icon: React.createElement(UserOutlined),
+      label: data.name,
+    }));
+    setItems(items);
+    setFilteredItems(items);
+  }, [collection, setItems]);
 
   const handleAddToCollection = () => {
     const data = { name: newItemName };
@@ -97,6 +101,7 @@ const ListNavContiner = ({
                 placeholder={addLabel}
                 value={newItemName}
                 onChange={(e) => setNewItemName(e.target.value)}
+                onPressEnter={handleAddToCollection}
               />
               <Button
                 onClick={handleAddToCollection}
