@@ -131,6 +131,14 @@ const TableSection = ({
           theme={{
             token: {
               fontSize: 12,
+              // marginLG: 0,
+            },
+            components: {
+              // Divider: {
+              //   orientationMargin: 0,
+              //   verticalMarginInline: 0,
+              //   textPaddingInline: 0,
+              // },
             },
           }}
         >

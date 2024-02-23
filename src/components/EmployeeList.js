@@ -1,6 +1,17 @@
 import React, { useEffect, useState } from "react";
 import dayjs from "dayjs";
-import { DatePicker, Space, Button, Form, Input, Checkbox, Select } from "antd";
+import {
+  DatePicker,
+  Space,
+  Button,
+  Form,
+  Input,
+  Checkbox,
+  Select,
+  Flex,
+  Col,
+  Row,
+} from "antd";
 import { PlusOutlined, MinusOutlined } from "@ant-design/icons";
 
 import ListNavContiner from "./ListNavContainer";
@@ -131,38 +142,52 @@ const EmployeeList = ({
 };
 
 const ShiftDays = ({ employee, employeeId, setEmployees }) => {
-  const [selectedDays, setSelectedDays] = useState(
-    employee.shiftDays ? employee.shiftDays : daysShort
-  );
+  const formItemLayout = {
+    labelCol: {
+      xs: { span: 24 },
+      sm: { span: 6 },
+    },
+    wrapperCol: {
+      xs: { span: 24 },
+      sm: { span: 18 },
+    },
+  };
+  const shiftOptions = [
+    { value: "always", label: "always" },
+    { value: "normal", label: "normal" },
+    { value: "never", label: "never" },
+  ];
 
-  useEffect(() => {
-    setSelectedDays(employee.shiftDays ? employee.shiftDays : daysShort);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [employeeId]);
-
-  const handleDayChange = (checkedDays) => {
-    setSelectedDays(checkedDays);
+  const handleChange = (day, value) => {
     setEmployees((prev) => ({
       ...prev,
-      [employeeId]: { ...prev[employeeId], shiftDays: checkedDays },
+      [employeeId]: {
+        ...prev[employeeId],
+        shiftDays: { ...prev[employeeId].shiftDays, [day]: value },
+      },
     }));
   };
 
   return (
     <>
-      <Checkbox.Group
-        options={daysShort}
-        value={selectedDays}
-        onChange={handleDayChange}
-      />
-
-      {/* <Form {...formItemLayout} layout="horizontal" style={{ maxWidth: 400 }}>
+      {/* <Form {...formItemLayout} layout="horizontal" style={{ maxWidth: 400 }}> */}
+      <Row gutter={24}>
         {daysShort.map((day) => (
-          <Form.Item label={day}>
-            <Select placeholder="chose shift" />
-          </Form.Item>
+          <Col span={12} key={day}>
+            <Form.Item label={`${day} `} {...formItemLayout}>
+              <Select
+                placeholder="chose shift"
+                options={shiftOptions}
+                onChange={(value) => handleChange(day, value)}
+                value={
+                  (employee.shiftDays && employee.shiftDays[day]) || "normal"
+                }
+              />
+            </Form.Item>
+          </Col>
         ))}
-      </Form> */}
+      </Row>
+      {/* </Form> */}
     </>
   );
 };
@@ -209,7 +234,6 @@ const OffDays = ({
       console.log(codesObject);
       let offCount = Object.keys(codes.Leave).reduce((acc, code) => {
         if (code in codesObject) return acc + codesObject[code];
-
         return acc;
       }, 0);
       console.log(offCount);

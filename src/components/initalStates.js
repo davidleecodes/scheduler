@@ -8,7 +8,15 @@ const employeesInit = {
       o1: { days: ["02/24/2024", "02/26/2024"], code: "v" },
       o2: { days: ["03/01/2024", "03/02/2024"], code: "Leave1" },
     },
-    shiftDays: ["Mon", "Thu", "Fri", "Sat", "Sun"],
+    shiftDays: {
+      Mon: "always",
+      Tue: "normal",
+      Wed: "normal",
+      Thu: "normal",
+      Fri: "never",
+      Sat: "never",
+      Sun: "never",
+    },
     group: "g1",
   },
   e2: {

@@ -1,6 +1,17 @@
 import React, { useEffect, useState } from "react";
+import { UserOutlined, PlusOutlined } from "@ant-design/icons";
 
-import { Table, Flex, Typography, Select, theme } from "antd";
+import {
+  Table,
+  Flex,
+  Typography,
+  Select,
+  theme,
+  Divider,
+  Space,
+  Input,
+  Button,
+} from "antd";
 import { groupRulesCollection } from "./GroupRulesCollection";
 import dayjs from "dayjs";
 import { daysShort } from "./utils";
@@ -138,7 +149,10 @@ const ScheduleTable = ({
           if (employee) {
             if (employee.shiftDays) {
               let nonShiftDays = daysShort.reduce((acc, day, index) => {
-                if (!employee.shiftDays.includes(day)) {
+                if (
+                  day in employee.shiftDays &&
+                  employee.shiftDays[day] == "never"
+                ) {
                   return [...acc, index];
                 }
                 return acc;
@@ -397,17 +411,28 @@ const CodeSelect = ({
   });
 
   options.push(
+    // {
+    // label: <Divider size="small" />,
+    // options: [
     ...Object.entries(codes.Leave).map(([codeId, code]) => ({
       value: codeId,
       label: code.name,
+      className: " selected-opt-center",
     }))
+    //   ],
+    // }
   );
 
   options.push(
+    // {
+    // label: <Divider size="small" />,
+    // options: [
     ...Object.entries(codes.Add).map(([codeId, code]) => ({
       value: codeId,
       label: code.name,
     }))
+    //   ],
+    // }
   );
 
   // options.push(
@@ -423,6 +448,7 @@ const CodeSelect = ({
     //
     <div style={{ backgroundColor: highLight ? yellow[1] : "initial" }}>
       <Select
+        // style={{ width: 200 }}
         size="small"
         variant="borderless"
         options={options}
@@ -437,6 +463,30 @@ const CodeSelect = ({
         onChange={(value) => handleCellChange(value, day.date, employeeId)}
         filterOption={filterOption}
         showSearch
+        dropdownRender={(menu) => (
+          <>
+            {menu}
+            <Divider style={{ margin: "8px 0" }} />
+            <Space style={{ padding: "0 8px 4px" }}>
+              <Input
+                placeholder="temp code"
+                // ref={inputRef}
+                // value={name}
+                // onChange={onNameChange}
+                onKeyDown={(e) => e.stopPropagation()}
+                style={{ width: 90 }}
+              />
+              <Select style={{ width: 40 }} />
+              <Button
+                icon={<PlusOutlined />}
+                // onClick={addItem}
+                shape="circle"
+                type="primary"
+                size="small"
+              />
+            </Space>
+          </>
+        )}
       />
     </div>
   );
