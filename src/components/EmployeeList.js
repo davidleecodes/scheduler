@@ -204,25 +204,39 @@ const OffDays = ({
   const offDays = employee?.offDays || [];
   const [dates, setDates] = useState(["", ""]);
 
-  const handleAddOffDay = () => {
+  useEffect(() => {
     setError("");
+  }, [employee, employeeId, setError]);
+
+  const isOffDaysValid = (dates, prevDates) => {
     const start = dayjs(dates[0]);
     const end = dayjs(dates[1]);
+    let prevStart;
+    let prevEnd;
+    if (prevDates) {
+      prevStart = dayjs(prevDates[0]);
+      prevEnd = dayjs(prevDates[1]);
+    }
+
     let currentDate = start.day(0);
 
     while (currentDate.isSameOrBefore(end)) {
-      // validate find the number of codes v in the same week
       let codesObject = {};
+      let offDayinWeekCount = 0;
+      let prevOffDayinWeekCount = 0;
 
       for (let i = 0; i <= 6; i++) {
         const day = currentDate.day(i);
+        offDayinWeekCount += day.isBetween(start, end, null, "[]") ? 1 : 0;
+        if (prevDates)
+          prevOffDayinWeekCount += day.isBetween(prevStart, prevEnd, null, "[]")
+            ? 1
+            : 0;
         const formatedDay = day.format("MM-DD-YYYY");
         const currSchDay = scheduleMappedCodes[formatedDay];
         if (currSchDay) {
           Object.keys(currSchDay).forEach((codeId) => {
-            const num =
-              currSchDay[codeId].length +
-              (day.isBetween(start, end, null, "[]") ? 1 : 0);
+            const num = currSchDay[codeId].length;
             if (num) {
               codesObject[codeId] = codesObject[codeId]
                 ? codesObject[codeId] + num
@@ -236,17 +250,26 @@ const OffDays = ({
         if (code in codesObject) return acc + codesObject[code];
         return acc;
       }, 0);
-      console.log(offCount);
-      if (offCount >= daysOffPerWeek) {
+      console.log(offCount, offDayinWeekCount, prevOffDayinWeekCount);
+      if (
+        offCount + offDayinWeekCount - prevOffDayinWeekCount >
+        daysOffPerWeek
+      ) {
         setError(
           `max num of days off per week reached 
           ${currentDate.day(0).format("MM-DD-YYYY")} -
            ${currentDate.day(6).format("MM-DD-YYYY")}`
         );
-        return;
+        return false;
       }
       currentDate = currentDate.add(1, "week");
     }
+    return true;
+  };
+
+  const handleAddOffDay = () => {
+    setError("");
+    if (!isOffDaysValid(dates)) return;
 
     const offDayIds = Object.keys(offDays);
     setEmployees((prev) => ({
@@ -271,7 +294,6 @@ const OffDays = ({
 
   const handleOffDayDelete = (offDayId) => {
     setError("");
-
     const updatedOffDays = { ...offDays };
     delete updatedOffDays[offDayId];
     setEmployees((prev) => ({
@@ -282,7 +304,13 @@ const OffDays = ({
       },
     }));
   };
+
   const handleChange = (data, name, offDayId) => {
+    if (name === "days") {
+      console.log(data, employee.offDays[offDayId].days);
+      if (!isOffDaysValid(data, employee.offDays[offDayId].days)) return;
+    }
+
     setError("");
     console.log(data, name, offDayId);
     setEmployees((prev) => ({
