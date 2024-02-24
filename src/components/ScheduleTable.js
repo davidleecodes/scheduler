@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { UserOutlined, PlusOutlined } from "@ant-design/icons";
 
 import {
@@ -14,7 +14,7 @@ import {
 } from "antd";
 import { groupRulesCollection } from "./GroupRulesCollection";
 import dayjs from "dayjs";
-import { daysShort } from "./utils";
+import { daysShort, iterateArrayId } from "./utils";
 
 // {emp1:{
 //     date:'code'
@@ -27,6 +27,7 @@ const ScheduleTable = ({
   employees,
   groups,
   codes,
+  setCodes,
   schedule,
   setSchedule,
   userAdjustedSchedule,
@@ -121,6 +122,7 @@ const ScheduleTable = ({
   };
 
   useEffect(() => {
+    setError("");
     let userScheduleMappedCodes = {};
     Object.entries(userAdjustedSchedule).forEach(([employeeId, employee]) => {
       Object.entries(employee).forEach(([date, codeId]) => {
@@ -140,6 +142,8 @@ const ScheduleTable = ({
   }, [userAdjustedSchedule]);
 
   useEffect(() => {
+    setError("");
+
     const newSchedule = {};
     // const newSchedule = { ...schedule };
     Object.values(groups).forEach((group) => {
@@ -303,6 +307,7 @@ const ScheduleTable = ({
           employeeId={record.employeeId}
           day={day}
           codes={codes}
+          setCodes={setCodes}
           dayScheduleMappedCodes={userScheduleMappedCodes[day.date]}
           empSchedule={schedule[record.employeeId]}
           empUserAdjustedSchedule={userAdjustedSchedule[record.employeeId]}
@@ -383,12 +388,23 @@ const CodeSelect = ({
   employeeId,
   day,
   codes,
+  setCodes,
   dayScheduleMappedCodes,
   empSchedule,
   empUserAdjustedSchedule,
   handleCellChange,
 }) => {
   // const schDay = userScheduleMappedCodes[day.date];
+  const shiftOptions = [
+    { value: "morning", label: "morning" },
+    { value: "evening", label: "evening" },
+    { value: "none", label: "none" },
+  ];
+  const [open, setOpen] = useState(false);
+  const [newCode, setNewCode] = useState({});
+  const inputRef = useRef(null);
+  const selectRef = useRef(null);
+
   const dayOfWeek = day.dayOfWeek;
   const highLight =
     (dayOfWeek === "Sat" || dayOfWeek === "Sun") &&
@@ -442,8 +458,31 @@ const CodeSelect = ({
   //   }))
   // );
 
+  const handleAddChange = (value, name) => {
+    setNewCode({ ...newCode, [name]: value });
+  };
+
+  const handleAddCode = async (date, employeeId) => {
+    // e.preventDefault();
+    const day = "Add";
+    const data = { name: newCode.name, shift: newCode.shift };
+    const updatedCodes = { ...codes };
+    const dayCodes = Object.keys(updatedCodes[day]);
+    const newCodeId = iterateArrayId(dayCodes, day);
+    updatedCodes[day] = {
+      ...updatedCodes[day],
+      [newCodeId]: data,
+    };
+    setCodes(updatedCodes);
+    console.log(codes);
+    setNewCode({});
+    setOpen(false);
+    handleCellChange(newCodeId, date, employeeId);
+  };
+
   const filterOption = (input, option) =>
     (option?.label ?? "").toLowerCase().includes(input.toLowerCase());
+
   return (
     //
     <div style={{ backgroundColor: highLight ? yellow[1] : "initial" }}>
@@ -463,26 +502,43 @@ const CodeSelect = ({
         onChange={(value) => handleCellChange(value, day.date, employeeId)}
         filterOption={filterOption}
         showSearch
+        open={open}
+        onDropdownVisibleChange={(visible) => setOpen(visible)}
         dropdownRender={(menu) => (
           <>
             {menu}
+
             <Divider style={{ margin: "8px 0" }} />
             <Space style={{ padding: "0 8px 4px" }}>
               <Input
                 placeholder="temp code"
-                // ref={inputRef}
-                // value={name}
-                // onChange={onNameChange}
+                ref={inputRef}
+                value={newCode.name}
+                onChange={(e) => handleAddChange(e.target.value, "name")}
                 onKeyDown={(e) => e.stopPropagation()}
                 style={{ width: 90 }}
               />
-              <Select style={{ width: 40 }} />
+              <div
+                onMouseDown={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                }}
+              >
+                <Select
+                  ref={selectRef}
+                  style={{ width: 80 }}
+                  options={shiftOptions}
+                  value={newCode.shift}
+                  onChange={(value) => handleAddChange(value, "shift")}
+                />
+              </div>
               <Button
                 icon={<PlusOutlined />}
-                // onClick={addItem}
+                onClick={() => handleAddCode(day.date, employeeId)}
                 shape="circle"
                 type="primary"
                 size="small"
+                disabled={!newCode.name || !newCode.shift}
               />
             </Space>
           </>

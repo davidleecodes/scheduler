@@ -7,10 +7,10 @@
 
 .ant-select-selector .ant-select-selection-item,
 .ant-select-selector .ant-select-selection-placeholder {
-  padding-inline-end: 0 !important;
-  text-align: center;
+  /* padding-inline-end: 0 !important;
+  text-align: center; */
 }
 
 .ant-select.ant-select-sm.ant-select-borderless.ant-select-single.ant-select-show-arrow.ant-select-show-search {
-  width: 100%;
+  /* width: 100%; */
 }

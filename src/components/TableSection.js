@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import dayjs from "dayjs";
-import { Flex, Form } from "antd";
+
+import { Flex, Form, Button } from "antd";
 import ScheduleTable from "./ScheduleTable";
 import ScheduleRange from "./ScheduleRange";
 import ExportCsv from "./ExportCsv";
@@ -21,6 +22,7 @@ const TableSection = ({
   employees,
   groups,
   codes,
+  setCodes,
   schedule,
   setSchedule,
   userAdjustedSchedule,
@@ -57,22 +59,30 @@ const TableSection = ({
     const codeCounts = {};
     const count = (employeeSchedule) => {
       Object.entries(employeeSchedule).forEach(([date, codeId]) => {
-        const day = daysShort[dayjs(date).weekday()];
-        if (day === "Sun" || day === "Sat") {
-          codeCounts.wknd = codeCounts.wknd ? codeCounts.wknd + 1 : 1;
-        }
-        if (codeId !== "" && codeId !== " ") {
-          if (codes[day][codeId]) {
-            const codeShift = codes[day][codeId].shift;
-
-            codeCounts[codeShift] = codeCounts[codeShift]
-              ? codeCounts[codeShift] + 1
-              : 1;
-          } else if (codes.Add[codeId]) {
-            const codeName = codes.Add[codeId].name;
-            codeCounts[codeName] = codeCounts[codeName]
-              ? codeCounts[codeName] + 1
-              : 1;
+        const dayjsDate = dayjs(date);
+        if (dayjsDate.isBetween(startDate, endDate, null, "[]")) {
+          const day = daysShort[dayjsDate.weekday()];
+          if (
+            (day === "Sun" || day === "Sat") &&
+            codeId !== "x" &&
+            !(codeId in codes.Leave)
+          ) {
+            codeCounts.wknd = codeCounts.wknd ? codeCounts.wknd + 1 : 1;
+          }
+          if (codeId !== "" && codeId !== " ") {
+            let codeShift;
+            if (codes[day][codeId]) {
+              codeShift = codes[day][codeId].shift;
+            } else if (codes.Add[codeId]) {
+              codeShift = codes.Add[codeId].shift;
+            } else if (codes.Leave[codeId]) {
+              codeShift = codes.Leave[codeId].shift;
+            }
+            if (codeShift && codeShift !== "none") {
+              codeCounts[codeShift] = codeCounts[codeShift]
+                ? codeCounts[codeShift] + 1
+                : 1;
+            }
           }
         }
       });
@@ -81,7 +91,9 @@ const TableSection = ({
     if (userAdjustedSchedule[employeeId]) {
       count(userAdjustedSchedule[employeeId]);
     }
-
+    if (schedule[employeeId]) {
+      count(schedule[employeeId]);
+    }
     const res = Object.entries(codeCounts)
       .sort((a, b) => a[0].localeCompare(b[0]))
       .map(([code, num]) => `${code} : ${num}`)
@@ -108,6 +120,9 @@ const TableSection = ({
           </Flex>
 
           <Flex gap="small" justify="flex-end">
+            <Button type="primary" onClick={() => setuserAdjustedSchedule({})}>
+              Reset
+            </Button>
             <Generator
               groups={groups}
               codes={codes}
@@ -149,6 +164,7 @@ const TableSection = ({
             employees={employees}
             groups={groups}
             codes={codes}
+            setCodes={setCodes}
             schedule={schedule}
             setSchedule={setSchedule}
             userAdjustedSchedule={userAdjustedSchedule}

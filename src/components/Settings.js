@@ -109,6 +109,7 @@ const Settings = () => {
           setScheduleRange={setScheduleRange}
           employees={employees}
           groups={groups}
+          setCodes={setCodes}
           codes={codes}
           schedule={schedule}
           setSchedule={setSchedule}

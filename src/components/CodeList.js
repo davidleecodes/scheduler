@@ -12,11 +12,12 @@ const shiftOptions = [
   { value: "morning", label: "morning" },
   { value: "evening", label: "evening" },
   { value: "none", label: "none" },
+  { value: "leave", label: "leave" },
 ];
 const AddField = ({ handleAddCode, day, selectedId }) => {
   const [newCodeName, setNewCodeName] = useState("");
 
-  const shift = selectedId === "Leave" ? "none" : shiftOptions[0].value; // default morning
+  const shift = selectedId === "Leave" ? "leave" : shiftOptions[0].value; // default morning
   const noShift = selectedId === "Leave" ? true : false;
 
   const handleAdd = () => {

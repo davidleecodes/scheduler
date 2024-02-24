@@ -14,8 +14,8 @@ const employeesInit = {
       Wed: "normal",
       Thu: "normal",
       Fri: "never",
-      Sat: "never",
-      Sun: "never",
+      Sat: "normal",
+      Sun: "normal",
     },
     group: "g1",
   },
@@ -116,13 +116,13 @@ const codeInt = {
   Leave: {
     v: {
       name: "v",
-      shift: "none",
+      shift: "leave",
       noShift: true,
       noDelete: true,
       notes: "default vacation",
     },
-    Leave1: { name: "h", shift: "none", noShift: true },
-    Leave2: { name: "e", shift: "none", noShift: true },
+    Leave1: { name: "h", shift: "leave", noShift: true },
+    Leave2: { name: "e", shift: "leave", noShift: true },
   },
   Add: {
     x: {
@@ -132,11 +132,9 @@ const codeInt = {
       noDelete: true,
       notes: "marks days to not be assigned",
     },
-    Add1: { name: "c", shift: "none" },
-    Add2: { name: "a", shift: "none" },
-    Add3: { name: "b", shift: "none" },
+    Add1: { name: "c", shift: "morning" },
   },
-  Internal: { x: { name: "x" }, h: { name: "h" }, v: { name: "v" } },
+  // Internal: { x: { name: "x" }, h: { name: "h" }, v: { name: "v" } },
   // Add: ["x", "y", "z"],
 };
 
