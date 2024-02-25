@@ -38,7 +38,6 @@ const Export = ({
 
 const Import = ({ setEmployees, setGroups, setScheduleRange, setCodes }) => {
   const handleFileChange = (data) => {
-    console.log(data);
     const file = data.file.originFileObj;
 
     if (file) {
@@ -47,15 +46,12 @@ const Import = ({ setEmployees, setGroups, setScheduleRange, setCodes }) => {
       reader.onload = (e) => {
         try {
           const jsonData = JSON.parse(e.target.result);
-          console.log(e.target, jsonData);
 
           setEmployees(jsonData.employees);
           setGroups(jsonData.groups);
           setScheduleRange(jsonData.scheduleRange);
           setCodes(jsonData.codes);
-        } catch (error) {
-          console.error("Error parsing JSON file:", error);
-        }
+        } catch (error) {}
       };
 
       reader.readAsText(file);

@@ -56,7 +56,6 @@ const ScheduleTable = ({
 
     //check validation for offDays per week
     if (codeId in codes.Leave) {
-      console.log(codeId);
       const dayjsDate = dayjs(date);
       let codesObject = {};
 
@@ -87,13 +86,11 @@ const ScheduleTable = ({
           });
         }
       }
-      console.log(codesObject);
 
       let offCount = Object.keys(codes.Leave).reduce((acc, code) => {
         if (code in codesObject) return acc + codesObject[code];
         return acc;
       }, 0);
-      console.log(offCount);
 
       if (offCount >= daysOffPerWeek) {
         setError(
@@ -165,9 +162,6 @@ const ScheduleTable = ({
 
               while (currDate.isSameOrBefore(endDate.add(1, "day"))) {
                 for (const dayIndex of nonShiftDays) {
-                  // console.log(currDate.day(dayIndex).format("MM-DD-YYYY"));
-                  // console.log(nonShiftDays, currDate, endDate);
-
                   newSchedule[employeeId] = {
                     ...newSchedule[employeeId],
                     [currDate.weekday(dayIndex).format("MM-DD-YYYY")]: "x",
@@ -276,16 +270,10 @@ const ScheduleTable = ({
   const codesMatch = (day) => {
     const scheduleDayCodes = Object.keys(userScheduleMappedCodes[day.date]);
     const dayCodes = Object.keys(codes[day.dayOfWeek]);
-    // console.log(
-    //   day.date,
-    //   scheduleDayCodes,
-    //   dayCodes,
-    //   userScheduleMappedCodes[day.date]
-    // );
+
     return dayCodes.every((c) => scheduleDayCodes.includes(c));
   };
 
-  // console.log("table");
   const allDays = dateRange.map((day) => ({
     [day.date]: "",
   }));
@@ -294,11 +282,8 @@ const ScheduleTable = ({
     title: dayStack(day),
     dataIndex: day.date,
     key: day.date,
-
     // width: 20,
-    // onHeaderCell: (column) => {
-    //   console.log(column);
-    // },
+
     render: (text, record) => {
       // const { employeeId } = record;
       if (!record) return null;
@@ -368,7 +353,6 @@ const ScheduleTable = ({
       ...userAdjustedSchedule[employeeId],
     }))
   );
-  // console.log(data);
   return (
     <>
       {error && <p style={{ color: "red" }}>{error}</p>}
@@ -474,7 +458,6 @@ const CodeSelect = ({
       [newCodeId]: data,
     };
     setCodes(updatedCodes);
-    console.log(codes);
     setNewCode({});
     setOpen(false);
     handleCellChange(newCodeId, date, employeeId);

@@ -227,7 +227,6 @@ const ScheduleTable = ({
     return dayCodes.every((c) => scheduleDayCodes.includes(c));
   };
 
-  // console.log("table");
   return (
     <>
       {error && <p style={{ color: "red" }}>{error}</p>}
@@ -338,7 +337,6 @@ const CodeSelect = ({
     (dayOfWeek === "Sat" || dayOfWeek === "Sun") &&
     empSchedule &&
     !empSchedule[day.date];
-  // console.log("cell");
   return (
     <TableCell
       key={day.date}

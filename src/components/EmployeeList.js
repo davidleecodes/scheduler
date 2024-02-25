@@ -245,12 +245,10 @@ const OffDays = ({
           });
         }
       }
-      console.log(codesObject);
       let offCount = Object.keys(codes.Leave).reduce((acc, code) => {
         if (code in codesObject) return acc + codesObject[code];
         return acc;
       }, 0);
-      console.log(offCount, offDayinWeekCount, prevOffDayinWeekCount);
       if (
         offCount + offDayinWeekCount - prevOffDayinWeekCount >
         daysOffPerWeek
@@ -288,7 +286,6 @@ const OffDays = ({
         },
       },
     }));
-    // console.log(offDayIds, employee);
     setDates(["", ""]);
   };
 
@@ -307,12 +304,10 @@ const OffDays = ({
 
   const handleChange = (data, name, offDayId) => {
     if (name === "days") {
-      console.log(data, employee.offDays[offDayId].days);
       if (!isOffDaysValid(data, employee.offDays[offDayId].days)) return;
     }
 
     setError("");
-    console.log(data, name, offDayId);
     setEmployees((prev) => ({
       ...prev,
       [employeeId]: {

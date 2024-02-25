@@ -26,7 +26,6 @@ const Generator = ({
           groupRulesAdd[rule] = group.groupRules[rule];
         });
       }
-      console.log(groupRulesAdd, group.groupRules);
       return group.employees.map((employeeId) => [
         employeeId,
         {
@@ -36,7 +35,6 @@ const Generator = ({
       ]);
     });
     employeesWithGroupData = Object.fromEntries(employeesWithGroupData);
-    console.log(employeesWithGroupData);
 
     // only employees in groups
     const groupEmployeeIds = Object.values(groups).flatMap(
@@ -53,7 +51,6 @@ const Generator = ({
       const weekYear = dayJsDay.week() + "-" + dayJsDay.year();
 
       const shuffledCodes = shuffleArray(Object.keys(codes[day.dayOfWeek]));
-      // console.log(employeeShiftCount);
 
       shuffledCodes.forEach((codeId) => {
         let index = 0;
@@ -65,14 +62,9 @@ const Generator = ({
           const empGroupData = employeesWithGroupData[employeeId]?.groupData;
           let isValid = true;
 
-          // console.log(empGroupData);
           if (empGroupData) {
-            // console.log(empGroupData);
-
             isValid = Object.keys(empGroupData)
               .map((rule) => {
-                // console.log(rule);
-
                 return groupRulesCollection[rule].group.genLogic(
                   employeeId,
                   employeeShiftCount,
@@ -83,9 +75,7 @@ const Generator = ({
                 );
               })
               .every((val) => val);
-            // console.log(genLogicCheck);
           }
-          console.log(isValid);
           return isValid;
         }
 
@@ -103,31 +93,12 @@ const Generator = ({
             ].shift === "evening") ||
           (index < shuffledEmployeeIds.length && !genLogicCheck(employeeId))
         ) {
-          day.dayOfWeek === "Sat" &&
-            console.log(
-              employeeId,
-              index,
-              shuffledEmployeeIds.length,
-              "G",
-              index < shuffledEmployeeIds.length &&
-                schedule[employeeId] &&
-                schedule[employeeId][day.date],
-              index < shuffledEmployeeIds.length &&
-                isCurrShiftMorning &&
-                updatedUserAdjustedSchedule[employeeId] &&
-                updatedUserAdjustedSchedule[employeeId][prevDayDate] &&
-                codes[prevDayWeekday][
-                  updatedUserAdjustedSchedule[employeeId][prevDayDate]
-                ].shift === "evening",
-              index < shuffledEmployeeIds.length && !genLogicCheck(employeeId)
-            );
           index++;
           employeeId = shuffledEmployeeIds[index];
         }
         if (index <= shuffledEmployeeIds.length - 1) {
           employeeId = shuffledEmployeeIds[index];
 
-          console.log(employeeId, index);
           let removedEmployee = shuffledEmployeeIds.splice(index, 1);
           shuffledEmployeeIds.push(removedEmployee[0]);
           if (!employeeShiftCount[employeeId])
@@ -137,8 +108,6 @@ const Generator = ({
           ][weekYear]
             ? employeeShiftCount[employeeId][weekYear] + 1
             : 1;
-
-          console.log(employeeId, index);
 
           updatedUserAdjustedSchedule[employeeId] = {
             ...updatedUserAdjustedSchedule[employeeId],

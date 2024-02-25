@@ -96,7 +96,6 @@ const GroupList = ({ groups, employees, setGroups, setEmployees }) => {
               groupRulesCollection[selectedRule].group.defaultValues,
           },
     };
-    console.log(updatedGroups, groupRulesCollection[selectedRule].group);
     setGroups(updatedGroups);
 
     const groupEmployees = groups[groupId].employees;

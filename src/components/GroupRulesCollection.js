@@ -150,7 +150,6 @@ const intervalGroupOnChange = (startDate, endDate, employeeData, groupData) => {
 
 const maxShiftGenLogic = (employeeId, employeeShiftCount, data) => {
   const { numberOfShifts, weekYear } = data;
-  // console.log(employeeId, employeeShiftCount, data, numberOfShifts);
 
   if (!employeeShiftCount[employeeId]) return true;
   if (employeeShiftCount[employeeId][weekYear] >= numberOfShifts) return false;
