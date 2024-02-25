@@ -56,6 +56,8 @@ const CodeList = ({
   setCodes,
   userAdjustedSchedule,
   setuserAdjustedSchedule,
+  employees,
+  setEmployees,
 }) => {
   const [selectedId, setSelectedId] = React.useState(Object.keys(codes)[0]);
 
@@ -88,7 +90,27 @@ const CodeList = ({
     setuserAdjustedSchedule(updatedSchedule);
   };
 
+  //changes the deleted leave to the default "v"
+  const deleteCodeFromEmployeeLeave = (codeId) => {
+    const updatedEmployees = { ...employees };
+    Object.entries(updatedEmployees).forEach(([employeeId, employee]) => {
+      const updatedEmployee = { ...employee };
+      if (updatedEmployee.offDays) {
+        Object.entries(updatedEmployee.offDays).forEach(([key, offDay]) => {
+          if (offDay.code === codeId) updatedEmployee.offDays[key].code = "v";
+        });
+        console.log(updatedEmployee, updatedEmployee.offDays);
+
+        updatedEmployees[employeeId] = updatedEmployee;
+      }
+    });
+    setEmployees(updatedEmployees);
+  };
+
   const handleCodeDelete = (day, codeId) => {
+    if (day === "Leave") {
+      deleteCodeFromEmployeeLeave(codeId);
+    }
     const updatedCodes = { ...codes };
     const { [codeId]: code, ...rest } = updatedCodes[day];
     updatedCodes[day] = rest;

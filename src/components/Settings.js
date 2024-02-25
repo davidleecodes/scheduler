@@ -52,6 +52,8 @@ const Settings = () => {
           setCodes={setCodes}
           userAdjustedSchedule={userAdjustedSchedule}
           setuserAdjustedSchedule={setuserAdjustedSchedule}
+          employees={employees}
+          setEmployees={setEmployees}
         />
       ),
     },
