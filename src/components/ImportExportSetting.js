@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Flex } from "antd";
+import { Button, Flex, Upload } from "antd";
 
 function exportToJsonFile(data, fileName) {
   const jsonData = JSON.stringify(data, null, 2);
@@ -37,8 +37,9 @@ const Export = ({
 };
 
 const Import = ({ setEmployees, setGroups, setScheduleRange, setCodes }) => {
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
+  const handleFileChange = (data) => {
+    console.log(data);
+    const file = data.file.originFileObj;
 
     if (file) {
       const reader = new FileReader();
@@ -46,6 +47,8 @@ const Import = ({ setEmployees, setGroups, setScheduleRange, setCodes }) => {
       reader.onload = (e) => {
         try {
           const jsonData = JSON.parse(e.target.result);
+          console.log(e.target, jsonData);
+
           setEmployees(jsonData.employees);
           setGroups(jsonData.groups);
           setScheduleRange(jsonData.scheduleRange);
@@ -61,10 +64,14 @@ const Import = ({ setEmployees, setGroups, setScheduleRange, setCodes }) => {
 
   return (
     <>
-      <Button type="primary" component="label">
-        Import Settings
-        <input type="file" hidden onChange={handleFileChange} />
-      </Button>
+      <Upload
+        onChange={handleFileChange}
+        showUploadList={false}
+        accept=".json"
+        customRequest={() => null}
+      >
+        <Button type="primary">Import Settings</Button>
+      </Upload>
       {/* <pre>{JSON.stringify(data, null, 2)}</pre> */}
     </>
   );
