@@ -22,7 +22,7 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
-const { Title, Paragraph, Text } = Typography;
+const { Text } = Typography;
 
 const filterOption = (input, option) =>
   (option?.label ?? "").toLowerCase().includes(input.toLowerCase());
@@ -105,7 +105,7 @@ const GroupEmployees = ({
     })
   );
 
-  const getTaskPos = (id) =>
+  const getItemPos = (id) =>
     employeeListIds.findIndex((employeeId) => employeeId === id);
 
   const handleDragEnd = (event) => {
@@ -115,8 +115,8 @@ const GroupEmployees = ({
 
     setGroups((prev) => {
       let updateGroups = { ...prev };
-      const originalPos = getTaskPos(active.id);
-      const newPos = getTaskPos(over.id);
+      const originalPos = getItemPos(active.id);
+      const newPos = getItemPos(over.id);
       updateGroups[groupId] = {
         ...prev[groupId],
         employees: arrayMove(employeeListIds, originalPos, newPos),
@@ -131,48 +131,28 @@ const GroupEmployees = ({
       sensors={sensors}
       onDragEnd={handleDragEnd}
     >
-      <List
-        group={group}
-        employees={employees}
-        setEmployees={setEmployees}
-        handleDeleteEmployee={handleDeleteEmployee}
-        groupId={groupId}
-        employeeListIds={employeeListIds}
-      />
+      <div>
+        <SortableContext
+          items={employeeListIds}
+          strategy={verticalListSortingStrategy}
+        >
+          <Flex gap="small" vertical>
+            {employeeListIds.map((employeeId) => (
+              <Employee
+                key={employeeId}
+                id={employeeId}
+                group={group}
+                employees={employees}
+                setEmployees={setEmployees}
+                handleDeleteEmployee={handleDeleteEmployee}
+                groupId={groupId}
+                employeeId={employeeId}
+              />
+            ))}
+          </Flex>
+        </SortableContext>
+      </div>
     </DndContext>
-  );
-};
-
-const List = ({
-  group,
-  employees,
-  setEmployees,
-  handleDeleteEmployee,
-  groupId,
-  employeeListIds,
-}) => {
-  return (
-    <div>
-      <SortableContext
-        items={employeeListIds}
-        strategy={verticalListSortingStrategy}
-      >
-        <Flex gap="small" vertical>
-          {employeeListIds.map((employee) => (
-            <Employee
-              key={employee}
-              id={employee}
-              group={group}
-              employees={employees}
-              setEmployees={setEmployees}
-              handleDeleteEmployee={handleDeleteEmployee}
-              groupId={groupId}
-              employeeId={employee}
-            />
-          ))}
-        </Flex>
-      </SortableContext>
-    </div>
   );
 };
 
@@ -186,7 +166,7 @@ const Employee = ({
   employeeId,
 }) => {
   const {
-    token: { colorBgElevated, borderRadiusSM, colorPrimary },
+    token: { borderRadiusSM },
   } = theme.useToken();
 
   const { attributes, listeners, setNodeRef, transform, transition } =
@@ -216,17 +196,11 @@ const Employee = ({
               {...attributes}
               {...listeners}
               icon={<HolderOutlined />}
-              // shape="circle"
               type="text"
             />
           </Flex>
 
-          <Form
-            // {...formItemLayout}
-            layout="horizontal"
-            style={{ maxWidth: 500 }}
-            // size="small"
-          >
+          <Form layout="horizontal" style={{ maxWidth: 500 }}>
             {employees[employeeId].groupRules &&
               Object.keys(employees[employeeId].groupRules).map((ruleId) => {
                 const Rule = groupRulesCollection[ruleId].employee.component;

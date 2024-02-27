@@ -10,16 +10,7 @@ import {
 } from "./GroupListHelper";
 import { iterateArrayId } from "./utils";
 import { geekblue } from "@ant-design/colors";
-import {
-  Button,
-  Form,
-  Input,
-  Flex,
-  Collapse,
-  theme,
-  Typography,
-  Empty,
-} from "antd";
+import { Button, Form, Input, Flex, theme, Typography, Empty } from "antd";
 import { MinusOutlined } from "@ant-design/icons";
 const { Title, Paragraph, Text } = Typography;
 
@@ -218,14 +209,6 @@ const GroupList = ({ groups, employees, setGroups, setEmployees }) => {
                 </Form.Item>
               </Form>
 
-              {/* <Collapse
-                ghost
-                items={[
-                  {
-                    key: "1",
-                    label: "rules",
-                    children: (
-                      <> */}
               <Flex gap="small" vertical>
                 <Title level={5}>rules</Title>
                 {!group.groupRules && (
@@ -269,20 +252,7 @@ const GroupList = ({ groups, employees, setGroups, setEmployees }) => {
                   groupId={groupId}
                 />
               </Flex>
-              {/* </>
-                    ),
-                  },
-                ]}
-              /> */}
 
-              {/* <Collapse
-                ghost
-                items={[
-                  {
-                    key: "1",
-                    label: "employees",
-                    children: (
-                      <> */}
               <Flex gap="small" vertical>
                 <Title level={5}>employees</Title>
                 {!group.employees && (
@@ -306,11 +276,6 @@ const GroupList = ({ groups, employees, setGroups, setEmployees }) => {
                   group={group}
                 />
               </Flex>
-              {/* </>
-                    ),
-                  },
-                ]}
-              /> */}
             </Flex>
           </>
         )}
