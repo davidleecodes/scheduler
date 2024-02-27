@@ -3,7 +3,11 @@ import React, { useState } from "react";
 import ListNavContiner from "./ListNavContainer";
 
 import { groupRulesCollection } from "./GroupRulesCollection";
-import { AddEmployeeField, AddRuleField } from "./GroupListHelper";
+import {
+  AddEmployeeField,
+  AddRuleField,
+  GroupEmployees,
+} from "./GroupListHelper";
 import { iterateArrayId } from "./utils";
 import { geekblue } from "@ant-design/colors";
 import {
@@ -284,68 +288,16 @@ const GroupList = ({ groups, employees, setGroups, setEmployees }) => {
                 {!group.employees && (
                   <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
                 )}
-                {group.employees &&
-                  group.employees.map((employeeId) => {
-                    if (employees[employeeId]) {
-                      return (
-                        <Flex gap="small" align="center" key={employeeId}>
-                          <Flex
-                            gap="small"
-                            vertical
-                            style={{
-                              background: geekblue[0],
-                              borderRadius: borderRadiusSM,
-                              padding: "2px 8px",
-                              flexGrow: 1,
-                            }}
-                          >
-                            <Text strong>{employees[employeeId].name}</Text>
-                            <Form
-                              // {...formItemLayout}
-                              layout="horizontal"
-                              style={{ maxWidth: 500 }}
-                              // size="small"
-                            >
-                              {employees[employeeId].groupRules &&
-                                Object.keys(
-                                  employees[employeeId].groupRules
-                                ).map((ruleId) => {
-                                  const Rule =
-                                    groupRulesCollection[ruleId].employee
-                                      .component;
-                                  return (
-                                    <Rule
-                                      key={ruleId}
-                                      ruleData={
-                                        employees[employeeId].groupRules[ruleId]
-                                          .data
-                                      }
-                                      employees={employees}
-                                      setEmployees={setEmployees}
-                                      employeeId={employeeId}
-                                      groupRuleData={
-                                        group.groupRules &&
-                                        group.groupRules[ruleId] &&
-                                        group.groupRules[ruleId].data
-                                      }
-                                    />
-                                  );
-                                })}
-                            </Form>
-                          </Flex>
-
-                          <Button
-                            onClick={(event) =>
-                              handleDeleteEmployee(employeeId, groupId, event)
-                            }
-                            icon={<MinusOutlined />}
-                            shape="circle"
-                            size="small"
-                          />
-                        </Flex>
-                      );
-                    }
-                  })}
+                {group.employees && (
+                  <GroupEmployees
+                    group={group}
+                    employees={employees}
+                    setEmployees={setEmployees}
+                    handleDeleteEmployee={handleDeleteEmployee}
+                    groupId={groupId}
+                    setGroups={setGroups}
+                  />
+                )}
 
                 <AddEmployeeField
                   employees={employees}
