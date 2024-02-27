@@ -238,7 +238,7 @@ const GroupList = ({ groups, employees, setGroups, setEmployees }) => {
                         </Flex>
 
                         <Button
-                          onClick={() => handleRuleDelete("interval", groupId)}
+                          onClick={() => handleRuleDelete(ruleId, groupId)}
                           icon={<MinusOutlined />}
                           shape="circle"
                           size="small"
