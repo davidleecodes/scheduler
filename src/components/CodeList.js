@@ -207,7 +207,8 @@ const CodeList = ({
                         placeholder="notes"
                         value={code.notes}
                         style={{
-                          width: 400,
+                          // width: 400,
+                          flexGrow: 1,
                         }}
                       />
                     </Form.Item>
