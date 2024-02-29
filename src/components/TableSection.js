@@ -130,6 +130,8 @@ const TableSection = ({
               schedule={schedule}
               dateRange={dateRange}
               setuserAdjustedSchedule={setuserAdjustedSchedule}
+              startDate={startDate}
+              endDate={endDate}
             />
             <ExportCsv
               dateRange={dateRange}

@@ -14,6 +14,9 @@ dayjs.extend(isBetween);
 const weekday = require("dayjs/plugin/weekday");
 dayjs.extend(weekday);
 
+const isoWeek = require("dayjs/plugin/isoWeek");
+dayjs.extend(isoWeek);
+
 const updateLocale = require("dayjs/plugin/updateLocale");
 dayjs.extend(updateLocale);
 dayjs.updateLocale("en", {
