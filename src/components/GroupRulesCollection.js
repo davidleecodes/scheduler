@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import dayjs from "dayjs";
 import { daysShort } from "./utils";
@@ -13,10 +13,13 @@ import {
 } from "antd";
 const { Title, Paragraph, Text } = Typography;
 const IntervalGroup = ({ ruleData, setGroups, groupId, groups }) => {
-  const [selectedDays, setSelectedDays] = useState(ruleData?.days || []);
-  const [everyNumberOfWeeks, setEveryNumberOfWeeks] = useState(
-    ruleData?.everyNumberOfWeeks || ""
-  );
+  const [selectedDays, setSelectedDays] = useState();
+  const [everyNumberOfWeeks, setEveryNumberOfWeeks] = useState();
+
+  useEffect(() => {
+    setSelectedDays(ruleData?.days || []);
+    setEveryNumberOfWeeks(ruleData?.everyNumberOfWeeks || "");
+  }, [groupId, ruleData]);
 
   const handleDayChange = (checkedDays) => {
     setSelectedDays(checkedDays);
@@ -73,20 +76,28 @@ const IntervalEmployee = ({
   employeeId,
   groupRuleData,
 }) => {
-  const [selectedDate, setSelectedDate] = useState(
-    dayjs(ruleData.startDay) || ""
-  );
+  const [selectedDate, setSelectedDate] = useState();
 
+  useEffect(() => {
+    setSelectedDate(dayjs(ruleData.startDay) || "");
+  }, [employeeId, ruleData]);
   const selectedDaysIndex =
     groupRuleData &&
     groupRuleData.days &&
     groupRuleData.days.map((day) => daysShort.indexOf(day));
 
   const handleDateChange = (date) => {
+    // console.log(employeeId);
     setSelectedDate(date);
-    const updatedEmployees = { ...employees };
-    updatedEmployees[employeeId].groupRules.interval.data.startDay = date;
-    setEmployees(updatedEmployees);
+
+    const updatedEmployee = { ...employees[employeeId] };
+    const updatedGroupRules = {
+      ...updatedEmployee.groupRules,
+      interval: { data: { startDay: date } },
+    };
+    updatedEmployee.groupRules = updatedGroupRules;
+
+    setEmployees({ ...employees, [employeeId]: updatedEmployee });
   };
   function disableDay(date) {
     return selectedDaysIndex
@@ -157,9 +168,12 @@ const maxShiftGenLogic = (employeeId, employeeShiftCount, data) => {
 };
 
 const MaxShiftGroup = ({ ruleData, setGroups, groupId, groups }) => {
-  const [numberOfShifts, setNumberOfShifts] = useState(
-    ruleData?.numberOfShifts || ""
-  );
+  const [numberOfShifts, setNumberOfShifts] = useState();
+
+  useEffect(() => {
+    setNumberOfShifts(ruleData?.numberOfShifts || "");
+  }, [groupId, ruleData]);
+  // console.log(ruleData?.numberOfShifts);
 
   const handleNumberOfShiftsChange = (value) => {
     setNumberOfShifts(value);
