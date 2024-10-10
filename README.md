@@ -20,6 +20,10 @@ Scheduler came about when a friend who is a pharmacist manager expressed the dif
 
 ![Group employee gif](demo/scheduler_group_employee.gif)
 
+3a. Adding rule to group
+
+![Group rule gif](demo/scheduler_add_rule.gif)
+
 4. Generate schedule
 
 ![Generate schedule gif](demo/scheduler_generate.gif)
